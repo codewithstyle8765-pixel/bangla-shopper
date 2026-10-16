@@ -1,0 +1,467 @@
+@import "tailwindcss";
+
+@layer theme, base, components, utilities;
+
+/* Design tokens: each @theme variable becomes a CSS variable and Tailwind utilities. */
+@theme {
+  /* Brand */
+  --color-brand-coral: #f05658;
+  --color-brand-coral-hover: #d8484a;
+  --color-brand-coral-active: #c23e40;
+  --color-brand-alert: #ff384b;
+  --color-brand-navy: #2a2a4d;
+  --color-star-filled: #ffc107;
+  --color-star-filled-hover: #f0b000;
+
+  /* Text */
+  --color-brand-black: #000000;
+  --color-brand-charcoal: #171a1f;
+  --color-brand-dark: #222222;
+  --color-brand-muted: #29292c;
+  --color-brand-ink: #2d2d2d;
+  --color-control-icon: #444444;
+  --color-footer-text: #666666;
+  --color-price-strikethrough: #6b6b6b;
+  --color-text-subtle: #757575;
+  --color-brand-link: #117cc2;
+  --color-stock-link: #0090ff;
+  --color-success: #177428;
+
+  /* Lines & surfaces */
+  --color-muted-line: #c2c2c2;
+  --color-divider: #dddddd;
+  --color-divider-strong: #e1e1e1;
+  --color-card-border: #ededed;
+  --color-surface-gray: #e7e5e6;
+  --color-surface-soft: #f3f3f3;
+  --color-brand-surface: #f8fafc;
+  --color-background: #ffffff;
+  --color-foreground: #171a1f;
+
+  /* Dark CTA */
+  --color-btn-dark-edge: #2b2e33;
+  --color-btn-dark-hover: #2a2d33;
+
+  /* Footer social icons */
+  --color-social-facebook: #4a6dbf;
+  --color-social-youtube: #f22231;
+  --color-social-twitter: #2ac1f2;
+  --color-social-instagram: #ad33b2;
+  --color-social-linkedin: #0179b6;
+
+  /* Home "Landed Just Now" panel */
+  --color-landed-from: rgba(205, 211, 219, 0.5);
+  --color-landed-to: rgba(202, 202, 202, 0.5);
+  --color-landed-border: rgba(229, 229, 229, 0.36);
+
+  --shadow-card: 0 0 4px rgba(0, 0, 0, 0.09);
+  --font-sans: var(--font-roboto), Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-crumb: #141414;
+  --color-crumb-separator: #5c5c5c;
+
+  /* 1290px grid + 16px margins: fixed desktop layout from here up */
+  --breakpoint-desk: 82.625rem;
+}
+
+:root {
+  /* Shared timing for drawers, dropdowns, accordions and modals */
+  --duration-panel: 300ms;
+  --ease-panel: cubic-bezier(0.25, 1, 0.5, 1);
+  /* Sticky header height + breathing room, for in-page anchors (scroll-mt) */
+  --sticky-header: 85px;
+  /* Cart/checkout fixed CTA bar (py-3 + 48px button + border); the page reserves it so the footer is never covered */
+  --sticky-cta-h: 73px;
+  /* Page side margin below the 1290px desktop grid (the live site uses 10px on phones and tablets) */
+  --gutter: 10px;
+}
+
+@media (width >= 64rem) {
+  :root {
+    --gutter: 16px;
+    --sticky-header: 137px;
+  }
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Pinch-zoomed page (phones): pinned bars shake while a zoomed page scrolls, so they let go until it is back at 100%. */
+html[data-zoomed] [data-pin] {
+  position: relative !important;
+  top: auto !important;
+}
+html[data-zoomed] [data-pin="hide"],
+html[data-zoomed] [data-sticky-cta] {
+  display: none !important;
+}
+html[data-zoomed] body {
+  padding-bottom: 0 !important;
+}
+
+@layer base {
+  sup {
+    font-size: 58.3%;
+  }
+}
+
+/* Magento CMS page content (About, policies, terms): admin HTML, Page Builder rows and the old theme's classes. */
+@layer components {
+  .cms-content {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-brand-ink);
+    overflow-wrap: anywhere;
+  }
+  .cms-content :where(p, ul, ol, table, blockquote, figure) {
+    margin: 0 0 0.9em;
+  }
+  .cms-content :where(p, ul, ol, table, blockquote, figure):last-child {
+    margin-bottom: 0;
+  }
+  .cms-content :where(h1, h2, h3, h4, h5, h6) {
+    margin: 1.6em 0 0.6em;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-brand-dark);
+  }
+  .cms-content :where(h1, h2) {
+    position: relative;
+    padding-bottom: 10px;
+    font-size: 20px;
+  }
+  .cms-content :where(h1, h2)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 24px;
+    height: 2px;
+    background: var(--color-brand-coral);
+  }
+  .cms-content :where(h3) {
+    font-size: 17px;
+  }
+  .cms-content :where(h4, h5, h6) {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .cms-content :where(strong, b) {
+    font-weight: 600;
+    color: var(--color-brand-dark);
+  }
+  .cms-content :where(a) {
+    color: var(--color-brand-link);
+    text-underline-offset: 2px;
+  }
+  .cms-content :where(a):hover {
+    text-decoration: underline;
+  }
+  .cms-content :where(ul) {
+    padding-left: 0;
+    list-style: none;
+  }
+  .cms-content :where(ul > li) {
+    position: relative;
+    padding-left: 20px;
+  }
+  .cms-content :where(ul > li)::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-brand-coral);
+  }
+  .cms-content :where(ol) {
+    padding-left: 1.4em;
+    list-style: decimal;
+  }
+  .cms-content :where(ol > li)::marker {
+    font-weight: 600;
+    color: var(--color-brand-coral);
+  }
+  .cms-content :where(li + li) {
+    margin-top: 0.4em;
+  }
+  .cms-content :where(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .cms-content :where(table) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .cms-content :where(th, td) {
+    border: 1px solid var(--color-card-border);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .cms-content :where(th) {
+    background: var(--color-brand-surface);
+    font-weight: 600;
+    color: var(--color-brand-dark);
+  }
+  .cms-content :where(blockquote) {
+    border-left: 3px solid var(--color-brand-coral);
+    background: var(--color-brand-surface);
+    padding: 10px 16px;
+  }
+  .cms-content :where(hr) {
+    margin: 24px 0;
+    border: 0;
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  /* Page Builder */
+  .cms-content :where([data-content-type="row"] + [data-content-type="row"]) {
+    margin-top: 24px;
+  }
+  .cms-content :where([data-content-type="column-group"], [data-content-type="column-line"]) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .cms-content :where([data-content-type="column"]) {
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+  .cms-content :where([data-content-type="image"] img) {
+    width: 100%;
+  }
+  .cms-content :where(.pagebuilder-button-primary, .pagebuilder-button-secondary, .pagebuilder-button-link) {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .cms-content :where(.pagebuilder-button-primary) {
+    background: var(--color-brand-coral);
+    color: #fff;
+  }
+  .cms-content :where(.pagebuilder-button-secondary) {
+    border: 2px solid var(--color-brand-black);
+    color: var(--color-brand-black);
+  }
+  .cms-content :where(.pagebuilder-mobile-only) {
+    display: none;
+  }
+  @media (width < 48rem) {
+    .cms-content :where(.pagebuilder-mobile-hidden) {
+      display: none;
+    }
+    .cms-content :where(.pagebuilder-mobile-only) {
+      display: block;
+    }
+  }
+
+  /* Old theme markup: banner, two-column body (content + Leadership / Milestones cards) */
+  .cms-content :where(.about-image) {
+    margin-bottom: 24px;
+  }
+  .cms-content :where(.about-image img) {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+  }
+  .cms-content :where([class*="col-lg-"]) {
+    min-width: 0;
+  }
+  .cms-content :where(.bonus-title h2:first-child, .block-welcome > :first-child > h2:first-child) {
+    margin-top: 0;
+  }
+  .cms-content :where(.bonus-content > h2) {
+    margin-top: 0.5em;
+    padding-bottom: 0;
+    font-size: 17px;
+  }
+  .cms-content :where(.bonus-content > h2)::after {
+    content: none;
+  }
+  .cms-content :where(.block-whychoose + .block-whychoose) {
+    margin-top: 28px;
+  }
+  .cms-content :where(.card) {
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
+    background: #fff;
+    padding: 14px 16px;
+  }
+  .cms-content :where(.card + .card) {
+    margin-top: 12px;
+  }
+  .cms-content :where(.card-header) {
+    margin: 0 0 4px;
+    font-size: 16px;
+  }
+  .cms-content :where(.card-body > strong:first-child) {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-brand-coral);
+  }
+  .cms-content :where(.card-body p) {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  @media (width >= 64rem) {
+    .cms-content :where(div:has(> .col-lg-8):has(> .col-lg-4)) {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 32px;
+      align-items: start;
+    }
+    .cms-content :where(div:has(> .col-lg-8):has(> .col-lg-4) > :not([class*="col-lg-"])) {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (width < 64rem) {
+    .cms-content :where(.col-lg-4) {
+      margin-top: 28px;
+    }
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Product card frame: single clean 1px border matching reference */
+@utility card-surface {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid var(--color-card-border);
+  box-shadow: var(--shadow-card);
+}
+
+@utility btn-dark {
+  background-color: var(--color-brand-charcoal);
+  border: 1px solid var(--color-btn-dark-edge);
+  border-radius: 4px;
+  color: #ffffff;
+  transition: background-color 150ms ease, transform 150ms ease;
+  &:hover:not(:disabled) {
+    background-color: var(--color-btn-dark-hover);
+  }
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+@utility divider {
+  display: block;
+  height: 3px;
+  border: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 1px,
+    var(--color-divider) 1px,
+    var(--color-divider) 2px,
+    transparent 2px
+  );
+}
+
+@utility divider-strong {
+  display: block;
+  height: 6px;
+  border: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 1px,
+    #f5f5f5 1px,
+    #f5f5f5 2px,
+    var(--color-divider-strong) 2px,
+    var(--color-divider-strong) 4px,
+    #f5f5f5 4px,
+    #f5f5f5 5px,
+    transparent 5px
+  );
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cartItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Printing (e.g. the order confirmation): content only, no site chrome or buttons. */
+@page {
+  margin: 10mm 12mm;
+  size: auto;
+}
+
+@media print {
+  header,
+  footer,
+  aside[aria-label="Announcement bar"],
+  nav[aria-label="Breadcrumb"],
+  nav[aria-label="Primary"],
+  nav[aria-label="My account"],
+  [data-print-hide],
+  [data-sticky-cta] {
+    display: none !important;
+  }
+
+  body {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  /* Prevent elements and boxes from slicing across page breaks */
+  section,
+  article,
+  aside,
+  li,
+  tr,
+  dl,
+  .print-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}

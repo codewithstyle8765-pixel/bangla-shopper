@@ -1,0 +1,47 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "bangla-shoppers",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-08-04",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"keep_vars": true,
+	"vars": {
+		"NEXTAUTH_URL": "https://bangla-shoppers.prayas-19.workers.dev"
+	},
+	"placement": {
+		"mode": "smart"
+	},
+	"cache": {
+		"enabled": true,
+		"cross_version_cache": false
+	},
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "bangla-shoppers"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	"kv_namespaces": [
+		{
+			"binding": "NEXT_INC_CACHE_KV",
+			"id": "00b26de7ce5748fdb984f6a086cec7d7"
+		},
+		{
+			"binding": "bangla_shoppers_cache",
+			"id": "00b26de7ce5748fdb984f6a086cec7d7"
+		}
+	]
+}
