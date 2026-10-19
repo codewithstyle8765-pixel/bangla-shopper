@@ -30,7 +30,7 @@ async function CartRecommendations() {
 
 export default function CartPage() {
   return (
-    <Container className="pb-28 font-sans xl:pb-12">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Shopping Cart" }]} structuredData={false} />
       <PageTitle>Shopping Cart</PageTitle>
       <CartPageView />

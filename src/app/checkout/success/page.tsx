@@ -19,7 +19,7 @@ async function Confirmation({ searchParams }: { searchParams: Promise<SearchPara
 
 export default function CheckoutSuccessPage({ searchParams }: { searchParams: Promise<SearchParamsRecord> }) {
   return (
-    <Container className="pb-14 font-sans">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Order Confirmation" }]} structuredData={false} />
       <div className="pt-4">
         <Suspense fallback={null}>

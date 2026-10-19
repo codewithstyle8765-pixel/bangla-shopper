@@ -82,9 +82,13 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
   }, [postcodes, values.city, values.thana]);
 
   const postOfficeOptions = useMemo(() => {
+    if (!values.thana || values.thana === "My thana not listed") return [];
     const uniqueOffices = Array.from(new Set(postOffices.map((o) => o.office.replace(/\s*-?\s*TSO$/i, ""))));
-    return withCurrent(options(uniqueOffices), values.area);
-  }, [postOffices, values.area]);
+    if (uniqueOffices.length === 0) return [];
+    const baseOpts = options(uniqueOffices);
+    baseOpts.push({ value: "My area not listed", label: "My area not listed" });
+    return withCurrent(baseOpts, values.area);
+  }, [postOffices, values.area, values.thana]);
 
   const clientErrors = useMemo(() => validateAddress(toAddress(values), { requireRegion: picker }), [values, picker]);
   const isValid = Object.keys(clientErrors).length === 0;
@@ -143,7 +147,7 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
         }
       }
     }
-    if (picker && field === "area" && postcodes && value) {
+    if (picker && field === "area" && postcodes && value && value !== "My area not listed") {
       const match = findPostcodeForArea(postcodes, next.city, value, next.thana);
       if (match) {
         next.postcode = match.postcode;

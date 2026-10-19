@@ -27,7 +27,7 @@ async function Checkout() {
 
 export default function CheckoutPage() {
   return (
-    <Container className="font-sans lg:pb-12">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Cart", href: "/cart" }, { label: "Checkout" }]} structuredData={false} />
       <PageTitle>Secure Checkout</PageTitle>
       <Suspense fallback={<CheckoutSkeleton />}>

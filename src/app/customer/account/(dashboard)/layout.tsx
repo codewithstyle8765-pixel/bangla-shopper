@@ -33,7 +33,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <Container className="pb-3 font-sans">
+    <Container className="font-sans">
       <Suspense fallback={null}>
         <SessionGate />
       </Suspense>

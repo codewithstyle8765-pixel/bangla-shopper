@@ -13,7 +13,7 @@ export function FooterTopButton() {
       type="button"
       aria-label="Back to top"
       onClick={toTop}
-      className="hidden h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full sm:grid bg-white/10 text-white transition-colors hover:bg-brand-coral"
+      className="hidden h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full lg:grid bg-white/10 text-white transition-colors hover:bg-brand-coral"
     >
       <ArrowUpIcon className="h-4 w-4" />
     </button>
@@ -48,7 +48,7 @@ export function BackToTop() {
       onClick={toTop}
       data-pin="hide"
       className={clsx(
-        "fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-5 z-30 lg:bottom-5 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-[4px] bg-brand-dark/70 text-white transition-opacity hover:bg-brand-dark md:flex",
+        "fixed bottom-5 right-5 z-30 hidden h-10 w-10 cursor-pointer items-center justify-center rounded-[4px] bg-brand-dark/70 text-white transition-opacity hover:bg-brand-dark lg:flex",
         visible ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >

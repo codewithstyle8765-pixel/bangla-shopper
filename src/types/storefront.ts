@@ -267,8 +267,8 @@ export interface FooterData {
   columns: Array<{ title: string; links: FooterLink[] }>;
   social: Array<{ network: "facebook" | "youtube" | "twitter" | "instagram" | "linkedin" | "tiktok" | "pinterest"; href: string }>;
   apps: { ios: string; android: string };
-  /** Promise row above the app badges and payment logos (secure payments, delivery, support). */
-  highlights: Array<{ icon: "secure" | "delivery" | "support"; title: string; text: string }>;
+  /** Promise row above the app badges and payment logos (authentic products, secure payments, delivery). */
+  highlights: Array<{ icon: "secure" | "delivery" | "support" | "authentic"; title: string; text: string }>;
   copyright: string;
   legalLinks: FooterLink[];
 }

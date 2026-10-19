@@ -10,9 +10,12 @@ import { formatTk } from "@/utils/format";
 import { CartTotals, CouponForm, FreeShippingProgress, TrustBadges } from "./CartSummary";
 import { CartPageSkeleton } from "./CartSkeletons";
 import { QuantitySelector } from "@/packages/module-common/QuantitySelector";
+import { EarnPointsNote } from "@/packages/module-quote/checkout/EarnPointsNote";
+import { useCustomerName } from "@/packages/module-customer/session";
 
 export function CartPageView() {
   const { cart, isLoaded, isUpdating, updateQuantity, removeItem, error } = useCart();
+  const signedIn = Boolean(useCustomerName());
 
   if (!isLoaded) return <CartPageSkeleton />;
 
@@ -32,7 +35,7 @@ export function CartPageView() {
   const savings = cart.items.reduce((acc, i) => acc + (i.originalPrice ? (i.originalPrice - i.price) * i.quantity : 0), 0);
 
   return (
-    <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
       <section aria-label="Cart items" className={clsx("transition-opacity", isUpdating && "opacity-60")}>
         <div className="mb-3 hidden grid-cols-[minmax(0,1fr)_120px_130px_120px] gap-4 border-b-2 border-brand-dark pb-2 text-[13px] font-bold uppercase tracking-[0.1em] text-brand-dark md:grid">
           <span>Product</span>
@@ -122,21 +125,27 @@ export function CartPageView() {
         </div>
       </section>
 
-      <aside aria-label="Order summary" className="space-y-5 rounded-[6px] border border-card-border bg-white p-5 xl:sticky xl:top-4">
+      <aside aria-label="Order summary" className="space-y-5 rounded-[6px] border border-card-border bg-white p-5 lg:sticky lg:top-4">
         <h2 className="text-[16px] font-black uppercase tracking-[0.1em] text-brand-dark">Order Summary</h2>
         <FreeShippingProgress subtotal={cart.subtotal} />
         <CouponForm />
         <CartTotals />
+        <EarnPointsNote amount={cart.subtotal - cart.discount} signedIn={signedIn} />
         <Link
           href="/checkout"
-          className="hidden h-12 w-full items-center justify-center rounded-[4px] bg-brand-coral text-[17px] font-semibold text-white transition-colors hover:bg-brand-coral-hover xl:flex"
+          className="hidden h-12 w-full items-center justify-center rounded-[4px] bg-brand-coral text-[17px] font-semibold text-white transition-colors hover:bg-brand-coral-hover lg:flex"
         >
           Proceed to Checkout
         </Link>
-        <TrustBadges />
+        <div className="hidden lg:block">
+          <TrustBadges />
+        </div>
+        <div className="lg:hidden">
+          <TrustBadges centered />
+        </div>
       </aside>
 
-      <div data-sticky-cta="cart" className="fixed inset-x-0 bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-30 lg:bottom-0 flex items-center gap-3 border-t border-card-border bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] xl:hidden">
+      <div data-sticky-cta="cart" className="fixed inset-x-0 bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-30 flex items-center gap-3 border-t border-card-border bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
         <div className="min-w-0 flex-1">
           <p className="text-[12px] text-footer-text">Total ({cart.totalQuantity} items)</p>
           <p className="text-[18px] font-bold text-brand-alert">{formatTk(Math.max(0, cart.subtotal - cart.discount))}</p>

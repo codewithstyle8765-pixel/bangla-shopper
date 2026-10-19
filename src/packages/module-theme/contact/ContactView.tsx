@@ -42,7 +42,7 @@ export function ContactView({ footer }: { footer: FooterData | null }) {
     : [];
 
   return (
-    <Container className="pb-4 font-sans lg:pb-12">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Contact Us" }]} />
       <PageTitle className="mb-4" description="We’re here to help 7 days a week. Call, email, visit us or send a message and our team will get back to you.">
         Contact Us

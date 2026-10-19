@@ -453,17 +453,21 @@ export function WriteReviewDialog({
   onReviewSubmitted,
 }: WriteReviewDialogProps) {
   const [round, setRound] = useState(0);
-  const close = () => {
-    onClose();
-    setRound((r) => r + 1);
-  };
+  const prevOpen = useRef(open);
+
+  useEffect(() => {
+    if (open && !prevOpen.current) {
+      setRound((r) => r + 1);
+    }
+    prevOpen.current = open;
+  }, [open]);
 
   return (
-    <Modal open={open} onClose={close} title="Write a Review" size="md">
+    <Modal open={open} onClose={onClose} title="Write a Review" size="md">
       <p className="mb-4 text-[14px] text-footer-text">
         Reviewing <span className="font-semibold text-brand-dark">{productName}</span>
       </p>
-      <ReviewForm key={round} sku={sku} onDone={close} onReviewSubmitted={onReviewSubmitted} />
+      <ReviewForm key={round} sku={sku} onDone={onClose} onReviewSubmitted={onReviewSubmitted} />
     </Modal>
   );
 }

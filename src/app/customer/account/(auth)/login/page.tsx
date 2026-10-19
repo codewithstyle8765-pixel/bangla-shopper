@@ -19,7 +19,7 @@ async function Login({ searchParams }: { searchParams: Promise<SearchParamsRecor
 
 export default function LoginPage({ searchParams }: { searchParams: Promise<SearchParamsRecord> }) {
   return (
-    <Container className="pb-3.5 font-sans">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Login" }]} structuredData={false} />
       <AuthShell
         tab="login"

@@ -65,7 +65,7 @@ function CartRowSkeleton() {
 
 export function CartPageSkeleton() {
   return (
-    <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]" aria-busy="true" aria-label="Loading cart">
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]" aria-busy="true" aria-label="Loading cart">
       <div>
         <div className="mb-3 hidden border-b-2 border-card-border pb-2 md:block">
           <Shimmer width="100%" height={14} rounded="rounded" />

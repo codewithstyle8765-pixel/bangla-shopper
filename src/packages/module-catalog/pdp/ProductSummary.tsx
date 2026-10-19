@@ -406,7 +406,7 @@ export function ProductSummary({
           </div>
 
           <div className="flex items-center gap-[10px] shrink-0 sm:gap-[13px]">
-            <p className="whitespace-nowrap text-[16px] font-semibold leading-[18px] text-black min-[400px]:text-[17px] lg:w-[92px] lg:whitespace-normal lg:text-center lg:text-[18px] desk:relative desk:-top-[3px]">
+            <p className="whitespace-nowrap text-[16px] font-semibold leading-[18px] text-black min-[400px]:text-[17px] lg:text-[18px] lg:w-auto lg:whitespace-nowrap lg:text-left desk:w-[92px] desk:whitespace-normal desk:text-center desk:relative desk:-top-[3px]">
               Download Our App
             </p>
 

@@ -6,7 +6,7 @@ import {
   SearchIcon,
 } from "@/packages/module-common/icons/UiIcons";
 import { NextImage } from "@/packages/module-common/NextImage";
-import { RatingStars } from "@/packages/module-common/RatingStars";
+import { RatingStars, STAR_PATH } from "@/packages/module-common/RatingStars";
 import { NotchArrow } from "@/packages/module-common/icons/Shapes";
 import { Select } from "@/packages/module-common/form/Select";
 import { ReadMore } from "@/packages/module-common/ReadMore";
@@ -210,8 +210,6 @@ function ViewAllButton({ onClick, count, className = "" }: { onClick: () => void
   );
 }
 
-/** Desktop strip: photos in view at once; the arrows slide it one photo at a time. */
-const STRIP_VISIBLE = 4;
 
 function StripArrow({ direction, disabled, onClick }: { direction: "left" | "right"; disabled: boolean; onClick: () => void }) {
   return (
@@ -246,6 +244,14 @@ const DURATIONS = [
   ["30d", "Last 30 days"],
   ["60d", "Last 60 days"],
   ["12m", "Last 12 months"],
+] as const;
+
+const RATING_BREAKDOWN = [
+  { stars: 5, percentage: 66 },
+  { stars: 4, percentage: 13 },
+  { stars: 3, percentage: 6 },
+  { stars: 2, percentage: 5 },
+  { stars: 1, percentage: 10 },
 ] as const;
 
 export function ProductTabs({
@@ -299,7 +305,7 @@ export function ProductTabs({
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
   const [stripStart, setStripStart] = useState(0);
   const [highlightedReview, setHighlightedReview] = useState<string | null>(null);
-  const stripMax = Math.max(0, customerPhotos.length - STRIP_VISIBLE);
+  const stripMax = Math.max(0, customerPhotos.length - 3);
   /* A photo opens just the viewer (as the product gallery does); "View All" opens the grid. */
   const openPhotos = (index: number | null) => {
     if (index === null) setPhotosOpen(true);
@@ -373,117 +379,170 @@ export function ProductTabs({
         "reviews",
         "Ratings & Reviews",
         <div className="w-full bg-white">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-start gap-0">
-            <div className="flex h-[35px] w-full shrink-0 select-none items-center gap-[2px] overflow-x-auto rounded-[10px] bg-muted-line p-[5px] no-scrollbar sm:w-fit">
+          {/* Top duration bar + Call-to-action */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 lg:gap-4">
+            <div className="flex h-[36px] w-full lg:w-fit shrink-0 select-none items-center gap-[3px] overflow-x-auto rounded-[10px] bg-muted-line p-[4px] no-scrollbar">
               {DURATIONS.map(([value, label]) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => setSelectedDuration(value)}
                   aria-pressed={selectedDuration === value}
-                  className={`h-[25px] flex-1 shrink-0 cursor-pointer whitespace-nowrap rounded-[7.5px] px-[6px] text-center text-[13px] font-medium leading-[25px] transition-colors min-[390px]:text-[14px] sm:flex-none sm:px-[10px] ${
-                    selectedDuration === value ? "bg-white text-brand-ink" : "text-brand-dark hover:text-black"
-                  }`}
+                  className={`h-[28px] flex-1 lg:flex-none shrink-0 cursor-pointer whitespace-nowrap rounded-[7.5px] px-[8px] sm:px-[12px] text-center text-[13px] sm:text-[14px] font-medium leading-[28px] transition-all ${selectedDuration === value
+                    ? "bg-white text-brand-ink shadow-xs font-semibold"
+                    : "text-brand-dark hover:text-black"
+                    }`}
                 >
                   {label}
                 </button>
               ))}
             </div>
 
-            <p className="ml-0 lg:ml-[22px] lg:w-[181px] whitespace-nowrap text-[16px] font-bold text-brand-ink shrink-0 mt-[10px] lg:mt-0">
-              Do you own this product?
-            </p>
+            <div className="hidden lg:flex items-center gap-3 shrink-0">
+              <p className="whitespace-nowrap text-[15px] font-bold text-brand-ink">
+                Do you own this product?
+              </p>
+              <button
+                type="button"
+                onClick={() => setWritingReview(true)}
+                aria-haspopup="dialog"
+                className="h-[36px] px-[14px] py-[6px] rounded-[10px] bg-star-filled flex items-center gap-[8px] cursor-pointer shrink-0 shadow-xs transition-all duration-200 hover:bg-star-filled-hover hover:shadow-sm active:scale-98"
+              >
+                <EditNoteIcon className="w-[20px] h-[20px] shrink-0 text-brand-black" />
+                <span className="text-[15px] font-bold text-brand-ink leading-none">
+                  Write a review
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div className="lg:hidden mt-3.5 bg-white py-1">
+            <div className="flex items-center justify-between sm:justify-start">
+              <div className="flex flex-col items-start shrink-0 min-w-[95px] sm:min-w-[110px]">
+                <div className="flex items-baseline">
+                  <span className="text-[34px] sm:text-[38px] font-extrabold text-brand-ink leading-none tracking-tight">
+                    4.2
+                  </span>
+                  <span className="text-[16px] sm:text-[18px] font-bold text-brand-dark/50 ml-0.5">
+                    /5
+                  </span>
+                </div>
+                <div className="mt-1.5">
+                  <RatingStars value={4.2} size={15} gap={3} />
+                </div>
+                <p className="text-[13px] font-bold text-brand-ink mt-2 leading-none">
+                  1,045 ratings
+                </p>
+                <p className="text-[11px] text-brand-dark/70 mt-1 leading-none">
+                  721 with reviews
+                </p>
+              </div>
+
+              <div className="w-px self-stretch bg-muted-line/50 mx-3 sm:mx-6 shrink-0" />
+
+              <div className="w-[220px] sm:w-[260px] md:w-[310px] shrink-0 space-y-1.5 sm:space-y-2">
+                {RATING_BREAKDOWN.map((item) => (
+                  <div key={item.stars} className="flex items-center gap-2 text-[12px] sm:text-[13px]">
+                    <span className="w-4 shrink-0 font-medium text-brand-ink flex items-center gap-0.5">
+                      {item.stars}
+                      <svg viewBox="2.3 2.2 19.4 18.3" className="w-3 h-3 fill-star-filled inline-block shrink-0">
+                        <path d={STAR_PATH} />
+                      </svg>
+                    </span>
+                    <div className="flex-1 h-[7px] sm:h-[8px] bg-muted-line/80 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-star-filled rounded-full transition-all duration-300"
+                        style={{ width: `${item.percentage}%` }}
+                      />
+                    </div>
+                    <span className="w-7 sm:w-8 shrink-0 text-right font-medium text-brand-dark text-[11px] sm:text-[12px]">
+                      {item.percentage}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hidden sm:flex ml-auto shrink-0 pl-4 sm:pl-6 items-center">
+                <button
+                  type="button"
+                  onClick={() => setWritingReview(true)}
+                  aria-haspopup="dialog"
+                  className="h-[42px] px-5 rounded-[10px] bg-star-filled hover:bg-star-filled-hover flex items-center gap-2 font-bold text-[14px] text-brand-ink shadow-xs transition-all duration-200 active:scale-98 cursor-pointer"
+                >
+                  <EditNoteIcon className="w-[19px] h-[19px] text-brand-black shrink-0" />
+                  <span>Write a review</span>
+                </button>
+              </div>
+            </div>
 
             <button
               type="button"
               onClick={() => setWritingReview(true)}
               aria-haspopup="dialog"
-              className="ml-0 lg:ml-[11px] w-[164px] h-[35px] px-[7px] py-[6px] rounded-[10px] bg-star-filled flex items-center cursor-pointer shrink-0 mt-[6px] lg:mt-0 shadow-sm transition-[background-color,box-shadow,transform] duration-200 hover:bg-star-filled-hover hover:shadow-md active:scale-98"
+              className="mt-3.5 w-full h-[40px] rounded-[10px] bg-star-filled hover:bg-star-filled-hover flex items-center justify-center gap-2 font-bold text-[14px] text-brand-ink shadow-xs transition-all duration-200 active:scale-98 cursor-pointer sm:hidden"
             >
-              <EditNoteIcon className="w-[23px] h-[22px] mr-[13px] shrink-0 self-start text-brand-black" />
-              <span className="text-[16px] font-bold text-brand-ink leading-none">
-                Write a review
-              </span>
+              <EditNoteIcon className="w-[18px] h-[18px] text-brand-black shrink-0" />
+              <span>Write a review</span>
             </button>
           </div>
 
-          <div className="flex flex-col xl:flex-row items-start justify-start gap-[7px] mt-[15px] mx-[3px]">
-            <div className="w-[286px] shrink-0">
-              <div className="flex items-start">
-                <div className="w-[148px] mr-[5px] flex items-center gap-[10px]">
-                  <RatingStars value={4} size={21} gap={10} />
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-start gap-[16px] lg:gap-[24px] mt-[16px]">
+            {/* Desktop Rating Breakdown Section (lg & xl only) */}
+            <div className="hidden lg:block w-[300px] xl:w-[320px] shrink-0 bg-white">
+              <div className="flex flex-col items-start gap-2">
+                {/* Score & Stars */}
+                <div className="flex flex-col items-start w-full">
+                  <div className="flex items-baseline">
+                    <span className="text-[40px] font-extrabold text-brand-ink leading-none tracking-tight">
+                      4.2
+                    </span>
+                    <span className="text-[18px] font-bold text-brand-dark/50 ml-0.5">
+                      /5
+                    </span>
+                  </div>
+                  <div className="mt-1">
+                    <RatingStars value={4.2} size={15} gap={3} />
+                  </div>
+                  <p className="text-[13px] font-bold text-brand-ink mt-1 leading-none">
+                    1,045 ratings
+                  </p>
+                  <p className="text-[11px] text-brand-dark/70 mt-1 leading-none">
+                    721 with reviews
+                  </p>
                 </div>
-                <p className="w-[133px] text-[16px] font-bold text-brand-ink text-center mt-[2px]">
-                  4.2 out of 5 stars
-                </p>
-              </div>
 
-              <p className="mt-[12px] text-[14px] font-medium text-brand-ink">
-                1,045 customer ratings, 721 with reviews
-              </p>
-
-              <div className="flex items-center gap-[7px] mt-[12px]">
-                <RatingStars value={5} size={15} gap={7} />
-                <div className="w-[137px] h-[15px] rounded-[7.5px] bg-muted-line overflow-hidden mt-[1px]">
-                  <div className="w-[83px] h-[15px] rounded-[7.5px] bg-star-filled" />
+                {/* 5 Star Progress Bars */}
+                <div className="w-full space-y-2 pt-2 border-t border-muted-line/60">
+                  {RATING_BREAKDOWN.map((item) => (
+                    <div key={item.stars} className="flex items-center gap-2 text-[13px]">
+                      <span className="w-5 shrink-0 font-medium text-brand-ink flex items-center gap-0.5">
+                        {item.stars}
+                        <svg viewBox="2.3 2.2 19.4 18.3" className="w-3 h-3 fill-star-filled inline-block shrink-0">
+                          <path d={STAR_PATH} />
+                        </svg>
+                      </span>
+                      <div className="flex-1 h-[8px] bg-muted-line/80 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-star-filled rounded-full transition-all duration-300"
+                          style={{ width: `${item.percentage}%` }}
+                        />
+                      </div>
+                      <span className="w-8 shrink-0 text-right font-medium text-brand-dark text-[12px]">
+                        {item.percentage}%
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-[14px] font-medium text-brand-ink mt-[2px]">
-                  66%
-                </p>
-              </div>
-
-              <div className="flex items-center gap-[7px] mt-[10px]">
-                <RatingStars value={4} size={15} gap={7} />
-                <div className="w-[137px] h-[15px] rounded-[7.5px] bg-muted-line overflow-hidden mt-[1px]">
-                  <div className="w-[22px] h-[15px] rounded-[7.5px] bg-star-filled" />
-                </div>
-                <p className="text-[14px] font-medium text-brand-ink mt-[2px]">
-                  13%
-                </p>
-              </div>
-
-              <div className="flex items-center mt-[9px] w-[286px]">
-                <div className="flex items-center gap-[6px]">
-                  <RatingStars value={3} size={15} gap={6} />
-                </div>
-                <div className="ml-[10px] w-[137px] h-[15px] rounded-[7.5px] bg-muted-line overflow-hidden mt-[1px]">
-                  <div className="w-[11px] h-[15px] rounded-[5px] bg-star-filled" />
-                </div>
-                <p className="ml-auto text-[14px] font-medium text-brand-ink mt-[2px]">
-                  6%
-                </p>
-              </div>
-
-              <div className="flex items-center mt-[10px] w-[286px]">
-                <div className="flex items-center gap-[6px]">
-                  <RatingStars value={2} size={15} gap={6} />
-                </div>
-                <div className="ml-[10px] w-[137px] h-[15px] rounded-[7.5px] bg-muted-line overflow-hidden mt-[1px]">
-                  <div className="w-[9px] h-[15px] rounded-[4px] bg-star-filled" />
-                </div>
-                <p className="ml-auto text-[14px] font-medium text-brand-ink mt-[2px]">
-                  5%
-                </p>
-              </div>
-
-              <div className="flex items-center gap-[7px] mt-[9px]">
-                <RatingStars value={1} size={15} gap={7} />
-                <div className="w-[137px] h-[15px] rounded-[7.5px] bg-muted-line overflow-hidden mt-[1px]">
-                  <div className="w-[17px] h-[15px] rounded-[7.5px] bg-star-filled" />
-                </div>
-                <p className="text-[14px] font-medium text-brand-ink mt-[2px]">
-                  10%
-                </p>
               </div>
             </div>
 
             <div
               aria-hidden="true"
-              className="hidden xl:block w-[3px] h-[197px] shrink-0 bg-surface-soft"
+              className="hidden lg:block w-px self-stretch bg-muted-line/70 shrink-0"
             />
 
             {customerPhotos.length > 0 && (
-              <div className="w-full xl:hidden mt-[15px]">
+              <div className="w-full lg:hidden mt-[8px]">
                 <div className="flex items-center justify-between mb-[13px] w-full">
                   <p className="text-[16px] font-bold text-brand-ink leading-none">
                     Customer Images / Videos
@@ -501,7 +560,7 @@ export function ProductTabs({
             )}
 
             {customerPhotos.length > 0 && (
-              <div className="hidden xl:block flex-1 min-w-0 max-w-[986px] mt-[2px]">
+              <div className="hidden lg:block flex-1 min-w-0 max-w-[986px] mt-[2px] [--strip-vis:3] xl:[--strip-vis:4]">
                 <div className="flex items-center justify-between mb-[13px]">
                   <p className="text-[16px] font-bold text-brand-ink leading-none">Customer Images / Videos</p>
                   <ViewAllButton onClick={() => openPhotos(null)} count={customerPhotos.length} />
@@ -511,15 +570,15 @@ export function ProductTabs({
                   <div className="min-w-0 flex-1 overflow-hidden">
                     <ul
                       className="flex gap-[16px] transition-transform duration-500 ease-(--ease-panel) motion-reduce:transition-none"
-                      style={{ transform: `translateX(calc(${-stripStart} * (100% + 16px) / ${STRIP_VISIBLE}))` }}
+                      style={{ transform: `translateX(calc(${-stripStart} * (100% + 16px) / var(--strip-vis, 3)))` }}
                     >
                       {customerPhotos.map((photo, i) => (
                         <li
                           key={`${photo.review.id}-${photo.src}`}
-                          aria-hidden={i < stripStart || i >= stripStart + STRIP_VISIBLE}
-                          className="shrink-0 basis-[calc((100%-48px)/4)]"
+                          aria-hidden={i < stripStart || i >= stripStart + 4}
+                          className="shrink-0 basis-[calc((100%-32px)/3)] xl:basis-[calc((100%-48px)/4)]"
                         >
-                          <StripPhoto photo={photo} onOpen={() => openPhotos(i)} tabIndex={i < stripStart || i >= stripStart + STRIP_VISIBLE ? -1 : 0} />
+                          <StripPhoto photo={photo} onOpen={() => openPhotos(i)} tabIndex={i < stripStart || i >= stripStart + 4 ? -1 : 0} />
                         </li>
                       ))}
                     </ul>
@@ -530,7 +589,7 @@ export function ProductTabs({
             )}
           </div>
 
-          <div className="mt-[8px] grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-3 md:flex md:flex-wrap md:gap-[20px]">
+          <div className="mt-[16px] lg:mt-[28px] grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-3 md:flex md:flex-wrap md:gap-[20px]">
             <label className="flex items-center cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -659,9 +718,8 @@ export function ProductTabs({
                   <div className="divider-strong mb-[15px] mt-[20px] w-full" />
                 )}
                 <div
-                  className={`-mx-2 rounded-[8px] px-2 py-1 transition-colors duration-700 ${
-                    highlightedReview === review.id ? "bg-brand-coral/6 ring-1 ring-brand-coral/30" : "ring-0"
-                  }`}
+                  className={`-mx-2 rounded-[8px] px-2 py-1 transition-colors duration-700 ${highlightedReview === review.id ? "bg-brand-coral/6 ring-1 ring-brand-coral/30" : "ring-0"
+                    }`}
                 >
                   <ReviewItem review={review} onOpenPhoto={(src) => openPhotos(customerPhotos.findIndex((p) => p.review.id === review.id && p.src === src))} />
                 </div>

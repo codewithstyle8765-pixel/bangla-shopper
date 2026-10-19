@@ -15,7 +15,9 @@ interface ModalProps {
   dismissible?: boolean;
   /** Snappier 200ms open/close for light informational dialogs. */
   quick?: boolean;
-  /** Extra styling on the scrollable content wrapper. */
+  /** Vertically center on mobile instead of sticking to bottom as a bottom-sheet. */
+  center?: boolean;
+  /** Extra styling on the scrollable content wrapper (e.g. overflow-visible for selects). */
   contentClassName?: string;
 }
 
@@ -33,6 +35,7 @@ export function Modal({
   size = "sm",
   dismissible = true,
   quick = false,
+  center = false,
   contentClassName = "",
 }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -64,33 +67,52 @@ export function Modal({
       ref={ref}
       aria-labelledby={titleId}
       onCancel={(e) => {
-        if (e.target !== ref.current) {
-          e.stopPropagation();
-          return;
-        }
         e.preventDefault();
         if (dismissible) onClose();
       }}
-      className="m-0 h-dvh max-h-none w-full max-w-none overflow-hidden bg-transparent p-0 font-sans backdrop:bg-transparent open:flex open:items-end open:justify-center sm:open:items-center sm:open:p-8"
+      className={clsx(
+        "fixed inset-0 z-50 !m-0 !h-dvh !max-h-dvh !w-full !max-w-none overflow-hidden border-0 bg-transparent font-sans backdrop:bg-transparent open:flex open:flex-col",
+        center
+          ? "open:items-center open:justify-center p-3 sm:p-6"
+          : "open:items-center p-0 sm:open:justify-center sm:p-6",
+      )}
     >
       <div
         aria-hidden="true"
         onClick={() => dismissible && onClose()}
         className={clsx(
-          "absolute inset-0 bg-brand-black/50 transition-opacity ease-(--ease-panel) motion-reduce:transition-none",
+          "fixed inset-0 bg-brand-black/50 transition-opacity ease-(--ease-panel) motion-reduce:transition-none",
           quick ? "duration-200" : "duration-(--duration-panel)",
           visible ? "opacity-100" : "opacity-0",
         )}
       />
       <div
         className={clsx(
-          "relative flex max-h-[calc(100dvh-1rem)] w-full flex-col rounded-t-[12px] bg-white shadow-2xl transition-[opacity,transform] ease-(--ease-panel) motion-reduce:transition-none sm:max-h-full sm:rounded-[8px]",
+          "relative flex w-full min-h-0 flex-col bg-white shadow-2xl transition-[opacity,transform] ease-(--ease-panel) motion-reduce:transition-none overflow-hidden",
+          // On mobile: mt-auto anchors to bottom. On sm+: my-auto centers vertically.
+          !center && "mt-auto sm:my-auto",
+          center && "my-auto",
+          // Mobile: true bottom sheet (flush left, right, bottom; rounded top). sm+: centered floating modal.
+          center
+            ? "max-h-[min(85dvh,calc(100dvh-2.5rem))] rounded-[12px]"
+            : "max-h-[min(85dvh,calc(100dvh-2.5rem))] rounded-t-[16px] rounded-b-none sm:rounded-[12px]",
+          "sm:max-h-[min(85dvh,calc(100dvh-3.5rem))]",
           quick ? "duration-200" : "duration-(--duration-panel)",
           SIZES[size],
-          visible ? "translate-y-0 opacity-100 sm:scale-100" : "translate-y-full opacity-0 sm:translate-y-2 sm:scale-[0.98]",
+          visible
+            ? "translate-y-0 opacity-100 sm:scale-100"
+            : center
+              ? "scale-95 opacity-0"
+              : "translate-y-full opacity-0 sm:translate-y-2 sm:scale-[0.98] sm:opacity-0",
         )}
       >
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-card-border px-5 py-3.5">
+        {/* Mobile drag indicator */}
+        {!center && (
+          <div className="flex shrink-0 justify-center pt-2 pb-1 sm:hidden">
+            <div className="h-1 w-10 rounded-full bg-brand-muted/40" />
+          </div>
+        )}
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-card-border px-5 py-3 sm:py-3.5">
           <h2 id={titleId} className="text-[16px] font-black uppercase leading-[1.25] tracking-[0.1em] text-brand-dark">
             {title}
           </h2>
@@ -99,7 +121,7 @@ export function Modal({
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="-my-2 -mr-2 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-brand-dark hover:bg-brand-surface"
+              className="-my-2 -mr-2 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-brand-dark hover:bg-brand-surface transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />
@@ -108,12 +130,18 @@ export function Modal({
           )}
         </div>
         {children && (
-          <div className={clsx("min-h-0 text-[14px] leading-[1.5] text-footer-text px-5 py-4 overflow-y-auto overscroll-contain", contentClassName)}>
+          <div
+            className={clsx(
+              "min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 text-[14px] leading-[1.5] text-footer-text",
+              !footer && "pb-[max(1.25rem,env(safe-area-inset-bottom))]",
+              contentClassName,
+            )}
+          >
             {children}
           </div>
         )}
         {footer && (
-          <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-card-border px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end">
+          <div className="flex shrink-0 flex-col-reverse gap-2 border-t border-card-border px-5 py-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end">
             {footer}
           </div>
         )}

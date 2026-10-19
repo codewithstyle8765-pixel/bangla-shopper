@@ -1,5 +1,5 @@
 
-const STAR_PATH =
+export const STAR_PATH =
   "M12 2.25l2.955 6.088 6.67.86-4.885 4.63 1.235 6.61L12 17.21l-5.975 3.228 1.235-6.61L2.375 9.198l6.67-.86L12 2.25z";
 
 export interface RatingStarsProps {

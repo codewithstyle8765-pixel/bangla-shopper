@@ -17,7 +17,7 @@ async function Register() {
 
 export default function RegisterPage() {
   return (
-    <Container className="pb-3.5 font-sans">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Create Account" }]} structuredData={false} />
       <AuthShell
         tab="register"

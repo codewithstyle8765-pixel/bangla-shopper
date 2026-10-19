@@ -118,24 +118,41 @@ export async function Footer() {
         </Container>
       </div>
 
-      <Container className="border-t border-card-border py-4">
-        <ul className="grid grid-cols-3 divide-x divide-card-border">
-          {data.highlights.map(({ icon, title, text }) => (
-            <li key={title} className="flex flex-col items-center gap-2 px-2 text-center sm:flex-row sm:justify-center sm:gap-3 sm:px-4 sm:text-left xl:px-8">
-              <HighlightIcon icon={icon} className="h-8 w-8 shrink-0 text-brand-coral sm:h-9 sm:w-9" />
-              <span className="text-[12px] leading-[1.4]">
-                <span className="block text-balance text-[13px] font-semibold leading-[1.3] text-brand-dark sm:text-[14px] sm:leading-[1.4]">
-                  <span className="max-sm:hidden">{title.match(/^\d+%\s/)?.[0]}</span>
-                  {title.replace(/^\d+%\s/, "")}
-                </span>
-                <span className="max-sm:hidden">{text}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </Container>
+      {(() => {
+        const highlightsList = [
+          {
+            icon: "authentic" as const,
+            title: "100% Authentic Products",
+            text: "Authenticity Guaranteed",
+          },
+          ...data.highlights.filter(
+            (h) => h.icon !== "support" && h.icon !== "authentic" && !h.title.toLowerCase().includes("support"),
+          ),
+        ];
 
-      <Container className="flex flex-col items-center gap-5 border-t border-card-border py-4 lg:flex-row lg:justify-between">
+        return (
+          <div className="border-t border-b border-card-border py-4">
+            <Container>
+              <ul className="grid grid-cols-3 divide-x divide-card-border">
+                {highlightsList.map(({ icon, title, text }) => (
+                  <li key={title} className="flex flex-col items-center gap-2 px-2 text-center sm:flex-row sm:justify-center sm:gap-3 sm:px-4 sm:text-left xl:px-8">
+                    <HighlightIcon icon={icon} className="h-8 w-8 shrink-0 text-brand-coral sm:h-9 sm:w-9" />
+                    <span className="text-[12px] leading-[1.4]">
+                      <span className="block text-balance text-[13px] font-semibold leading-[1.3] text-brand-dark sm:text-[14px] sm:leading-[1.4]">
+                        <span className="max-sm:hidden">{title.match(/^\d+%\s/)?.[0]}</span>
+                        {title.replace(/^\d+%\s/, "")}
+                      </span>
+                      <span className="max-sm:hidden">{text}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Container>
+          </div>
+        );
+      })()}
+
+      <Container className="flex flex-col items-center gap-5 py-4 lg:flex-row lg:justify-between">
         <div className="flex flex-col items-center gap-3 lg:items-start">
           <h2 className="text-[16px] font-bold text-brand-dark">Check out our app!</h2>
           <div className="flex items-center gap-2">

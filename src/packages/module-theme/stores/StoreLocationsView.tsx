@@ -172,7 +172,7 @@ export function StoreLocationsView({ stores }: { stores: StoreLocation[] }) {
   ];
 
   return (
-    <Container className="pb-4 font-sans lg:pb-12">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Store Locations" }]} />
       <PageTitle className="mb-3" description="Visit a BanglaShoppers showroom to see, try and buy 100% authentic beauty products, with friendly advice from our team.">
         Our Showrooms

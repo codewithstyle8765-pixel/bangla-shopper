@@ -78,6 +78,13 @@ export function ArrowUpIcon({ className }: IconProps) {
 }
 
 const HIGHLIGHT_PATHS: Record<FooterData["highlights"][number]["icon"], React.ReactNode> = {
+  authentic: (
+    <>
+      <circle cx="12" cy="8" r="6" />
+      <path d="m9 8 2 2 4-4" />
+      <path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1" />
+    </>
+  ),
   secure: (
     <g transform="translate(-1.5 0)">
       <path d="M12 22.5s9.5-4 9.5-10.5V5L12 1.5 2.5 5v7c0 6.5 9.5 10.5 9.5 10.5z" />

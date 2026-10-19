@@ -18,7 +18,7 @@ export function ProductGridPlaceholder({ count = 10 }: { count?: number }) {
 /** `titleAtEnd`: category pages, whose title sits below the products. */
 export function ProductListingSkeleton({ titleAtEnd = false }: { titleAtEnd?: boolean }) {
   return (
-    <Container className="pb-12" aria-busy="true" aria-label="Loading products">
+    <Container className="font-sans" aria-busy="true" aria-label="Loading products">
       <Shimmer width={240} height={18} rounded="rounded" className="mb-[11px] mt-[11px] max-w-full" />
       {!titleAtEnd && (
         <div className="mb-5 space-y-2">

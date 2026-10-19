@@ -33,7 +33,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
-      <body className="antialiased font-sans min-h-screen bg-background text-foreground flex flex-col overflow-x-clip pb-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:pb-0 has-[[data-sticky-cta]]:pb-[calc(4rem+1px+var(--sticky-cta-h)+env(safe-area-inset-bottom))] lg:has-[[data-sticky-cta=checkout]]:pb-0 lg:has-[[data-sticky-cta=pdp]]:pb-0 lg:has-[[data-sticky-cta=cart]]:pb-(--sticky-cta-h) xl:has-[[data-sticky-cta=cart]]:pb-0">
+      <body className="antialiased font-sans min-h-screen bg-background text-foreground flex flex-col overflow-x-clip pb-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:pb-0 has-[[data-sticky-cta]]:pb-[calc(4rem+1px+var(--sticky-cta-h)+env(safe-area-inset-bottom))] lg:has-[[data-sticky-cta=checkout]]:pb-0 lg:has-[[data-sticky-cta=pdp]]:pb-0 lg:has-[[data-sticky-cta=cart]]:pb-0">
         <ErrorBoundary>
           <GlobalProviders>
             <Header categories={categories} hotline={footer?.contact.hotline}>

@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Forgot Your Password? | BanglaShoppe
 
 export default function ForgotPasswordPage() {
   return (
-    <Container className="pb-3.5 font-sans">
+    <Container className="font-sans">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Forgot Password" }]} structuredData={false} />
       <AuthShell
         title="Forgot Password"
