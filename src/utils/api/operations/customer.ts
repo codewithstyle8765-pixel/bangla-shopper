@@ -33,6 +33,8 @@ export const customerOperations = {
         lastName: field(data, "lastName"),
         email: field(data, "email"),
         password: String(data.get("password") ?? ""),
+        gender: field(data, "gender") || undefined,
+        dateOfBirth: field(data, "dateOfBirth") || undefined,
         isSubscribed: data.get("newsletter") === "on",
       };
       const fieldErrors: Record<string, string> = {};

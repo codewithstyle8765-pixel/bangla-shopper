@@ -137,12 +137,7 @@ export function CartPageView() {
         >
           Proceed to Checkout
         </Link>
-        <div className="hidden lg:block">
-          <TrustBadges />
-        </div>
-        <div className="lg:hidden">
-          <TrustBadges centered />
-        </div>
+        <TrustBadges />
       </aside>
 
       <div data-sticky-cta="cart" className="fixed inset-x-0 bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-30 flex items-center gap-3 border-t border-card-border bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">

@@ -78,23 +78,35 @@ export function ProductSummary({
   variants = [],
   className = "",
 }: ProductSummaryProps) {
-  /* Starts on the child that matches the product's own price (the size in its name), else the first in stock. */
-  const [selected, setSelected] = useState<Record<string, string>>(() => {
-    const start = variants.find((v) => v.inStock && v.price === basePrice) ?? variants.find((v) => v.inStock) ?? variants[0];
-    return start?.attributes ?? {};
-  });
-  const variant = options.length ? variants.find((v) => options.every((o) => v.attributes[o.code] === selected[o.code])) : undefined;
+  /* Initially unselected so customer chooses an option explicitly. */
+  const [selected, setSelected] = useState<Record<string, string>>({});
+  const [showValidation, setShowValidation] = useState(false);
+
+  const hasOptions = options.length > 0;
+  const allOptionsSelected = hasOptions && options.every((o) => Boolean(selected[o.code]));
+  const firstUnselectedOption = hasOptions ? options.find((o) => !selected[o.code]) : undefined;
+
+  const variant = allOptionsSelected
+    ? variants.find((v) => options.every((o) => v.attributes[o.code] === selected[o.code]))
+    : undefined;
   const price = variant?.price ?? basePrice;
   const originalPrice = variant ? variant.originalPrice : baseOriginalPrice;
-  const inStock = variant ? variant.inStock : options.length ? false : baseInStock;
+  const inStock = variant ? variant.inStock : hasOptions ? variants.some((v) => v.inStock) : baseInStock;
   const stockLeft = variant ? undefined : baseStockLeft;
   const selectedOptions = options.map((o) => selected[o.code]).filter(Boolean);
   const selectedLabels = options.map((o) => o.values.find((v) => v.uid === selected[o.code])?.label ?? "");
 
   useEffect(() => {
     if (!options.length) return;
-    setPdpSelection(sku, { selectedOptions, labels: selectedLabels, complete: Boolean(variant), price, originalPrice, inStock });
-  }, [sku, variant, price, originalPrice, inStock, selectedOptions.join(), options.length]);
+    setPdpSelection(sku, {
+      selectedOptions,
+      labels: selectedLabels,
+      complete: Boolean(allOptionsSelected && variant),
+      price,
+      originalPrice,
+      inStock: Boolean(variant ? variant.inStock : variants.some((v) => v.inStock)),
+    });
+  }, [sku, variant, allOptionsSelected, price, originalPrice, inStock, selectedOptions.join(), options.length]);
 
   const [skuCopied, setSkuCopied] = useState(false);
   const copySku = async () => {
@@ -265,10 +277,28 @@ export function ProductSummary({
 
         {options.map((option) => {
           const chosen = option.values.find((v) => v.uid === selected[option.code]);
+          const isMissing = showValidation && !selected[option.code];
           return (
-            <fieldset key={option.code} className="mt-[12px]">
+            <fieldset
+              key={option.code}
+              id={`pdp-option-${option.code}`}
+              data-option-code={option.code}
+              data-option-missing={isMissing ? "true" : undefined}
+              className="mt-[12px]"
+            >
               <legend className="text-[14px] text-brand-dark">
-                <strong className="font-semibold">{option.label}:</strong> <span className="text-brand-coral">{chosen?.label ?? "Please select"}</span>
+                <strong className="font-semibold">{option.label}:</strong>{" "}
+                <span
+                  className={
+                    chosen
+                      ? "text-brand-coral"
+                      : isMissing
+                      ? "text-brand-alert font-semibold"
+                      : "text-brand-coral"
+                  }
+                >
+                  {chosen?.label ?? (isMissing ? `Please select ${option.label.toLowerCase()}` : "Please select")}
+                </span>
               </legend>
               <div className="mt-2 flex flex-wrap gap-2">
                 {option.values.map((value) => {
@@ -279,6 +309,9 @@ export function ProductSummary({
                       options.every((o) => o.code === option.code || !selected[o.code] || v.attributes[o.code] === selected[o.code]),
                   );
                   const active = value.uid === selected[option.code];
+                  const handleOptionClick = () => {
+                    setSelected((cur) => ({ ...cur, [option.code]: value.uid }));
+                  };
                   if (value.swatch) {
                     return (
                       <button
@@ -287,7 +320,7 @@ export function ProductSummary({
                         aria-pressed={active}
                         aria-label={soldOut ? `${value.label} (sold out)` : value.label}
                         title={soldOut ? `${value.label} - sold out` : value.label}
-                        onClick={() => setSelected((cur) => ({ ...cur, [option.code]: value.uid }))}
+                        onClick={handleOptionClick}
                         className={`relative h-9 w-9 cursor-pointer rounded-full border-2 p-[3px] transition-colors ${active ? "border-brand-coral" : "border-transparent hover:border-card-border"}`}
                       >
                         <span className="block h-full w-full rounded-full border border-black/10" style={{ background: value.swatch.kind === "color" ? value.swatch.value : `center / cover url("${value.swatch.value}")` }} />
@@ -305,7 +338,7 @@ export function ProductSummary({
                       type="button"
                       aria-pressed={active}
                       title={soldOut ? "Sold out" : undefined}
-                      onClick={() => setSelected((cur) => ({ ...cur, [option.code]: value.uid }))}
+                      onClick={handleOptionClick}
                       className={`h-9 min-w-[68px] cursor-pointer rounded-[4px] border px-3 text-[14px] font-medium transition-colors ${
                         active ? "border-brand-coral bg-brand-coral/5 text-brand-coral ring-1 ring-brand-coral" : "border-card-border text-brand-dark hover:border-brand-dark"
                       } ${soldOut ? "border-dashed line-through decoration-text-subtle" : ""}`}
@@ -322,7 +355,9 @@ export function ProductSummary({
         <div className="mt-[10px] flex w-full items-center justify-between gap-3 border-y border-divider py-[7px] desk:mx-auto desk:w-[600px] desk:py-[5px]">
           <p className="min-w-0 text-[14px] leading-[1.3] text-stock-link">
             <strong className="text-text-subtle font-semibold">Stock: </strong>
-            {!inStock ? (
+            {hasOptions && !allOptionsSelected ? (
+              <span className="text-brand-alert font-semibold">Please select option</span>
+            ) : !inStock ? (
               <>
                 <span className="text-brand-alert">Sold Out</span>{" "}
                 <strong className="whitespace-nowrap font-semibold underline">
@@ -361,15 +396,32 @@ export function ProductSummary({
             />
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isAdding || !inStock}
-            title={inStock ? undefined : "This product is currently sold out"}
-            className="min-w-[146px] flex-1 sm:flex-none sm:w-[146px] h-[40px] leading-[40px] rounded-[4px] bg-brand-coral text-white text-[18px] font-semibold text-center cursor-pointer enabled:hover:bg-brand-coral-hover enabled:active:scale-98 transition-all disabled:cursor-not-allowed disabled:opacity-50 select-none mt-[3px]"
-          >
-            {isAdding ? "Adding..." : "Add to Cart"}
-          </button>
+          {hasOptions && !allOptionsSelected ? (
+            <button
+              type="button"
+              data-choose-option-btn
+              onClick={() => {
+                setShowValidation(true);
+                const target = firstUnselectedOption
+                  ? document.getElementById(`pdp-option-${firstUnselectedOption.code}`)
+                  : document.querySelector("[data-option-code]");
+                target?.scrollIntoView({ block: "center", behavior: "smooth" });
+              }}
+              className="min-w-[146px] flex-1 sm:flex-none sm:w-[150px] h-[40px] leading-[40px] rounded-[4px] bg-brand-coral text-white text-[17px] font-semibold text-center cursor-pointer hover:bg-brand-coral-hover active:scale-98 transition-all select-none mt-[3px]"
+            >
+              Choose Option
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={isAdding || !inStock}
+              title={inStock ? undefined : "This product is currently sold out"}
+              className="min-w-[146px] flex-1 sm:flex-none sm:w-[146px] h-[40px] leading-[40px] rounded-[4px] bg-brand-coral text-white text-[18px] font-semibold text-center cursor-pointer enabled:hover:bg-brand-coral-hover enabled:active:scale-98 transition-all disabled:cursor-not-allowed disabled:opacity-50 select-none mt-[3px]"
+            >
+              {isAdding ? "Adding..." : !inStock ? "Sold Out" : "Add to Cart"}
+            </button>
+          )}
 
           {/* Wishlist and share wrap together; Add to Cart then fills the first row on phones. */}
           <div className="flex shrink-0 items-center gap-[13px]">

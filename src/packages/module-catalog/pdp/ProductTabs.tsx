@@ -418,8 +418,8 @@ export function ProductTabs({
 
           <div className="lg:hidden mt-3.5 bg-white py-1">
             <div className="flex items-center justify-between sm:justify-start">
-              <div className="flex flex-col items-start shrink-0 min-w-[95px] sm:min-w-[110px]">
-                <div className="flex items-baseline">
+              <div className="flex flex-col items-center text-center md:items-start md:text-left shrink-0 min-w-[95px] sm:min-w-[110px]">
+                <div className="w-full flex items-baseline justify-center md:justify-start">
                   <span className="text-[34px] sm:text-[38px] font-extrabold text-brand-ink leading-none tracking-tight">
                     4.2
                   </span>
@@ -427,20 +427,20 @@ export function ProductTabs({
                     /5
                   </span>
                 </div>
-                <div className="mt-1.5">
+                <div className="w-full mt-1.5 flex justify-center md:justify-start">
                   <RatingStars value={4.2} size={15} gap={3} />
                 </div>
-                <p className="text-[13px] font-bold text-brand-ink mt-2 leading-none">
+                <p className="w-full text-[13px] font-bold text-brand-ink mt-2 leading-none text-center md:text-left">
                   1,045 ratings
                 </p>
-                <p className="text-[11px] text-brand-dark/70 mt-1 leading-none">
+                <p className="w-full text-[11px] text-brand-dark/70 mt-1 leading-none text-center md:text-left">
                   721 with reviews
                 </p>
               </div>
 
               <div className="w-px self-stretch bg-muted-line/50 mx-3 sm:mx-6 shrink-0" />
 
-              <div className="w-[220px] sm:w-[260px] md:w-[310px] shrink-0 space-y-1.5 sm:space-y-2">
+              <div className="flex-1 min-w-0 md:flex-none md:w-[280px] min-[850px]:w-[310px] space-y-1.5 sm:space-y-2">
                 {RATING_BREAKDOWN.map((item) => (
                   <div key={item.stars} className="flex items-center gap-2 text-[12px] sm:text-[13px]">
                     <span className="w-4 shrink-0 font-medium text-brand-ink flex items-center gap-0.5">
@@ -462,12 +462,15 @@ export function ProductTabs({
                 ))}
               </div>
 
-              <div className="hidden sm:flex ml-auto shrink-0 pl-4 sm:pl-6 items-center">
+              <div className="hidden sm:flex ml-auto shrink-0 pl-3 sm:pl-4 flex-col items-end justify-center min-[800px]:flex-row min-[800px]:items-center min-[800px]:justify-end gap-x-3 gap-y-1.5">
+                <p className="whitespace-nowrap text-[14px] font-bold text-brand-ink text-right">
+                  Do you own this product?
+                </p>
                 <button
                   type="button"
                   onClick={() => setWritingReview(true)}
                   aria-haspopup="dialog"
-                  className="h-[42px] px-5 rounded-[10px] bg-star-filled hover:bg-star-filled-hover flex items-center gap-2 font-bold text-[14px] text-brand-ink shadow-xs transition-all duration-200 active:scale-98 cursor-pointer"
+                  className="h-[40px] md:h-[42px] px-4 md:px-5 rounded-[10px] bg-star-filled hover:bg-star-filled-hover flex items-center gap-2 font-bold text-[14px] text-brand-ink shadow-xs transition-all duration-200 active:scale-98 cursor-pointer shrink-0"
                 >
                   <EditNoteIcon className="w-[19px] h-[19px] text-brand-black shrink-0" />
                   <span>Write a review</span>

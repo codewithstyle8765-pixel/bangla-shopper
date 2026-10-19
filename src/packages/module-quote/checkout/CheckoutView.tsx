@@ -165,16 +165,16 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
         shipping: usingSavedShipping
           ? { customerAddressId: shippingAddressId }
           : {
-              address: {
-                firstName: customer?.firstName || "Guest",
-                lastName: customer?.lastName || "Customer",
-                phone: "8801700000000",
-                street: ["-"],
-                city: destination.city,
-                countryCode: destination.countryCode,
-                thana: "-",
-              },
+            address: {
+              firstName: customer?.firstName || "Guest",
+              lastName: customer?.lastName || "Customer",
+              phone: "8801700000000",
+              street: ["-"],
+              city: destination.city,
+              countryCode: destination.countryCode,
+              thana: "-",
             },
+          },
       });
       if (!result.ok) {
         setEstimateError(result.message);
@@ -447,12 +447,11 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
             </h2>
             <span className="text-[15px] font-bold text-brand-alert">{formatTk(total)}</span>
           </div>
-          <div className="space-y-4 border-t border-card-border p-4">{summary}</div>
+          <div className="space-y-4 border-t border-card-border p-4">
+            {summary}
+            <TrustBadges />
+          </div>
         </section>
-
-        <div className="lg:hidden">
-          <TrustBadges centered />
-        </div>
       </div>
 
       <aside aria-label="Order summary" className="hidden space-y-5 rounded-[6px] border border-card-border bg-white p-5 lg:sticky lg:top-4 lg:block">

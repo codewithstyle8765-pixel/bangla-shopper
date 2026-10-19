@@ -165,7 +165,29 @@ export async function login(email: string, password: string) {
   return { token, email: profile.customer.email, firstName: profile.customer.firstname };
 }
 
-export async function register(input: { firstName: string; lastName: string; email: string; password: string; isSubscribed: boolean }) {
+/**
+ * Exchange a social OAuth token for a Magento customer token.
+ *
+ * TODO: Implement when Magento social login extension is installed.
+ * Expected GraphQL mutation:
+ *   generateCustomerTokenWithSocial(provider: $provider, token: $token) { token }
+ */
+export async function socialLogin(
+  provider: string,
+  socialAccessToken?: string,
+): Promise<{ token: string; email?: string; firstName?: string }> {
+  throw new Error(`Social login not implemented yet. Provider: ${provider}, token: ${socialAccessToken ? "present" : "missing"}`);
+}
+
+export async function register(input: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  isSubscribed: boolean;
+  gender?: string;
+  dateOfBirth?: string;
+}) {
   await graphqlMutate(CREATE_CUSTOMER, {
     input: {
       firstname: input.firstName,
@@ -173,6 +195,8 @@ export async function register(input: { firstName: string; lastName: string; ema
       email: input.email,
       password: input.password,
       is_subscribed: input.isSubscribed,
+      ...(input.gender && GENDER_IDS[input.gender] ? { gender: GENDER_IDS[input.gender] } : {}),
+      ...(input.dateOfBirth ? { date_of_birth: input.dateOfBirth, dob: input.dateOfBirth } : {}),
     },
   });
 }

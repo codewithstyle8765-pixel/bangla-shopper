@@ -175,8 +175,14 @@ export function PdpSectionNav({ sections, product }: { sections: PdpSection[]; p
     if (!lockRef.current) revealLink(active);
   }, [active]);
 
-  const chooseAgain = () =>
+  const chooseAgain = () => {
+    const chooseBtn = document.querySelector<HTMLButtonElement>("[data-choose-option-btn]");
+    if (chooseBtn) {
+      chooseBtn.click();
+      return;
+    }
     document.getElementById(BUY_BOX_ID)?.closest("[data-pdp-summary]")?.querySelector("fieldset")?.scrollIntoView({ block: "center", behavior: smooth() });
+  };
 
   const add = async () => {
     setAdding(true);
@@ -263,7 +269,7 @@ export function PdpSectionNav({ sections, product }: { sections: PdpSection[]; p
               disabled={adding}
               className="h-12 w-[150px] shrink-0 cursor-pointer rounded-[4px] bg-brand-coral text-[16px] font-semibold text-white transition-colors hover:bg-brand-coral-hover disabled:cursor-wait disabled:opacity-60 min-[400px]:w-[170px]"
             >
-              {mustChoose ? `Choose ${product.chooseOption}` : adding ? "Adding..." : "Add to Cart"}
+              {mustChoose ? "Choose Option" : adding ? "Adding..." : "Add to Cart"}
             </button>
           </>
         )}

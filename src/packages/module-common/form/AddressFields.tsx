@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { addressToFields, normalizePhone, validateAddress, type AddressField } from "@/utils/address";
 import { loadPostcodes, postcodesForArea, defaultPostcodeForCity, findPostcodeForArea, type PostcodeTable } from "@/utils/bd-postcode";
 import type { AddressInput, BdDivision } from "@/types/storefront";
-import { SelectField, TextField, type SelectOption } from "./Field";
+import { SelectField, TextareaField, TextField, type SelectOption } from "./Field";
 
 interface AddressFieldsProps {
   idPrefix: string;
@@ -174,6 +174,11 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => update(field, e.target.value),
   });
 
+  const textareaProps = (field: AddressField) => ({
+    ...base(field),
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => update(field, e.target.value),
+  });
+
   const selectProps = (field: AddressField) => ({ ...base(field), onChange: (value: string) => update(field, value) });
 
   return (
@@ -183,7 +188,7 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
       <input type="hidden" name={`${namePrefix}lastName`} value={values.lastName} />
 
       <div className="grid gap-x-4 gap-y-1 sm:grid-cols-2">
-        {/* 2nd line - Your Full Name and Phone Number */}
+        {/* Full Name and Phone Number */}
         <TextField
           {...props("fullName")}
           label="Your Full Name"
@@ -201,86 +206,88 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
           placeholder="8801XXXXXXXXX"
         />
 
-        {/* 3rd Line - Country and Division */}
+        {/* Street Address textarea right after Full Name and Phone Number */}
+        <div className="sm:col-span-2">
+          <TextareaField
+            {...textareaProps("street0")}
+            label="Street Address"
+            required
+            autoComplete="address-line1"
+            placeholder="House / flat, road"
+            rows={2}
+            className="resize-none"
+          />
+        </div>
+
+        {/* Country and Division */}
         <SelectField {...selectProps("countryCode")} label="Country" required options={countries} />
-      {picker ? (
-        <SelectField {...selectProps("region")} label="Division" required options={divisionOptions} placeholder="Select division" />
-      ) : (
-        <TextField {...props("region")} label="State / Province / Division" autoComplete="address-level1" />
-      )}
+        {picker ? (
+          <SelectField {...selectProps("region")} label="Division" required options={divisionOptions} placeholder="Select division" />
+        ) : (
+          <TextField {...props("region")} label="State / Province / Division" autoComplete="address-level1" />
+        )}
 
-      {/* 4th Line - City / District and Thana / Upazila */}
-      {picker ? (
-        <>
-          <SelectField
-            {...selectProps("city")}
-            label="City / District"
-            required
-            options={cityOptions}
-            placeholder={values.region ? "Select city / district" : "Select a division first"}
-            disabled={!values.region}
+        {/* City / District and Thana / Upazila */}
+        {picker ? (
+          <>
+            <SelectField
+              {...selectProps("city")}
+              label="City / District"
+              required
+              options={cityOptions}
+              placeholder={values.region ? "Select city / district" : "Select a division first"}
+              disabled={!values.region}
+            />
+            <SelectField
+              {...selectProps("thana")}
+              label="Thana / Upazila"
+              required
+              options={thanaOptions}
+              placeholder={values.city ? "Select thana / upazila" : "Select a city first"}
+              disabled={!values.city}
+            />
+          </>
+        ) : (
+          <>
+            <TextField {...props("city")} label="City / District" required autoComplete="address-level2" placeholder="e.g. Dhaka" />
+            <TextField {...props("thana")} label="Thana / Upazila" required autoComplete="address-level3" placeholder="e.g. Banani" />
+          </>
+        )}
+
+        {/* Area / Post Office and Postal Code */}
+        {picker && values.thana && postOfficeOptions.length === 0 ? (
+          <TextField
+            {...props("area")}
+            label="Area / Post Office"
+            autoComplete="address-level4"
+            placeholder="Enter your area / post office"
           />
+        ) : picker ? (
           <SelectField
-            {...selectProps("thana")}
-            label="Thana / Upazila"
-            required
-            options={thanaOptions}
-            placeholder={values.city ? "Select thana / upazila" : "Select a city first"}
-            disabled={!values.city}
+            {...selectProps("area")}
+            label="Area / Post Office"
+            options={postOfficeOptions}
+            placeholder={values.thana ? "Select area / post office" : "Select thana first"}
+            disabled={!values.thana}
           />
-        </>
-      ) : (
-        <>
-          <TextField {...props("city")} label="City / District" required autoComplete="address-level2" placeholder="e.g. Dhaka" />
-          <TextField {...props("thana")} label="Thana / Upazila" required autoComplete="address-level3" placeholder="e.g. Banani" />
-        </>
-      )}
-
-      {/* 5th Line - Area / Post Office and Postal Code */}
-      {picker && values.thana && postOfficeOptions.length === 0 ? (
+        ) : (
+          <TextField
+            {...props("area")}
+            label="Area / Post Office"
+            autoComplete="address-level4"
+            placeholder="e.g. Banani TSO"
+          />
+        )}
         <TextField
-          {...props("area")}
-          label="Area / Post Office"
-          autoComplete="address-level4"
-          placeholder="Enter your area / post office"
-        />
-      ) : picker ? (
-        <SelectField
-          {...selectProps("area")}
-          label="Area / Post Office"
-          options={postOfficeOptions}
-          placeholder={values.thana ? "Select area / post office" : "Select thana first"}
-          disabled={!values.thana}
-        />
-      ) : (
-        <TextField
-          {...props("area")}
-          label="Area / Post Office"
-          autoComplete="address-level4"
-          placeholder="e.g. Banani TSO"
-        />
-      )}
-      <TextField
-        {...props("postcode")}
-        label={values.countryCode === "BD" ? "Postal Code" : "Zip / Postal code"}
-        inputMode="numeric"
-        maxLength={values.countryCode === "BD" ? 4 : 10}
-        autoComplete="postal-code"
-        placeholder={values.countryCode === "BD" ? "e.g. 1213" : undefined}
-      />
-
-      {/* 6th Line - Street Address */}
-      <div className="sm:col-span-2">
-        <TextField
-          {...props("street0")}
-          label="Street Address"
-          required
-          autoComplete="address-line1"
-          placeholder="House / flat, road"
+          {...props("postcode")}
+          label={values.countryCode === "BD" ? "Postal Code" : "Zip / Postal code"}
+          inputMode="numeric"
+          maxLength={values.countryCode === "BD" ? 4 : 10}
+          autoComplete="postal-code"
+          placeholder={values.countryCode === "BD" ? "e.g. 1213" : undefined}
         />
       </div>
-    </div>
-  </>
+    </>
   );
 }
 

@@ -2,11 +2,18 @@
 
 import { useActionState, useRef, useState } from "react";
 import Link from "next/link";
-import { Checkbox, EmailField, FormAlert, TextField, useFieldErrors, useSubmitWithoutReset } from "@/packages/module-common/form";
+import { Checkbox, EmailField, FormAlert, SelectField, TextField, useFieldErrors, useSubmitWithoutReset } from "@/packages/module-common/form";
 import type { ApiResult } from "@/types/storefront";
 import { callApi, useFormOperation } from "@/utils/api/client";
+import { SocialLoginButtons } from "./SocialLoginButtons";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const GENDER_OPTIONS = [
+  { value: "female", label: "Female" },
+  { value: "male", label: "Male" },
+  { value: "other", label: "Prefer not to say" },
+];
 
 /** Only same-site relative paths are allowed after login. */
 const safeRedirect = (target: string) => (target.startsWith("/") && !target.startsWith("//") ? target : "/customer/account");
@@ -24,7 +31,7 @@ function SubmitButton({ pending, children }: { pending: boolean; children: strin
     <button
       type="submit"
       disabled={pending}
-      className="flex h-12 w-full cursor-pointer items-center justify-center rounded-[4px] bg-brand-coral text-[16px] font-semibold text-white transition-colors hover:bg-brand-coral-hover disabled:cursor-wait disabled:opacity-70"
+      className="flex h-11 w-full cursor-pointer items-center justify-center rounded-[4px] bg-brand-coral text-[15px] font-semibold text-white transition-colors hover:bg-brand-coral-hover disabled:cursor-wait disabled:opacity-70"
     >
       {pending ? "Please wait..." : children}
     </button>
@@ -81,17 +88,15 @@ export function LoginForm({ redirectTo, expired = false }: { redirectTo: string;
         </Link>
       </div>
       <SubmitButton pending={pending}>Sign In</SubmitButton>
-      <div className="flex items-center gap-3 text-[12px] uppercase tracking-[0.1em] text-price-strikethrough" aria-hidden="true">
-        <span className="h-px flex-1 bg-card-border" />
-        or
-        <span className="h-px flex-1 bg-card-border" />
+      <SocialLoginButtons callbackUrl={redirectTo} />
+      <div className="pt-2">
+        <Link
+          href={redirectTo === "/checkout" ? "/checkout" : "/"}
+          className="btn-dark flex h-12 w-full items-center justify-center text-[15px] font-semibold"
+        >
+          {redirectTo === "/checkout" ? "Continue as Guest" : "Continue Shopping"}
+        </Link>
       </div>
-      <Link
-        href={redirectTo === "/checkout" ? "/checkout" : "/"}
-        className="btn-dark flex h-12 w-full items-center justify-center text-[15px] font-semibold"
-      >
-        {redirectTo === "/checkout" ? "Continue as Guest" : "Continue Shopping"}
-      </Link>
     </form>
   );
 }
@@ -111,17 +116,36 @@ export function RegisterForm() {
   const values = state && !state.ok ? (state.values ?? {}) : {};
 
   return (
-    <form ref={formRef} onSubmit={submit} noValidate className="space-y-4">
+    <form ref={formRef} onSubmit={submit} noValidate className="space-y-3">
       {state && !state.ok && !state.fieldErrors && <FormAlert>{state.message}</FormAlert>}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         <TextField id="firstName" defaultValue={values.firstName} label="First name" autoComplete="given-name" required error={errors.firstName} />
         <TextField id="lastName" defaultValue={values.lastName} label="Last name" autoComplete="family-name" required error={errors.lastName} />
       </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        <SelectField
+          id="gender"
+          label="Gender (Offers based on gender)"
+          placeholder="Select"
+          defaultValue={values.gender}
+          options={GENDER_OPTIONS}
+        />
+        <TextField
+          id="dateOfBirth"
+          label="Date of birth (For birthday offers)"
+          type="date"
+          defaultValue={values.dateOfBirth}
+          max={new Date().toISOString().split("T")[0]}
+        />
+      </div>
       <EmailField id="email" defaultValue={values.email} label="Email" autoComplete="email" required error={errors.email} />
-      <PasswordField id="password" label="Password" autoComplete="new-password" error={errors.password} />
-      <PasswordField id="confirmPassword" label="Confirm password" autoComplete="new-password" error={errors.confirmPassword} />
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+        <PasswordField id="password" label="Password" autoComplete="new-password" error={errors.password} />
+        <PasswordField id="confirmPassword" label="Confirm password" autoComplete="new-password" error={errors.confirmPassword} />
+      </div>
       <Checkbox id="newsletter" name="newsletter" defaultChecked label="Sign up for exclusive offers and the Cash Back Reward program." className="text-[13px] text-footer-text" />
       <SubmitButton pending={pending}>Create Account</SubmitButton>
+      <SocialLoginButtons />
       <p className="text-[12px] text-footer-text">
         By creating an account you agree to our{" "}
         <Link href="/terms-condition" className="text-brand-link hover:underline">

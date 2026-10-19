@@ -230,6 +230,8 @@ export const customerResolvers = {
       firstname: String(input.firstname),
       lastname: String(input.lastname),
       email: String(input.email).toLowerCase(),
+      gender: (input.gender as number) ?? undefined,
+      date_of_birth: (input.date_of_birth as string) || (input.dob as string) || undefined,
       is_subscribed: Boolean(input.is_subscribed),
       addresses: [],
     });

@@ -29,20 +29,20 @@ function Check({ className }: { className?: string }) {
 
 export function AuthShell({ title, tab, subtitle, children }: AuthShellProps) {
   return (
-      <div className="mx-auto mt-2 grid max-w-[980px] overflow-hidden rounded-[8px] bg-white shadow-[0_2px_18px_rgba(0,0,0,0.08)] ring-1 ring-card-border lg:grid-cols-[460px_minmax(0,1fr)]">
-        <div className="relative hidden min-h-[560px] overflow-hidden bg-brand-black lg:block">
-          <div className="absolute inset-x-0 top-0 h-[560px] overflow-hidden">
+      <div className="mx-auto mt-2 grid max-w-[1040px] overflow-hidden rounded-[8px] bg-white shadow-[0_2px_18px_rgba(0,0,0,0.08)] ring-1 ring-card-border lg:grid-cols-[420px_minmax(0,1fr)]">
+        <div className="relative hidden h-full min-h-[560px] overflow-hidden bg-brand-black lg:block">
+          <div className="absolute inset-0 overflow-hidden">
             <NextImage
               src="/assets/images/pdp/primary_picture.png"
               alt=""
               fill
-              sizes="460px"
+              sizes="420px"
               priority
-              className="scale-[1.22] object-cover object-left"
+              className="scale-[1.1] object-cover object-left"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/35 to-brand-black/5" />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/40 to-brand-black/10" />
           </div>
-          <div className="absolute inset-x-0 top-0 flex h-[560px] flex-col justify-end p-9 text-white">
+          <div className="absolute inset-0 flex flex-col justify-end p-9 text-white">
             <p className="text-[12px] font-bold uppercase tracking-[0.15em] text-brand-coral">BanglaShoppers Cash Back Reward</p>
             <h2 className="mt-2 text-[32px] font-black uppercase leading-[1.1] tracking-[0.06em]">
               Your beauty,
@@ -72,18 +72,18 @@ export function AuthShell({ title, tab, subtitle, children }: AuthShellProps) {
             ))}
           </ul>
 
-          <div className="flex flex-1 flex-col px-5 py-7 sm:px-10 sm:py-10">
+          <div className="flex flex-1 flex-col px-5 py-5 sm:px-8 lg:px-9 sm:py-6">
             {tab ? (
               <>
                 <h1 className="sr-only">{title}</h1>
-                <nav aria-label="Account access" className="mb-6 grid grid-cols-2 border-b border-card-border">
+                <nav aria-label="Account access" className="mb-4 grid grid-cols-2 border-b border-card-border">
                   {TABS.map((t) => (
                     <Link
                       key={t.id}
                       href={t.href}
                       aria-current={tab === t.id ? "page" : undefined}
                       className={clsx(
-                        "-mb-px border-b-[3px] pb-3 text-center text-[14px] font-black uppercase tracking-[0.1em] transition-colors sm:text-[16px]",
+                        "-mb-px border-b-[3px] pb-2 text-center text-[14px] font-black uppercase tracking-[0.1em] transition-colors sm:text-[15px]",
                         tab === t.id ? "border-brand-coral text-brand-dark" : "border-transparent text-price-strikethrough hover:text-brand-dark",
                       )}
                     >
@@ -95,10 +95,10 @@ export function AuthShell({ title, tab, subtitle, children }: AuthShellProps) {
             ) : (
               <>
                 <h1 className="text-[20px] font-black uppercase tracking-[0.1em] text-brand-dark">{title}</h1>
-                <span aria-hidden="true" className="mb-4 mt-3 block h-[3px] w-[36px] bg-brand-coral" />
+                <span aria-hidden="true" className="mb-3 mt-2 block h-[3px] w-[36px] bg-brand-coral" />
               </>
             )}
-            {subtitle && <p className="mb-5 text-[14px] leading-[1.5] text-footer-text">{subtitle}</p>}
+            {subtitle && <p className="mb-3 text-[13px] leading-[1.4] text-footer-text">{subtitle}</p>}
             {children}
           </div>
         </div>
