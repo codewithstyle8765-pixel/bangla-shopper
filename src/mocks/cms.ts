@@ -8,7 +8,7 @@ export const MOCK_FOOTER: FooterData = {
     title: "Corporate Headquarter",
     address: "House: 134, Road: 12, Block: E, Banani, Dhaka - 1213",
     hotline: "01879 222 444",
-    email: "sales@banglashoppers.com",
+    email: "support@banglashoppers.com",
     hours: "Everyday 11AM - 9PM",
     mapEmbed:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.9!2d90.40541475346524!3d23.791525578936316!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70c0a255685%3A0x18f759447736d0b!2sBangla%20Shoppers!5e0!3m2!1sen!2sbd!4v1596823006600!5m2!1sen!2sbd",

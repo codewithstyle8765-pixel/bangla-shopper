@@ -9,15 +9,7 @@ export interface NextImageProps extends Omit<ImageProps, "onError" | "onLoad"> {
   className?: string;
 }
 
-/** Shopping-bag placeholder in brand-surface / muted-line colours. */
-const DEFAULT_FALLBACK = `data:image/svg+xml,${encodeURIComponent(
-  "<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'>" +
-    "<rect width='400' height='400' fill='#f8fafc'/>" +
-    "<g fill='none' stroke='#c2c2c2' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'>" +
-    "<path d='M140 170h120l12 104a10 10 0 0 1-10 11H138a10 10 0 0 1-10-11z'/>" +
-    "<path d='M170 170v-14a30 30 0 0 1 60 0v14'/>" +
-    "</g></svg>",
-)}`;
+const DEFAULT_FALLBACK = "/assets/images/placeholder.svg";
 
 export function NextImage({
   src,
@@ -36,6 +28,11 @@ export function NextImage({
   const finalSrc = !src || failedSrc === src ? fallbackSrc : src;
 
   const isDataUrl = typeof finalSrc === "string" && finalSrc.startsWith("data:");
+  /* The square placeholder keeps the slot's own ratio, so h-auto banners don't grow to its 1:1 shape. */
+  const fallbackStyle =
+    finalSrc === fallbackSrc
+      ? { objectFit: "contain" as const, backgroundColor: "var(--color-placeholder)", ...(width && height ? { aspectRatio: `${width} / ${height}` } : {}), ...style }
+      : style;
 
   return (
     <Image
@@ -48,7 +45,7 @@ export function NextImage({
       onLoad={() => setLoaded(true)}
       className={`${className} transition-opacity duration-300 ${loaded || priority ? "opacity-100" : "opacity-0"}`}
       unoptimized={unoptimized ?? isDataUrl}
-      style={style}
+      style={fallbackStyle}
       {...rest}
     />
   );

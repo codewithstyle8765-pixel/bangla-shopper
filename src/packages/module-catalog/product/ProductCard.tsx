@@ -31,7 +31,7 @@ export function ProductCard({
   sku = "MLIH05",
   name,
   urlKey = "absolute-new-york-matte-lipstick",
-  image = "/assets/images/catalog/hostile.png",
+  image = "/assets/images/placeholder.svg",
   price,
   originalPrice,
   discountPercentage,

@@ -55,7 +55,7 @@ import { EMPTY_ADDRESS } from "@/utils/address";
 import { clearCustomerName, clearGuestCartId, getCustomerToken, getGuestCartId, setCustomerName } from "@/utils/session";
 import { mapProduct } from "./catalog";
 
-const PLACEHOLDER_IMAGE = "/assets/images/catalog/hostile.png";
+const PLACEHOLDER_IMAGE = "/assets/images/placeholder.svg";
 const GENDERS: Record<number, Customer["gender"]> = { 1: "male", 2: "female", 3: "other" };
 const GENDER_IDS: Record<string, number> = { male: 1, female: 2, other: 3 };
 

@@ -28,7 +28,7 @@ import type {
 } from "@/types/storefront";
 import { graphqlRequestCached } from "@/lib/cached-graphql";
 
-const PLACEHOLDER_IMAGE = "/assets/images/catalog/hostile.png";
+const PLACEHOLDER_IMAGE = "/assets/images/placeholder.svg";
 
 export const SORT_OPTIONS: SortOption[] = [
   { value: "featured", label: "Featured" },

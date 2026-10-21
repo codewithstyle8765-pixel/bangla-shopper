@@ -26,7 +26,7 @@ export async function Footer() {
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 right-32 h-44 w-44 rounded-full bg-brand-coral/14 max-lg:hidden" />
         <Container className="relative flex flex-col gap-4 sm:gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
           {/* Mobile contact items (Above newsletter on sm/mobile devices < md) */}
-          <div className="flex items-center justify-between gap-2 min-[360px]:gap-3 md:hidden">
+          <div className="flex items-center justify-between gap-2 max-[359px]:flex-col max-[359px]:items-start min-[360px]:gap-3 md:hidden">
             <a
               href={`tel:${contact.hotline.replace(/\s+/g, "")}`}
               className="flex shrink-0 items-center gap-2 sm:gap-2.5"

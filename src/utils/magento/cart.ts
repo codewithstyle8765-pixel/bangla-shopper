@@ -14,7 +14,7 @@ import type { MagentoCart } from "@/types/magento";
 import type { Cart } from "@/types/storefront";
 import { getCustomerToken, getGuestCartId, setGuestCartId } from "@/utils/session";
 
-const PLACEHOLDER_IMAGE = "/assets/images/catalog/hostile.png";
+const PLACEHOLDER_IMAGE = "/assets/images/placeholder.svg";
 
 export const EMPTY_CART: Cart = { id: null, items: [], totalQuantity: 0, subtotal: 0, discount: 0 };
 
