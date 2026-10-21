@@ -13,6 +13,7 @@ export interface ProductSummary {
   image: string;
   price: number;
   originalPrice?: number;
+  discountPercentage?: number;
   rating: number;
   reviewCount: number;
   origin?: string;

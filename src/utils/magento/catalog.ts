@@ -49,6 +49,11 @@ const SORT_MAP: Record<string, Record<string, "ASC" | "DESC"> | undefined> = {
 export function mapProduct(p: MagentoProduct): ProductSummary {
   const final = p.price_range.minimum_price.final_price.value;
   const regular = p.price_range.minimum_price.regular_price.value;
+  const hasDiscount = regular > final;
+  const discountPercent =
+    (p.price_range.minimum_price as { discount?: { percent_off?: number } })?.discount?.percent_off ??
+    (hasDiscount ? Math.round(((regular - final) / regular) * 100) : undefined);
+
   return {
     id: p.uid,
     sku: p.sku,
@@ -56,7 +61,8 @@ export function mapProduct(p: MagentoProduct): ProductSummary {
     urlKey: p.url_key,
     image: p.small_image?.url || PLACEHOLDER_IMAGE,
     price: final,
-    originalPrice: regular > final ? regular : undefined,
+    originalPrice: hasDiscount ? regular : undefined,
+    discountPercentage: discountPercent && discountPercent > 0 ? Math.round(discountPercent) : undefined,
     rating: Math.round(((p.rating_summary ?? 0) / 20) * 10) / 10,
     reviewCount: p.review_count ?? 0,
     origin: p.country_of_manufacture ?? undefined,

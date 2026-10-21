@@ -177,29 +177,31 @@ export function CartTotals({ shipping, reward, children }: CartTotalsProps) {
 
 export function TrustBadges({ centered = false }: { centered?: boolean }) {
   return (
-    <div className={`space-y-3 text-[12px] text-footer-text ${centered ? "flex flex-col items-center" : ""}`}>
-      <div className="space-y-3">
-        <div className="flex items-center gap-2.5">
-          <GuaranteeIcon className="h-8 w-8" />
-          <span>
+    <div className={clsx("space-y-3 text-[12px] text-footer-text", centered && "flex flex-col items-center")}>
+      <div className="space-y-3 text-left">
+        <div className="flex items-center gap-2.5 text-left">
+          <GuaranteeIcon className="h-8 w-8 shrink-0" />
+          <span className="text-left">
             <strong className="text-brand-dark">100% Authentic</strong> brand products, guaranteed
           </span>
         </div>
-        <div className="flex items-center gap-2.5">
-          <ReturnPolicyIcon className="h-8 w-8" />
-          <span>
+        <div className="flex items-center gap-2.5 text-left">
+          <ReturnPolicyIcon className="h-8 w-8 shrink-0" />
+          <span className="text-left">
             <strong className="text-brand-dark">7-day</strong> easy returns &amp; exchanges
           </span>
         </div>
       </div>
-      <NextImage
-        src="/assets/images/footer/payment-logos.webp"
-        alt="Accepted payments: Visa, Mastercard, American Express, bKash, Nagad, Rocket, City Bank, upay and more via SSLCommerz"
-        width={1851}
-        height={416}
-        sizes="340px"
-        className="h-auto w-full max-w-[340px] pt-1"
-      />
+      <div className={clsx("flex w-full", centered ? "justify-center" : "justify-center lg:justify-start")}>
+        <NextImage
+          src="/assets/images/footer/payment-logos.webp"
+          alt="Accepted payments: Visa, Mastercard, American Express, bKash, Nagad, Rocket, City Bank, upay and more via SSLCommerz"
+          width={1851}
+          height={416}
+          sizes="340px"
+          className="h-auto w-full max-w-[340px] pt-1"
+        />
+      </div>
     </div>
   );
 }

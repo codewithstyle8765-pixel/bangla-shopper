@@ -3,18 +3,9 @@ import { Container } from "@/packages/module-common/Container";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { getFooterData } from "@/utils/magento/cms";
 import { BackToTop, FooterTopButton } from "./BackToTop";
-import { ChevronRightIcon, ClockIcon, HighlightIcon, MailIcon, MailSolidIcon, PhoneIcon, PinIcon, SocialIcon } from "./FooterIcons";
+import { HighlightIcon, MailIcon, MailSolidIcon, PhoneIcon, SocialIcon } from "./FooterIcons";
+import { FooterNavSections } from "./FooterNavSections";
 import { NewsletterForm } from "./NewsletterForm";
-
-
-function ColumnTitle({ children }: { children: string }) {
-  return (
-    <h2 className="text-[16px] font-bold text-brand-dark">
-      {children}
-      <span aria-hidden="true" className="mt-2.5 block h-[2px] w-6 bg-brand-coral" />
-    </h2>
-  );
-}
 
 /** Newsletter band, contact beside the link columns, promise row, app + payment row, copyright bar. */
 export async function Footer() {
@@ -28,74 +19,84 @@ export async function Footer() {
     ...(!data.social.some((s) => s.network === "pinterest") ? [{ network: "pinterest" as const, href: "https://www.pinterest.com/banglashoppers" }] : []),
   ];
 
-  const contactItems = [
-    { icon: PinIcon, label: "Address", value: contact.address },
-    { icon: PhoneIcon, label: "Hotline", value: contact.hotline, href: `tel:${contact.hotline.replace(/\s+/g, "")}` },
-    { icon: MailIcon, label: "Email", value: contact.email, href: `mailto:${contact.email}` },
-    { icon: ClockIcon, label: "Open Time", value: contact.hours },
-  ];
-
   return (
     <footer className="mt-4 bg-white font-sans text-[14px] text-footer-text">
       <section aria-label="Newsletter" className="relative overflow-hidden bg-neutral-50 py-5 lg:py-6">
         <span aria-hidden="true" className="pointer-events-none absolute -right-20 -top-28 h-64 w-64 rounded-full bg-brand-coral/14" />
         <span aria-hidden="true" className="pointer-events-none absolute -bottom-24 right-32 h-44 w-44 rounded-full bg-brand-coral/14 max-lg:hidden" />
-        <Container className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-          <div className="flex items-center gap-4 lg:shrink-0 lg:border-r lg:border-card-border lg:pr-10">
-            <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-[10px] bg-brand-coral/8 text-brand-coral">
-              <MailSolidIcon className="h-6 w-6" />
-            </span>
-            <div>
-              <h2 className="text-[17px] font-bold leading-tight text-brand-dark sm:text-[19px]">{data.newsletterTitle}</h2>
-              <p className="mt-1 text-[13px] sm:text-[14px]">{data.newsletterText}</p>
+        <Container className="relative flex flex-col gap-4 sm:gap-5 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+          {/* Mobile contact items (Above newsletter on sm/mobile devices < md) */}
+          <div className="flex items-center justify-between gap-2 min-[360px]:gap-3 md:hidden">
+            <a
+              href={`tel:${contact.hotline.replace(/\s+/g, "")}`}
+              className="flex shrink-0 items-center gap-2 sm:gap-2.5"
+            >
+              <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-coral/10 text-brand-coral">
+                <PhoneIcon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <span className="block truncate text-[12px] font-bold text-brand-dark sm:text-[13px]">{contact.hotline}</span>
+                <span className="block truncate text-[10.5px] text-footer-text sm:text-[11px]">Call us for any query</span>
+              </div>
+            </a>
+
+            <a
+              href={`mailto:${contact.email}`}
+              className="flex min-w-0 items-center gap-2 sm:gap-2.5"
+            >
+              <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-coral/10 text-brand-coral">
+                <MailIcon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0">
+                <span className="block truncate text-[11px] font-bold text-brand-dark min-[370px]:text-[12px] sm:text-[13px]">{contact.email}</span>
+                <span className="block truncate text-[10.5px] text-footer-text sm:text-[11px]">We're here to help</span>
+              </div>
+            </a>
+          </div>
+
+          {/* Newsletter Title Row (With md-only contacts on the right on md devices) */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between lg:shrink-0 lg:border-r lg:border-card-border lg:pr-10">
+            <div className="flex items-center gap-4">
+              <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-[10px] bg-brand-coral/8 text-brand-coral">
+                <MailSolidIcon className="h-6 w-6" />
+              </span>
+              <div>
+                <h2 className="text-[17px] font-bold leading-tight text-brand-dark sm:text-[19px]">{data.newsletterTitle}</h2>
+                <p className="mt-1 text-[13px] sm:text-[14px]">{data.newsletterText}</p>
+              </div>
+            </div>
+
+            {/* Tablet-only contacts (To the right of the title on md devices 768px-1023px) */}
+            <div className="hidden md:flex lg:hidden items-center gap-6 shrink-0 justify-end">
+              <a href={`tel:${contact.hotline.replace(/\s+/g, "")}`} className="flex items-center gap-2.5 group">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-coral/10 text-brand-coral">
+                  <PhoneIcon className="h-4 w-4" />
+                </span>
+                <div>
+                  <span className="block whitespace-nowrap text-[13px] font-bold text-brand-dark transition-colors group-hover:text-brand-coral">{contact.hotline}</span>
+                  <span className="block whitespace-nowrap text-[11px] text-footer-text">Call us for any query</span>
+                </div>
+              </a>
+              <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 group">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-coral/10 text-brand-coral">
+                  <MailIcon className="h-4 w-4" />
+                </span>
+                <div>
+                  <span className="block whitespace-nowrap text-[13px] font-bold text-brand-dark transition-colors group-hover:text-brand-coral">{contact.email}</span>
+                  <span className="block whitespace-nowrap text-[11px] text-footer-text">We're here to help</span>
+                </div>
+              </a>
             </div>
           </div>
+
           <div className="w-full lg:max-w-[560px]">
             <NewsletterForm />
           </div>
         </Container>
       </section>
 
-      <Container className="grid grid-cols-2 gap-x-6 gap-y-4 py-4 md:grid-cols-4 lg:gap-x-8 xl:grid-cols-[minmax(0,1.9fr)_repeat(4,minmax(0,1fr))]">
-        <div className="col-span-2 md:col-span-4 xl:col-span-1">
-          <ColumnTitle>{contact.title}</ColumnTitle>
-          <address className="mt-5 grid gap-4 not-italic sm:grid-cols-2 xl:max-w-[350px] xl:grid-cols-1">
-            {contactItems.map(({ icon: Icon, label, value, href }) => (
-              <p key={label} className="flex gap-3 text-[13px] leading-[1.45]">
-                <Icon className="mt-0.5 h-5 w-5 shrink-0 text-brand-coral" />
-                <span>
-                  <span className="block font-semibold text-brand-dark">{label}</span>
-                  {href ? (
-                    <a href={href} className="transition-colors hover:text-brand-coral">
-                      {value}
-                    </a>
-                  ) : (
-                    value
-                  )}
-                </span>
-              </p>
-            ))}
-          </address>
-        </div>
-
-        {data.columns.map((column) => (
-          <nav key={column.title} aria-label={column.title}>
-            <ColumnTitle>{column.title}</ColumnTitle>
-            <ul className="mt-5 space-y-3">
-              {column.links.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href} className="group transition-colors hover:text-brand-coral">
-                    {link.label.slice(0, link.label.lastIndexOf(" ") + 1)}
-                    <span className="whitespace-nowrap">
-                      {link.label.slice(link.label.lastIndexOf(" ") + 1)}
-                      <ChevronRightIcon className="ml-1.5 inline-block h-3 w-3 align-[-1px] transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))}
+      <Container className="py-0 lg:py-4">
+        <FooterNavSections contact={contact} columns={data.columns} />
       </Container>
 
       <div className="border-t border-card-border py-4">

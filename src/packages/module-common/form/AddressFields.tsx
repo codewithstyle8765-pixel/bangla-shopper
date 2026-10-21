@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { addressToFields, normalizePhone, validateAddress, type AddressField } from "@/utils/address";
-import { loadPostcodes, postcodesForArea, defaultPostcodeForCity, findPostcodeForArea, type PostcodeTable } from "@/utils/bd-postcode";
+import { loadPostcodes, postcodesForArea, findPostcodeForArea, type PostcodeTable } from "@/utils/bd-postcode";
 import type { AddressInput, BdDivision } from "@/types/storefront";
 import { SelectField, TextareaField, TextField, type SelectOption } from "./Field";
 
@@ -46,6 +46,9 @@ const options = (names: string[]): SelectOption[] => names.map((n) => ({ value: 
 /** Keeps a saved value selectable even when it is missing from the list (e.g. an older free-text address). */
 const withCurrent = (list: SelectOption[], value: string) => (value && !list.some((o) => o.value === value) ? [{ value, label: value }, ...list] : list);
 
+const isThanaNotListed = (t?: string) => t === "Thana is not listed" || t === "My thana not listed";
+const isAreaNotListed = (a?: string) => a === "Area is not listed" || a === "My area not listed";
+
 export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors = {}, countries, locations = [], onFieldChange, onValidityChange }: AddressFieldsProps) {
   const [values, setValues] = useState(() => {
     const fields = addressToFields(defaultValue);
@@ -70,23 +73,23 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
     const list = city?.areas ?? [];
     const baseOpts = options(list);
     if (list.length > 0 || values.city) {
-      baseOpts.push({ value: "My thana not listed", label: "My thana not listed" });
+      baseOpts.push({ value: "Thana is not listed", label: "Thana is not listed" });
     }
     return withCurrent(baseOpts, values.thana);
   }, [city?.areas, values.city, values.thana]);
 
   /* Post offices under the selected district & thana */
   const postOffices = useMemo(() => {
-    if (!postcodes || !values.city || !values.thana || values.thana === "My thana not listed") return [];
+    if (!postcodes || !values.city || !values.thana || isThanaNotListed(values.thana)) return [];
     return postcodesForArea(postcodes, values.city, values.thana);
   }, [postcodes, values.city, values.thana]);
 
   const postOfficeOptions = useMemo(() => {
-    if (!values.thana || values.thana === "My thana not listed") return [];
+    if (!values.thana || isThanaNotListed(values.thana)) return [];
     const uniqueOffices = Array.from(new Set(postOffices.map((o) => o.office.replace(/\s*-?\s*TSO$/i, ""))));
     if (uniqueOffices.length === 0) return [];
     const baseOpts = options(uniqueOffices);
-    baseOpts.push({ value: "My area not listed", label: "My area not listed" });
+    baseOpts.push({ value: "Area is not listed", label: "Area is not listed" });
     return withCurrent(baseOpts, values.area);
   }, [postOffices, values.area, values.thana]);
 
@@ -116,41 +119,47 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
       changed.push("firstName", "lastName");
     }
 
-    /* A new division clears the city, thana and area below it; a new city clears the thana and area. */
+    /* A new division clears the city, thana, area and postcode below it. */
     if (picker && field === "region" && value !== v.region) {
-      Object.assign(next, { city: "", thana: "", area: "" });
-      changed.push("city", "thana", "area");
+      Object.assign(next, { city: "", thana: "", area: "", postcode: "" });
+      changed.push("city", "thana", "area", "postcode");
     }
+    /* A new city clears thana, area, and postcode without premature default postcode. */
     if (picker && field === "city" && value !== v.city) {
-      Object.assign(next, { thana: "", area: "" });
-      changed.push("thana", "area");
-      if (postcodes && value) {
-        const def = defaultPostcodeForCity(postcodes, value);
-        if (def) {
-          next.postcode = def.postcode;
-          if (!changed.includes("postcode")) changed.push("postcode");
-        }
-      }
+      Object.assign(next, { thana: "", area: "", postcode: "" });
+      changed.push("thana", "area", "postcode");
     }
+    /* Changing thana always resets dependent area and postcode */
     if (picker && field === "thana" && value !== v.thana) {
       next.area = "";
-      changed.push("area");
-      if (postcodes && value && value !== "My thana not listed") {
+      next.postcode = "";
+      if (!changed.includes("area")) changed.push("area");
+      if (!changed.includes("postcode")) changed.push("postcode");
+
+      /* If a valid listed thana is selected (not "Thana is not listed") */
+      if (postcodes && value && !isThanaNotListed(value)) {
         const offices = postcodesForArea(postcodes, next.city, value);
-        if (offices.length > 0) {
-          next.postcode = offices[0].postcode;
-          if (!changed.includes("postcode")) changed.push("postcode");
-          if (offices.length === 1) {
-            next.area = offices[0].office.replace(/\s*-?\s*TSO$/i, "");
-            if (!changed.includes("area")) changed.push("area");
+        const uniqueOffices = Array.from(new Set(offices.map((o) => o.office.replace(/\s*-?\s*TSO$/i, ""))));
+        /* If no areas are available under the selected thana, populate postcode based on the thana */
+        if (uniqueOffices.length === 0) {
+          const thanaMatch = offices[0] ?? findPostcodeForArea(postcodes, next.city, value);
+          if (thanaMatch) {
+            next.postcode = thanaMatch.postcode;
           }
         }
+        /* If uniqueOffices.length > 0, do NOT populate postcode; wait until area is selected */
       }
     }
-    if (picker && field === "area" && postcodes && value && value !== "My area not listed") {
-      const match = findPostcodeForArea(postcodes, next.city, value, next.thana);
-      if (match) {
-        next.postcode = match.postcode;
+    /* Selecting an area populates postcode */
+    if (picker && field === "area" && value !== v.area) {
+      if (postcodes && value && !isAreaNotListed(value)) {
+        const match = findPostcodeForArea(postcodes, next.city, value, next.thana);
+        if (match) {
+          next.postcode = match.postcode;
+          if (!changed.includes("postcode")) changed.push("postcode");
+        }
+      } else if (isAreaNotListed(value)) {
+        next.postcode = "";
         if (!changed.includes("postcode")) changed.push("postcode");
       }
     }

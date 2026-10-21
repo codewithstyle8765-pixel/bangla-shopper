@@ -15,6 +15,7 @@ export interface ProductCardProps {
   image?: string;
   price: number;
   originalPrice?: number;
+  discountPercentage?: number;
   rating?: number;
   reviewCount?: number;
   origin?: string;
@@ -33,6 +34,7 @@ export function ProductCard({
   image = "/assets/images/catalog/hostile.png",
   price,
   originalPrice,
+  discountPercentage,
   rating = 0,
   reviewCount = 0,
   origin,
@@ -46,6 +48,12 @@ export function ProductCard({
   const { addItem } = useCart();
   const fluid = layout === "fluid";
   const inset = fluid ? "ml-[9px] mr-[8px]" : "ml-[9px]";
+
+  const effectiveDiscount =
+    discountPercentage ??
+    (originalPrice && originalPrice > price
+      ? Math.round(((originalPrice - price) / originalPrice) * 100)
+      : undefined);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,6 +77,14 @@ export function ProductCard({
       )}
     >
       <Link href={`/product/${urlKey}`} className="block">
+        {effectiveDiscount && effectiveDiscount > 0 ? (
+          <span
+            className="absolute top-[6px] left-[6px] sm:top-[8px] sm:left-[8px] z-10 rounded-[3px] bg-brand-coral px-2 py-[3px] text-[12px] font-bold leading-none uppercase tracking-wide text-white shadow-xs pointer-events-none"
+            aria-label={`${effectiveDiscount}% off`}
+          >
+            {effectiveDiscount}% OFF
+          </span>
+        ) : null}
         <div className={clsx("relative overflow-hidden bg-white", inset, fluid ? "aspect-square" : "w-[182px] h-[182px]")}>
           <div className="h-full w-full transition-transform duration-500 ease-(--ease-panel) group-hover/card:scale-110 motion-reduce:transition-none">
             <NextImage

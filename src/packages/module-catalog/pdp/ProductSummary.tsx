@@ -387,7 +387,7 @@ export function ProductSummary({
         </div>
       </div>
 
-      <div className="w-full desk:w-[602px] mt-[7px] desk:mt-[6px] desk:ml-[1px] ml-0">
+      <div className="w-full desk:w-[604px] mt-[7px] desk:mt-[6px] desk:ml-[1px] ml-0">
         <div id={BUY_BOX_ID} className="flex items-center flex-wrap gap-[13px]">
           <div className="mt-[1px] shrink-0">
             <QuantitySelector
@@ -407,7 +407,7 @@ export function ProductSummary({
                   : document.querySelector("[data-option-code]");
                 target?.scrollIntoView({ block: "center", behavior: "smooth" });
               }}
-              className="min-w-[146px] flex-1 sm:flex-none sm:w-[150px] h-[40px] leading-[40px] rounded-[4px] bg-brand-coral text-white text-[17px] font-semibold text-center cursor-pointer hover:bg-brand-coral-hover active:scale-98 transition-all select-none mt-[3px]"
+              className="min-w-[146px] flex-1 sm:flex-none sm:w-[146px] h-[40px] leading-[40px] rounded-[4px] bg-brand-coral text-white text-[17px] font-semibold text-center cursor-pointer hover:bg-brand-coral-hover active:scale-98 transition-all select-none mt-[3px]"
             >
               Choose Option
             </button>

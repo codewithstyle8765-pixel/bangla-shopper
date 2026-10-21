@@ -7,16 +7,17 @@ import { MobileBottomNav } from "./MobileBottomNav";
 import MobileNavDrawer from "@/packages/module-theme/layout/mega-menu/MobileNavDrawer";
 import type { NavCategory } from "@/types/storefront";
 
+import type { AnnouncementItem } from "./announcements.types";
+
 interface HeaderProps {
   categories: NavCategory[];
-  /** Desktop mega menu, kept inside the sticky part of the header. */
   children?: ReactNode;
   cartCount?: number;
-  /** Store hotline (footer content); phones and tablets get a call button in the header. */
   hotline?: string;
+  announcements?: AnnouncementItem[];
 }
 
-export function Header({ categories, cartCount, hotline, children }: HeaderProps) {
+export function Header({ categories, cartCount, hotline, announcements, children }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const categoriesButtonRef = useRef<HTMLButtonElement>(null);
   /* Dismissal lasts until the next page load. */
@@ -24,7 +25,12 @@ export function Header({ categories, cartCount, hotline, children }: HeaderProps
 
   return (
     <>
-      {showAnnouncement && <HeaderTopBar onDismiss={() => setShowAnnouncement(false)} />}
+      {showAnnouncement && (
+        <HeaderTopBar
+          onDismiss={() => setShowAnnouncement(false)}
+          messages={announcements}
+        />
+      )}
       <header data-pin className="sticky top-0 z-40 w-full bg-white">
         <HeaderMain
           cartCount={cartCount}

@@ -24,21 +24,27 @@ interface MockProduct extends MagentoProduct {
 }
 
 /** Real products from the live home page, so listings show a varied, full catalogue. */
-export const MOCK_PRODUCTS: MockProduct[] = DEMO_PRODUCTS.map((p, i) => ({
-  uid: `p-${i + 1}`,
-  sku: `BS-${String(1000 + i)}`,
-  name: p.name,
-  url_key: p.slug,
-  stock_status: i % 9 === 4 ? "OUT_OF_STOCK" : "IN_STOCK",
-  /* Live items without reviews yet get demo values so the rating row is visible. */
-  rating_summary: p.rating ?? Math.round((3.6 + seeded(i + 100) * 1.4) * 20),
-  review_count: p.reviews || 12 + Math.round(seeded(i + 200) * 900),
-  country_of_manufacture: p.origin,
-  small_image: { url: `/assets/images/mock/products/${p.slug}.jpg` },
-  price_range: { minimum_price: { final_price: { value: p.price }, regular_price: { value: p.regular } } },
-  brand: p.brand,
-  category: p.category,
-}));
+export const MOCK_PRODUCTS: MockProduct[] = DEMO_PRODUCTS.map((p, i) => {
+  /* Give around 55-60% of mock items a discount, and the rest full regular price. */
+  const hasDiscount = (i % 7 < 4);
+  const regularPrice = hasDiscount && p.regular > p.price ? p.regular : p.price;
+
+  return {
+    uid: `p-${i + 1}`,
+    sku: `BS-${String(1000 + i)}`,
+    name: p.name,
+    url_key: p.slug,
+    stock_status: i % 9 === 4 ? "OUT_OF_STOCK" : "IN_STOCK",
+    /* Live items without reviews yet get demo values so the rating row is visible. */
+    rating_summary: p.rating ?? Math.round((3.6 + seeded(i + 100) * 1.4) * 20),
+    review_count: p.reviews || 12 + Math.round(seeded(i + 200) * 900),
+    country_of_manufacture: p.origin,
+    small_image: { url: `/assets/images/mock/products/${p.slug}.jpg` },
+    price_range: { minimum_price: { final_price: { value: p.price }, regular_price: { value: regularPrice } } },
+    brand: p.brand,
+    category: p.category,
+  };
+});
 
 /** Demo product. */
 const DEMO_PRODUCT: MockProduct = {
