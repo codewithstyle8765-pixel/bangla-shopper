@@ -192,14 +192,14 @@ export function TrustBadges({ centered = false }: { centered?: boolean }) {
           </span>
         </div>
       </div>
-      <div className={clsx("flex w-full", centered ? "justify-center" : "justify-center lg:justify-start")}>
+      <div className={clsx("flex w-full", centered ? "justify-center" : "justify-start")}>
         <NextImage
           src="/assets/images/footer/payment-logos.webp"
           alt="Accepted payments: Visa, Mastercard, American Express, bKash, Nagad, Rocket, City Bank, upay and more via SSLCommerz"
           width={1851}
           height={416}
-          sizes="340px"
-          className="h-auto w-full max-w-[340px] pt-1"
+          sizes="(max-width: 640px) 100vw, 340px"
+          className="h-auto w-full max-w-full sm:max-w-[340px] pt-1"
         />
       </div>
     </div>
