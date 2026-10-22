@@ -142,7 +142,6 @@ export function PromoPopupBanner() {
               alt={banner.altText}
               fill
               priority
-              unoptimized
               sizes="(max-width: 640px) 90vw, 440px"
               className="object-cover"
             />

@@ -11,14 +11,14 @@ interface QuantitySelectorProps {
   max?: number;
   onChange?: (value: number) => void;
   disabled?: boolean;
-  /** md: PDP size (132×42). sm: same design, compact for the cart drawer. */
+  /** md: PDP size (132×40, the Add to Cart height). sm: same design, compact for the cart drawer. */
   size?: "md" | "sm";
   label?: string;
   className?: string;
 }
 
 const SIZES = {
-  md: { box: "w-[132px] h-[42px]", button: "w-[40px]", input: "w-[50px] text-[16px]" },
+  md: { box: "w-[132px] h-[40px]", button: "w-[40px]", input: "w-[50px] text-[16px]" },
   sm: { box: "w-[110px] h-[36px]", button: "w-[34px]", input: "w-[40px] text-[16px] lg:text-[15px]" },
 };
 

@@ -248,9 +248,12 @@ export function ProductGallery({
             </svg>
           </button>
           {discountPercent ? (
-            <div className="md:hidden absolute top-2.5 left-2.5 z-10 bg-brand-alert text-white text-[12px] font-bold px-2 py-0.5 rounded-[4px] pointer-events-none">
-              -{discountPercent}%
-            </div>
+            <span
+              aria-label={`${discountPercent}% off`}
+              className="pointer-events-none absolute left-2.5 top-2.5 z-10 rounded-[3px] bg-brand-coral px-2 py-[3px] text-[12px] font-bold uppercase leading-none tracking-wide text-white shadow-xs"
+            >
+              {discountPercent}% OFF
+            </span>
           ) : null}
 
           <div

@@ -389,12 +389,11 @@ export function ProductSummary({
 
       <div className="w-full desk:w-[604px] mt-[7px] desk:mt-[6px] desk:ml-[1px] ml-0">
         <div id={BUY_BOX_ID} className="flex items-center flex-wrap gap-[13px]">
-          <div className="mt-[1px] shrink-0">
-            <QuantitySelector
-              initialValue={quantity}
-              onChange={(q) => setQuantity(q)}
-            />
-          </div>
+          <QuantitySelector
+            initialValue={quantity}
+            onChange={(q) => setQuantity(q)}
+            className="mt-[3px] shrink-0"
+          />
 
           {hasOptions && !allOptionsSelected ? (
             <button

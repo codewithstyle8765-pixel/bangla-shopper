@@ -24,7 +24,7 @@ export function HeroBannerGrid({ main = [], side = [] }: { main?: HomeBanner[]; 
     <section aria-label="Hero Banners" className="w-full lg:mt-[11px] xl:mt-[15px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
         <div className="flex flex-col lg:flex-row lg:items-stretch gap-(--gutter) lg:gap-[10px] w-full">
-          <div className="order-1 lg:order-2 flex-1 min-w-0 w-full xl:w-[980px] xl:h-[530px] aspect-[970/530] overflow-hidden relative bg-brand-surface">
+          <div className="order-1 lg:order-2 flex-1 min-w-0 w-full xl:w-[980px] xl:h-[530px] aspect-[980/530] overflow-hidden relative bg-brand-surface">
             <HeroMainSlides banners={mainBanners} />
           </div>
 
@@ -58,7 +58,7 @@ export function HeroBannerGridSkeleton() {
     <section aria-hidden="true" className="w-full lg:mt-[11px] xl:mt-[15px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
         <div className="flex flex-col lg:flex-row gap-(--gutter) lg:gap-[10px]">
-          <div className="order-1 lg:order-2 flex-1 min-w-0 aspect-[970/530] xl:w-[980px] xl:h-[530px]">
+          <div className="order-1 lg:order-2 flex-1 min-w-0 aspect-[980/530] xl:w-[980px] xl:h-[530px]">
             <Shimmer rounded="rounded-none" />
           </div>
           <div className="order-2 lg:order-1 grid grid-cols-3 gap-(--gutter) lg:flex lg:flex-col lg:justify-between lg:gap-0 lg:w-[23.6%] xl:w-[300px] lg:shrink-0">

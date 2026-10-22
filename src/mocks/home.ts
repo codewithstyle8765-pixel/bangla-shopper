@@ -10,13 +10,13 @@ const tile = (name: string, file: string, link: string, folder: "category" | "co
 export const MOCK_HOME_PAGE: MagentoHomePage = {
   hero_layout: "GRID", //GRID
   hero_slides: [
-    { image: "/assets/images/mock/hero-ponds.jpg", alt: "Pond's Miracle Me special offers", link: "/category/skin-care" },
-    { image: "/assets/images/home/r_main_banner.jpg", alt: "Best beauty products, flat up to 15% off", link: "/category/sale-items" },
+    { image: "/assets/images/makeup.webp", alt: "Best makeup collection for your perfect look", link: "/category/makeup" },
+    { image: "/assets/images/ponds.webp", alt: "Pond's Miracle Me special offers", link: "/category/skin-care" },
   ],
   hero_grid_main_banners: [
-    { image: "/assets/images/home/r_main_banner.jpg", alt: "Best beauty products, flat up to 15% off", link: "/category/sale-items" },
-    { image: "/assets/images/mock/hero-grid/ponds.jpg", alt: "Pond's Miracle Me special offers", link: "/category/skin-care" },
-    { image: "/assets/images/mock/hero-grid/baby-skincare.jpg", alt: "Baby skincare essentials combo, up to 35% off", link: "/category/mom-and-baby" },
+    { image: "/assets/images/makeup.webp", alt: "Best makeup collection for your perfect look", link: "/category/makeup" },
+    { image: "/assets/images/ponds.webp", alt: "Pond's Miracle Me special offers", link: "/category/skin-care" },
+    { image: "/assets/images/baby.webp", alt: "Baby care essentials, trusted care", link: "/category/mom-and-baby" },
   ],
   hero_grid_side_banners: [
     { image: "/assets/images/home/l1_banner.jpg", alt: "Absolute New York makeup", link: "/category/makeup" },

@@ -41,9 +41,9 @@ export function HeroMainSlides({ banners }: { banners: HomeBanner[] }) {
               <NextImage
                 src={banner.image}
                 alt={banner.alt}
-                width={970}
+                width={980}
                 height={530}
-                sizes="(max-width: 1023px) 100vw, 970px"
+                sizes="(max-width: 1023px) 100vw, 980px"
                 priority={!copy && index === 0}
                 draggable={false}
                 className="pointer-events-none h-full w-full object-cover transition-transform duration-300 group-hover:scale-101"
