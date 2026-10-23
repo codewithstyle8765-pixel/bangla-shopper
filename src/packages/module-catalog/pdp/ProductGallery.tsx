@@ -261,6 +261,25 @@ export function ProductGallery({
               <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
             </svg>
           </button>
+          {playing !== null && count > 1 &&
+            ([["prev", "Previous image", prev, "left-2.5"], ["next", "Next image", next, "right-2.5"]] as const).map(([key, label, go, side]) => (
+              <button
+                key={key}
+                type="button"
+                onPointerDown={(e) => e.stopPropagation()}
+                onPointerUp={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  go();
+                }}
+                aria-label={label}
+                className={`absolute top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/90 text-brand-dark shadow-[0_2px_8px_rgba(0,0,0,0.12)] transition-colors hover:bg-brand-coral hover:text-white ${side}`}
+              >
+                <svg viewBox="0 0 24 24" className="block h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d={key === "prev" ? "m15 6-6 6 6 6" : "m9 6 6 6-6 6"} />
+                </svg>
+              </button>
+            ))}
           {discountPercent ? (
             <span
               aria-label={`${discountPercent}% off`}

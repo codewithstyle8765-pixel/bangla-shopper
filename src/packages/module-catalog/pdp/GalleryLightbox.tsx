@@ -320,7 +320,8 @@ export function GalleryLightbox({ open, images, videos, index, productName, onIn
               onClick={() => go(dir === "left" ? -1 : 1)}
               aria-label={dir === "left" ? "Previous image" : "Next image"}
               className={clsx(
-                "absolute top-1/2 hidden h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-colors hover:border-brand-coral hover:bg-brand-coral sm:flex",
+                "absolute top-1/2 z-10 h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-sm transition-colors hover:border-brand-coral hover:bg-brand-coral sm:flex",
+                playing !== null ? "flex max-sm:h-10 max-sm:w-10 max-sm:border-0 max-sm:bg-white/90 max-sm:text-brand-dark" : "hidden",
                 dir === "left" ? "left-4" : "right-4",
               )}
             >
