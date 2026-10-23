@@ -1,17 +1,21 @@
+import type { ReactNode } from "react";
 import { Shimmer } from "@/packages/module-common/Shimmer";
 
+/** "-----" beside the title; "---" on phones so long titles keep to one line. */
+function Dashes() {
+  return (
+    <span className="font-medium text-brand-coral" aria-hidden="true">
+      <span className="sm:hidden">---</span>
+      <span className="max-sm:hidden">-----</span>
+    </span>
+  );
+}
+
 /** Home section heading: "----- TITLE -----". */
-export function SectionTitle({ children, className = "" }: { children: string; className?: string }) {
+export function SectionTitle({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <h2 className={`text-center text-[14px] font-bold tracking-[0.1em] text-brand-dark sm:text-[16px] ${className}`}>
-      <span className="font-medium text-brand-coral" aria-hidden="true">
-        -----{" "}
-      </span>
-      {children}
-      <span className="font-medium text-brand-coral" aria-hidden="true">
-        {" "}
-        -----
-      </span>
+      <Dashes /> {children} <Dashes />
     </h2>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Container } from "@/packages/module-common/Container";
+import { SectionTitle } from "./SectionTitle";
 
 const BRANDS = [
   {
@@ -25,14 +26,11 @@ const BRANDS = [
 
 export function PremiumBrandsRow() {
   return (
-    <section aria-label="Premium Brands" className="w-full mt-[14px]">
+    <section aria-label="Brands you may try" className="w-full mt-[14px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
-        <h2 className="text-[14px] sm:text-[16px] font-bold text-center tracking-[0.1em] mb-[10px]">
-          <span className="text-brand-coral font-medium">----- </span>
-          <span className="text-brand-coral">LOVE FOR </span>
-          <span className="text-brand-dark">PREMIUM BRANDS </span>
-          <span className="text-brand-coral font-medium">-----</span>
-        </h2>
+        <SectionTitle className="mb-[10px]">
+          <span className="text-brand-coral">BRAND</span> YOU MAY TRY
+        </SectionTitle>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-[15px] w-full">
           {BRANDS.map((brand) => (

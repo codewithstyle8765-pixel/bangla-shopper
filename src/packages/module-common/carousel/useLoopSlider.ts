@@ -52,12 +52,13 @@ export function useLoopSlider(count: number, { interval = 5000, slideMs = 700, p
 
   const move = useCallback(
     (to: number) => {
-      if (!looped || moving.current) return;
+      /* Going to the slide already shown would set the lock with no slide to release it. */
+      if (!looped || moving.current || to === position) return;
       moving.current = true;
       setAnimate(true);
       setPosition(to);
     },
-    [looped],
+    [looped, position],
   );
 
   const next = useCallback(() => move(position + 1), [move, position]);

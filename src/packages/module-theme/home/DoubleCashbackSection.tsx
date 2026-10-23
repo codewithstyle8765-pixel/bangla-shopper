@@ -15,7 +15,7 @@ export async function DoubleCashbackSection({ className = "" }: DoubleCashbackSe
     <section className={`w-full mt-[10px] ${className}`}>
       <Container className="desk:max-w-[1298px]">
         <ProductCarousel
-          title="EARN DOUBLE CASHBACK ON THESE SELECTED PRODUCTS >"
+          title="EARN DOUBLE CASHBACK >"
           viewAllLink="/category/cashback"
           bleed={false}
         >

@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     title: `${product.name} | BanglaShoppers`,
     description: `Buy ${product.name} online at the best price in Bangladesh from BanglaShoppers. 100% authentic products.`,
     alternates: { canonical: `/product/${product.urlKey}` },
-    openGraph: { title: product.name, images: [product.gallery[0]] },
+    openGraph: { title: product.name, images: [product.image] },
   };
 }
 
@@ -55,7 +55,7 @@ async function ProductDetail({ params }: ProductPageProps) {
     name: product.name,
     sku: product.sku,
     description: descriptionSummary(product.descriptionHtml) || product.name,
-    image: product.gallery,
+    image: product.gallery.filter((_, i) => !product.videos?.some((v) => v.index === i)),
     ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
     ...(product.reviewCount
       ? { aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating, reviewCount: product.reviewCount } }
@@ -76,7 +76,7 @@ async function ProductDetail({ params }: ProductPageProps) {
         <Breadcrumbs items={product.breadcrumbs} />
 
         <div className="flex flex-col lg:flex-row items-start justify-start gap-[13px] desk:ml-px">
-          <ProductGallery className="desk:mt-[2px]" images={product.gallery} productName={product.name} discountPercent={discountPercent} />
+          <ProductGallery className="desk:mt-[2px]" images={product.gallery} videos={product.videos} productName={product.name} discountPercent={discountPercent} />
 
           <ProductSummary
             name={product.name}

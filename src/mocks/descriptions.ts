@@ -269,4 +269,48 @@ export const MOCK_DESCRIPTIONS: Record<string, string> = {
   <li>Suitable from birth.</li>
   <li>Imported from Germany. 100% authentic, sourced by BanglaShoppers.</li>
 </ul>`,
+
+  "absolute-new-york-supreme-slim-demi-matte-lipstick-peony-mlss59-1-3gm": `
+<p>Absolute New York Supreme Slim Demi Matte Lipstick in Peony is a soft, rosy pink with a comfortable demi-matte finish. The slim bullet glides on smoothly for precise application and weightless, all-day colour.</p>
+<iframe style="width: 100%; height: 35rem; margin-bottom: 30px" src="https://www.youtube.com/embed/48FKkYnXYKk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h3>Features</h3>
+<ul>
+  <li>High-pigment colour with full coverage in one swipe</li>
+  <li>Demi-matte finish that never feels dry</li>
+  <li>Slim bullet for precise lines without a liner</li>
+  <li>Long-lasting, transfer-resistant wear</li>
+</ul>
+<h3>How To Use</h3>
+<ol>
+  <li>Start with clean, moisturised lips.</li>
+  <li>Outline the lips using the slim tip, starting from the centre of the upper lip.</li>
+  <li>Fill in the rest of the lips and press together. Reapply as needed.</li>
+</ol>
+<h3>Good To Know</h3>
+<ul>
+  <li>Shade: Peony (MLSS59), 1.3 g.</li>
+  <li>Imported from the USA. 100% authentic, sourced by BanglaShoppers.</li>
+</ul>`,
+
+  "absolute-new-york-dual-ended-brow-brush-for-eyes-abmb31": `
+<p>Absolute New York Dual Ended Brow Brush pairs an angled brush for defining and filling brows with a spoolie for grooming and blending, so you get natural, polished brows with one tool.</p>
+<iframe style="width: 100%; height: 35rem; margin-bottom: 2.5rem" src="https://www.youtube.com/embed/vBjeZMONUxk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<h3>Features</h3>
+<ul>
+  <li>Angled brush for precise brow definition</li>
+  <li>Spoolie end to groom and blend colour</li>
+  <li>Soft synthetic bristles, suitable for powders and pomades</li>
+  <li>Slim handle for easy control</li>
+</ul>
+<h3>How To Use</h3>
+<ol>
+  <li>Brush brows upward with the spoolie.</li>
+  <li>Use the angled end to fill sparse areas with short, hair-like strokes.</li>
+  <li>Blend with the spoolie for a soft, natural finish.</li>
+</ol>
+<h3>Good To Know</h3>
+<ul>
+  <li>Code: ABMB31.</li>
+  <li>Imported from the USA. 100% authentic, sourced by BanglaShoppers.</li>
+</ul>`,
 };

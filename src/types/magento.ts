@@ -22,7 +22,13 @@ export interface MagentoProductDetail extends MagentoProduct {
   custom_attributesV2?: {
     items: Array<{ code: string; value?: string; selected_options?: Array<{ label: string }> }>;
   } | null;
-  media_gallery?: Array<{ url: string; position?: number; disabled?: boolean }>;
+  /** Images and videos; a video's `url` is its thumbnail. */
+  media_gallery?: Array<{
+    url: string;
+    position?: number;
+    disabled?: boolean;
+    video_content?: { video_url?: string | null; video_title?: string | null } | null;
+  }>;
   description?: { html: string } | null;
   /** Remaining quantity, only when at or below the admin "Only X left" threshold (10); null above it. */
   only_x_left_in_stock?: number | null;

@@ -36,5 +36,17 @@ export function usefulPageSizes(total: number, current: number): number[] {
   return sizes.includes(current as (typeof PLP_PAGE_SIZES)[number]) ? sizes : [...sizes, current].sort((a, b) => a - b);
 }
 
+/**
+ * Product attribute (text, "Visible on Catalog Pages on Storefront" = Yes) holding the product's YouTube link(s);
+ * several links may be separated by commas or new lines. Each becomes a video slide after the main image.
+ */
+export const PRODUCT_VIDEO_ATTRIBUTE = "youtube_video_url";
+
+/**
+ * Magento needs an email on every guest order. Guests who skip the optional email get `<phone>@GUEST_EMAIL_DOMAIN`;
+ * the domain should not receive mail (Magento's order emails to it bounce).
+ */
+export const GUEST_EMAIL_DOMAIN = "guest.banglashoppers.com";
+
 /** Public storefront origin (canonical URLs, structured data). */
 export const SITE_URL: string = process.env.NEXT_PUBLIC_SITE_URL || "https://www.banglashoppers.com";

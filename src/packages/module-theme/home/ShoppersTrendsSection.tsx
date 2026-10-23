@@ -15,7 +15,7 @@ export async function ShoppersTrendsSection({ className = "" }: ShoppersTrendsSe
     <section className={`w-full mt-[10px] ${className}`}>
       <Container className="desk:max-w-[1298px]">
         <TwoRowProductCarousel
-          title="SHOPPERS TRENDS NOW AT BANGLASHOPPERS >"
+          title="TRENDING NOW >"
           viewAllLink="/category/trends"
         >
           {products.map((item) => (

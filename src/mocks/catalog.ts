@@ -1,5 +1,6 @@
 import { DEMO_PRODUCTS } from "./products";
 import { MOCK_DESCRIPTIONS } from "./descriptions";
+import { PRODUCT_VIDEO_ATTRIBUTE } from "@/lib/config";
 import type {
   MagentoAggregation,
   MagentoCategory,
@@ -376,6 +377,12 @@ function demoGallery(product: MockProduct): string[] {
   return [own, ...others.slice(0, 5)];
 }
 
+/** Client videos from the live site (same YouTube links), sent in the product's YouTube attribute. */
+const MOCK_PRODUCT_VIDEOS: Record<string, string> = {
+  "absolute-new-york-supreme-slim-demi-matte-lipstick-peony-mlss59-1-3gm": "https://www.youtube.com/watch?v=48FKkYnXYKk",
+  "absolute-new-york-dual-ended-brow-brush-for-eyes-abmb31": "https://www.youtube.com/watch?v=vBjeZMONUxk",
+};
+
 /** Demo low-stock levels ("Only N left"); most products have plenty (null). */
 function mockStockLeft(uid: string): number | null {
   const n = uid.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
@@ -506,6 +513,7 @@ export function resolveProducts(vars: {
               items: [
                 { code: "brand", selected_options: [{ label: product.brand }] },
                 { code: "color", selected_options: [{ label: product.name.split(" - ")[1] ?? "" }] },
+                ...(MOCK_PRODUCT_VIDEOS[product.url_key] ? [{ code: PRODUCT_VIDEO_ATTRIBUTE, value: MOCK_PRODUCT_VIDEOS[product.url_key] }] : []),
               ],
             },
             categories: [productCategory(product)],

@@ -23,7 +23,10 @@ export interface ProductSummary {
 }
 
 export interface ProductDetail extends ProductSummary {
+  /** Gallery slides in order; a video slide holds its thumbnail. */
   gallery: string[];
+  /** YouTube videos in the gallery, by slide index. */
+  videos?: GalleryVideo[];
   shade?: string;
   ratingCount: number;
   breadcrumbs: Array<{ label: string; href?: string }>;
@@ -40,6 +43,12 @@ export interface ProductDetail extends ProductSummary {
   /** Configurable products: what the customer picks (Size: 88 ml / 236 ml) and the child product per combination. */
   options?: ProductOption[];
   variants?: ProductVariant[];
+}
+
+export interface GalleryVideo {
+  index: number;
+  youtubeId: string;
+  title?: string;
 }
 
 export interface ProductOption {

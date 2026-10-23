@@ -39,11 +39,11 @@ const SECTIONS: Record<HomeSectionId, Section> = {
   shop_by_concern: { render: (c) => <ShopByConcernSection tiles={c.shopByConcern} />, skeleton: () => <ShopByConcernSkeleton /> },
   shoppers_trends: {
     render: () => <ShoppersTrendsSection />,
-    skeleton: () => <ProductGridSkeleton title="SHOPPERS TRENDS NOW AT BANGLASHOPPERS >" count={6} className="mt-[10px]" />,
+    skeleton: () => <ProductGridSkeleton title="TRENDING NOW >" count={6} className="mt-[10px]" />,
   },
   double_cashback: {
     render: () => <DoubleCashbackSection />,
-    skeleton: () => <ProductGridSkeleton title="EARN DOUBLE CASHBACK ON THESE SELECTED PRODUCTS >" count={6} className="mt-[10px]" />,
+    skeleton: () => <ProductGridSkeleton title="EARN DOUBLE CASHBACK >" count={6} className="mt-[10px]" />,
   },
   beauty_tech: {
     render: () => <BeautyTechDealSection />,

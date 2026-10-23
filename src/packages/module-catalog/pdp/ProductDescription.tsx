@@ -1,5 +1,6 @@
 import { NextImage } from "@/packages/module-common/NextImage";
 import { GuaranteeIcon } from "@/packages/module-common/icons/TrustIcons";
+import { YouTubeVideo } from "@/packages/module-common/YouTubeVideo";
 import { parseDescription, type DescriptionImage, type DescriptionSection } from "@/utils/product-description";
 import { IngredientList } from "./IngredientList";
 import { TabHeading } from "./TabHeading";
@@ -95,6 +96,10 @@ function Section({ section }: { section: DescriptionSection }) {
   }
 }
 
+function Videos({ ids, name }: { ids: string[]; name: string }) {
+  return ids.map((id, i) => <YouTubeVideo key={`${id}-${i}`} id={id} title={`${name} video`} className="mt-4" />);
+}
+
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-2 text-[14px]">
@@ -110,7 +115,7 @@ function Fact({ label, value }: { label: string; value: string }) {
  * panel straight after the intro (same markup, grid order).
  */
 export function ProductDescription({ html, name, brand, origin }: ProductDescriptionProps) {
-  const { introHtml, introImages, sections } = parseDescription(html);
+  const { introHtml, introImages, introVideos, sections } = parseDescription(html);
   const notes = sections.filter((s) => s.kind === "notes");
   const story = sections.filter((s) => s.kind !== "notes");
   const features = sections.find((s) => s.kind === "features");
@@ -136,6 +141,7 @@ export function ProductDescription({ html, name, brand, origin }: ProductDescrip
             {brand ? ` by ${brand}` : ""}. Detailed product information will be available soon.
           </p>
         )}
+        <Videos ids={introVideos} name={name} />
       </div>
 
       <aside aria-label="At a glance" className="lg:sticky lg:top-[calc(var(--pdp-sticky-top,var(--sticky-header))+16px)] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
@@ -148,6 +154,7 @@ export function ProductDescription({ html, name, brand, origin }: ProductDescrip
           <div key={section.title} className="mt-5 px-1">
             <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-brand-coral">{section.title}</p>
             <Section section={section} />
+            <Videos ids={section.videos} name={name} />
           </div>
         ))}
 
@@ -166,6 +173,7 @@ export function ProductDescription({ html, name, brand, origin }: ProductDescrip
             <section key={section.title}>
               <TabHeading>{section.title}</TabHeading>
               <Section section={section} />
+              <Videos ids={section.videos} name={name} />
             </section>
           ))}
         </div>

@@ -235,8 +235,8 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
   const total = Math.max(0, cart.subtotal - cart.discount - (rewardApplied?.amount ?? 0) + (selectedShipping?.amount ?? 0));
   const newShippingDefaults = customer ? { firstName: customer.firstName, lastName: customer.lastName } : undefined;
 
-  const emailValid = EMAIL_PATTERN.test(email.trim());
-  const emailError = (emailTouched && !emailValid ? (email ? "Enter a valid email address." : "Email address is required.") : undefined) ?? errors.email;
+  const emailValid = !email.trim() || EMAIL_PATTERN.test(email.trim());
+  const emailError = (emailTouched && !emailValid ? "Enter a valid email address." : undefined) ?? errors.email;
   const missing = [
     !customer && !emailValid && "email",
     !usingSavedShipping && !shippingValid && "shipping address",
@@ -302,12 +302,11 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
               label="Email address"
               type="email"
               autoComplete="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => setEmailTouched(true)}
               error={emailError}
-              hint="You can create an account after checkout."
+              hint="For your order confirmation. You can create an account after checkout."
               reserveErrorSpace
               wrapperClassName="mb-3"
             />

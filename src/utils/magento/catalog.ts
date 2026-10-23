@@ -1,4 +1,4 @@
-import { PLP_PAGE_SIZE, PLP_PAGE_SIZES } from "@/lib/config";
+import { PLP_PAGE_SIZE, PLP_PAGE_SIZES, PRODUCT_VIDEO_ATTRIBUTE } from "@/lib/config";
 import {
   CATEGORY_QUERY,
   NAVIGATION_QUERY,
@@ -27,6 +27,7 @@ import type {
   SortOption,
 } from "@/types/storefront";
 import { graphqlRequestCached } from "@/lib/cached-graphql";
+import { youTubeId, youTubeThumbnail } from "@/utils/video-url";
 
 const PLACEHOLDER_IMAGE = "/assets/images/placeholder.svg";
 
@@ -222,14 +223,24 @@ export async function getProductDetail(urlKey: string): Promise<ProductDetail | 
   if (!item) return null;
 
   const base = mapProduct(item);
-  const gallery = (item.media_gallery ?? [])
+  const media = (item.media_gallery ?? [])
     .filter((m) => !m.disabled)
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-    .map((m) => m.url);
+    .map((m) => ({ url: m.url, isVideo: Boolean(m.video_content), youtubeId: youTubeId(m.video_content?.video_url), title: m.video_content?.video_title ?? undefined }))
+    /* Non-YouTube videos (Vimeo) have no player here, so they are left out rather than shown as a still. */
+    .filter((m) => !m.isVideo || m.youtubeId);
   const attribute = (code: string) => {
     const attr = item.custom_attributesV2?.items.find((a) => a.code === code);
     return attr?.selected_options?.[0]?.label ?? attr?.value;
   };
+  /* Videos from the product's YouTube attribute go right after the main image, unless the gallery already has them. */
+  const linked = (attribute(PRODUCT_VIDEO_ATTRIBUTE) ?? "")
+    .split(/[\s,]+/)
+    .map((url) => youTubeId(url))
+    .filter((id, i, all): id is string => Boolean(id) && all.indexOf(id) === i && !media.some((m) => m.youtubeId === id));
+  if (linked.length) media.splice(Math.min(1, media.length), 0, ...linked.map((id) => ({ url: youTubeThumbnail(id), isVideo: true, youtubeId: id, title: undefined })));
+  const gallery = media.map((m) => m.url);
+  const videos = media.flatMap((m, index) => (m.youtubeId ? [{ index, youtubeId: m.youtubeId, title: m.title }] : []));
   const deepest = [...(item.categories ?? [])].sort((a, b) => b.url_path.length - a.url_path.length)[0];
   const categoryHref = deepest ? `/category/${deepest.url_path}` : undefined;
 
@@ -238,6 +249,7 @@ export async function getProductDetail(urlKey: string): Promise<ProductDetail | 
     brand: attribute("brand"),
     shade: attribute("color"),
     gallery: gallery.length ? gallery : [base.image],
+    videos: gallery.length ? videos : [],
     ratingCount: base.reviewCount,
     breadcrumbs: [
       { label: "Home", href: "/" },

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SectionTitleSkeleton } from "./SectionTitle";
+import { SectionTitle, SectionTitleSkeleton } from "./SectionTitle";
 import { Shimmer } from "@/packages/module-common/Shimmer";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Container } from "@/packages/module-common/Container";
@@ -35,11 +35,7 @@ export function VipOffersGrid() {
   return (
     <section aria-label="VIP Offers" className="w-full mt-[14px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
-        <h2 className="text-[14px] sm:text-[16px] font-bold text-brand-dark text-center tracking-[0.1em] mb-[11px]">
-          <span className="text-brand-coral font-medium">----- </span>
-          SUPER OFFER FOR VIP CUSTOMERS
-          <span className="text-brand-coral font-medium"> -----</span>
-        </h2>
+        <SectionTitle className="mb-[11px]">DEALS FOR VIP CUSTOMER</SectionTitle>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-[15px] w-full">
           {VIP_OFFERS.map((offer) => (

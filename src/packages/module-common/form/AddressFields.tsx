@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { addressToFields, normalizePhone, validateAddress, type AddressField } from "@/utils/address";
 import { loadPostcodes, postcodesForArea, findPostcodeForArea, type PostcodeTable } from "@/utils/bd-postcode";
 import type { AddressInput, BdDivision } from "@/types/storefront";
-import { SelectField, TextareaField, TextField, type SelectOption } from "./Field";
+import { SelectField, TextField, type SelectOption } from "./Field";
 
 interface AddressFieldsProps {
   idPrefix: string;
@@ -183,11 +183,6 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => update(field, e.target.value),
   });
 
-  const textareaProps = (field: AddressField) => ({
-    ...base(field),
-    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => update(field, e.target.value),
-  });
-
   const selectProps = (field: AddressField) => ({ ...base(field), onChange: (value: string) => update(field, value) });
 
   return (
@@ -215,18 +210,15 @@ export function AddressFields({ idPrefix, namePrefix = "", defaultValue, errors 
           placeholder="8801XXXXXXXXX"
         />
 
-        {/* Street Address textarea right after Full Name and Phone Number */}
-        <div className="sm:col-span-2">
-          <TextareaField
-            {...textareaProps("street0")}
-            label="Street Address"
-            required
-            autoComplete="address-line1"
-            placeholder="House / flat, road"
-            rows={2}
-            className="resize-none"
-          />
-        </div>
+        {/* Street Address right after Full Name and Phone Number; a single-line input so browser autofill fills it */}
+        <TextField
+          {...props("street0")}
+          label="Street Address"
+          required
+          autoComplete="address-line1"
+          placeholder="House / flat, road"
+          wrapperClassName="sm:col-span-2"
+        />
 
         {/* Country and Division */}
         <SelectField {...selectProps("countryCode")} label="Country" required options={countries} />

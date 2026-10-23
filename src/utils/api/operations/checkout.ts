@@ -3,6 +3,7 @@ import * as checkoutApi from "@/utils/magento/checkout";
 import type { CheckoutAddressRef, PlaceOrderInput } from "@/utils/magento/checkout";
 import { prefixErrors, readAddress, validateAddress } from "@/utils/address";
 import { getCustomerToken } from "@/utils/session";
+import { GUEST_EMAIL_DOMAIN } from "@/lib/config";
 import { attempt, defineOperation, echo, EMAIL_PATTERN, errorMessage, field, formInput, hasErrors, invalid, object } from "../define";
 
 type Estimate = Awaited<ReturnType<typeof checkoutApi.estimateCheckout>>;
@@ -24,7 +25,7 @@ export const checkoutOperations = {
       const fieldErrors: Record<string, string> = {};
 
       const email = field(data, "email");
-      if (isGuest && !EMAIL_PATTERN.test(email)) fieldErrors.email = "Enter a valid email address.";
+      if (isGuest && email && !EMAIL_PATTERN.test(email)) fieldErrors.email = "Enter a valid email address.";
 
       const resolveRef = (kind: "shipping" | "billing"): CheckoutAddressRef => {
         const savedId = field(data, `${kind}AddressId`) || "new";
@@ -44,9 +45,13 @@ export const checkoutOperations = {
       if (!paymentMethod) fieldErrors.paymentMethod = "Choose a payment method.";
       if (hasErrors(fieldErrors)) return invalid(fieldErrors, data);
 
+      /* Email is optional for guests, but Magento requires one on the cart: fall back to one built from the phone. */
+      const phone = shipping.address?.phone.replace(/\D/g, "") ?? "";
+      const guestEmail = email || (phone ? `${phone}@${GUEST_EMAIL_DOMAIN}` : "");
+
       try {
         const placed = await checkoutApi.placeOrder({
-          email: isGuest ? email : undefined,
+          email: isGuest ? guestEmail : undefined,
           shipping,
           billing,
           shippingMethod,

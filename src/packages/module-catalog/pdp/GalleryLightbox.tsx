@@ -4,10 +4,15 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import clsx from "clsx";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { useScrollLock } from "@/packages/module-common/useScrollLock";
+import { PlayBadge, YouTubeFrame } from "@/packages/module-common/YouTubeVideo";
+import { isYouTubeThumbnail } from "@/utils/video-url";
+import type { GalleryVideo } from "@/types/storefront";
 
 interface GalleryLightboxProps {
   open: boolean;
   images: string[];
+  /** Slides that are YouTube videos; they play on tap instead of zooming. */
+  videos?: GalleryVideo[];
   index: number;
   productName: string;
   onIndexChange: (index: number) => void;
@@ -36,7 +41,7 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 const distance = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y);
 
 /** Full-screen image viewer: swipe or arrows to browse, pinch / double-tap / wheel to zoom, thumbnail strip below, Escape or × to close. */
-export function GalleryLightbox({ open, images, index, productName, onIndexChange, onClose, caption, onBack }: GalleryLightboxProps) {
+export function GalleryLightbox({ open, images, videos, index, productName, onIndexChange, onClose, caption, onBack }: GalleryLightboxProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
   /* A tap that starts and ends on the dark area closes the viewer (a swipe off the photo does not). */
@@ -52,6 +57,7 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
   const [zoom, setZoom] = useState(NO_ZOOM);
   const [zoomedIndex, setZoomedIndex] = useState(index);
   const [gesturing, setGesturing] = useState(false);
+  const [playing, setPlaying] = useState<number | null>(null);
   const zoomRef = useRef(zoom);
   zoomRef.current = zoom;
   if (open && !mounted) setMounted(true);
@@ -59,8 +65,11 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
     setZoomedIndex(index);
     setZoom(NO_ZOOM);
   }
+  if (playing !== null && (playing !== index || !open)) setPlaying(null);
   const count = images.length;
   const zoomed = zoom.s > 1;
+  const videoAt = (i: number) => videos?.find((v) => v.index === i);
+  const onVideo = Boolean(videoAt(index));
 
   useScrollLock(mounted);
 
@@ -114,9 +123,10 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
+    /* A video slide only swipes: no capture, so the tap reaches its play button. */
+    if (!onVideo) e.currentTarget.setPointerCapture(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.current.size === 2) startPinch();
+    if (pointers.current.size === 2 && !onVideo) startPinch();
     else if (pointers.current.size === 1) drag.current = { x: e.clientX, y: e.clientY, zoom: zoomRef.current, moved: false };
   };
 
@@ -162,7 +172,7 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
       go(dx < 0 ? 1 : -1);
       return;
     }
-    if (d.moved) return;
+    if (d.moved || onVideo) return;
     const now = e.timeStamp;
     if (now - lastTap.current < DOUBLE_TAP_MS) {
       lastTap.current = 0;
@@ -175,6 +185,7 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
     const stage = stageRef.current;
     if (!stage || !mounted) return;
     const onWheel = (e: WheelEvent) => {
+      if (onVideo) return;
       e.preventDefault();
       const z = zoomRef.current;
       setZoom(zoomAt(z, z.s * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.002)), e.clientX, e.clientY));
@@ -242,33 +253,52 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
           className={clsx(
             "relative aspect-square w-full touch-none select-none overflow-hidden rounded-[8px] bg-white",
             caption ? "max-w-[min(100%,calc(100dvh-22rem),56rem)]" : "max-w-[min(100%,calc(100dvh-16rem),56rem)]",
-            zoomed ? (gesturing ? "cursor-grabbing" : "cursor-grab") : "cursor-zoom-in",
+            !onVideo && (zoomed ? (gesturing ? "cursor-grabbing" : "cursor-grab") : "cursor-zoom-in"),
           )}
         >
           <div
             className="flex h-full w-full transition-transform duration-300 ease-(--ease-panel) motion-reduce:transition-none"
             style={{ transform: `translateX(-${index * 100}%)` }}
           >
-            {images.map((img, i) => (
-              <div key={i} aria-hidden={i !== index} className="h-full w-full shrink-0 overflow-hidden">
-                <div
-                  className={clsx("h-full w-full", !gesturing && "transition-transform duration-200 ease-(--ease-panel) motion-reduce:transition-none")}
-                  style={i === index && zoomed ? { transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.s})` } : undefined}
-                >
-                  <NextImage
-                    src={img}
-                    alt={i === index ? `${productName} image ${i + 1} of ${count}` : ""}
-                    width={1800}
-                    height={1800}
-                    quality={90}
-                    sizes="(min-width: 64rem) 1800px, 200vw"
-                    loading={Math.abs(i - index) <= 1 ? "eager" : "lazy"}
-                    draggable={false}
-                    className="h-full w-full object-contain"
-                  />
+            {images.map((img, i) => {
+              const video = videoAt(i);
+              return (
+                <div key={i} aria-hidden={i !== index} className={clsx("relative h-full w-full shrink-0 overflow-hidden", video && "bg-brand-black")}>
+                  {video && playing === i ? (
+                    <YouTubeFrame id={video.youtubeId} title={video.title || `${productName} video`} />
+                  ) : (
+                    <div
+                      className={clsx("h-full w-full", !gesturing && "transition-transform duration-200 ease-(--ease-panel) motion-reduce:transition-none")}
+                      style={i === index && zoomed ? { transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.s})` } : undefined}
+                    >
+                      <NextImage
+                        src={img}
+                        alt={i === index ? (video ? `${productName} video` : `${productName} image ${i + 1} of ${count}`) : ""}
+                        width={1800}
+                        height={1800}
+                        quality={90}
+                        sizes="(min-width: 64rem) 1800px, 200vw"
+                        loading={Math.abs(i - index) <= 1 ? "eager" : "lazy"}
+                        draggable={false}
+                        unoptimized={isYouTubeThumbnail(img)}
+                        className="h-full w-full object-contain"
+                      />
+                      {video && (
+                        <button
+                          type="button"
+                          onClick={() => setPlaying(i)}
+                          aria-label="Play video"
+                          tabIndex={i === index ? 0 : -1}
+                          className="absolute inset-0 grid cursor-pointer place-items-center"
+                        >
+                          <PlayBadge />
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         {caption ? (
@@ -277,7 +307,7 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
           <>
             <p className="mt-3 line-clamp-2 max-w-[56rem] text-center text-[14px] leading-[1.4] text-white/90 sm:text-[15px]">{productName}</p>
             <p className="mt-1 text-center text-[12px] text-white/55">
-              {zoomed ? "Drag to move · double-tap to reset" : <><span className="lg:hidden">Pinch or double-tap to zoom</span><span className="max-lg:hidden">Scroll or double-click to zoom</span></>}
+              {onVideo ? "Tap play to watch the video" : zoomed ? "Drag to move · double-tap to reset" : <><span className="lg:hidden">Pinch or double-tap to zoom</span><span className="max-lg:hidden">Scroll or double-click to zoom</span></>}
             </p>
           </>
         )}
@@ -312,14 +342,15 @@ export function GalleryLightbox({ open, images, index, productName, onIndexChang
               key={i}
               type="button"
               onClick={() => onIndexChange(i)}
-              aria-label={`Show image ${i + 1}`}
+              aria-label={videoAt(i) ? "Show video" : `Show image ${i + 1}`}
               aria-current={i === index ? "true" : undefined}
               className={clsx(
                 "relative h-12 w-12 shrink-0 cursor-pointer overflow-hidden rounded-[6px] bg-white transition-opacity after:pointer-events-none after:absolute after:inset-0 after:rounded-[6px] sm:h-16 sm:w-16",
                 i === index ? "after:ring-2 after:ring-inset after:ring-brand-coral" : "opacity-60 hover:opacity-100",
               )}
             >
-              <NextImage src={img} alt="" width={64} height={64} className="h-full w-full object-cover" />
+              <NextImage src={img} alt="" width={64} height={64} unoptimized={isYouTubeThumbnail(img)} className={clsx("h-full w-full object-cover", videoAt(i) && "scale-[1.34]")} />
+              {videoAt(i) && <PlayBadge small className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />}
             </button>
           ))}
         </div>

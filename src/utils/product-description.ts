@@ -3,6 +3,8 @@
  * intro, then one section per h2/h3/h4, typed by its title ("Features", "How To Use", "Ingredients"...).
  */
 
+import { youTubeId } from "@/utils/video-url";
+
 export type DescriptionSectionKind = "features" | "steps" | "ingredients" | "notes" | "content";
 
 export interface DescriptionSection {
@@ -13,6 +15,8 @@ export interface DescriptionSection {
   /** Sanitised HTML for free-form sections, without its images. */
   html: string;
   images: DescriptionImage[];
+  /** YouTube IDs of the videos embedded in the section. */
+  videos: string[];
 }
 
 export interface DescriptionImage {
@@ -23,6 +27,7 @@ export interface DescriptionImage {
 export interface ParsedDescription {
   introHtml: string;
   introImages: DescriptionImage[];
+  introVideos: string[];
   sections: DescriptionSection[];
 }
 
@@ -52,6 +57,25 @@ export function sanitizeHtml(html: string) {
     .replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, "$1=$2#$2");
 }
 
+const VIDEO_MARK = /<div data-youtube="([\w-]{11})"><\/div>/g;
+
+/** YouTube iframes become placeholders that survive sanitising; every other iframe is still dropped. */
+const markYouTube = (html: string) =>
+  html.replace(/<iframe\b[^>]*\ssrc\s*=\s*["']([^"']+)["'][^>]*>[\s\S]*?<\/iframe>/gi, (tag, src: string) => {
+    const id = youTubeId(src);
+    return id ? `<div data-youtube="${id}"></div>` : tag;
+  });
+
+/** Videos are pulled out so the page renders them with its own click-to-play player. */
+function takeVideos(html: string): { html: string; videos: string[] } {
+  const videos: string[] = [];
+  const rest = html.replace(VIDEO_MARK, (_, id: string) => {
+    videos.push(id);
+    return "";
+  });
+  return { html: rest, videos };
+}
+
 /** Images are pulled out so the page renders them with next/image. */
 function takeImages(html: string): { html: string; images: DescriptionImage[] } {
   const images: DescriptionImage[] = [];
@@ -67,21 +91,27 @@ const listItems = (html: string) => [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>
 const paragraphs = (html: string) => [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map((m) => stripTags(m[1])).filter(Boolean);
 
 export function parseDescription(raw: string): ParsedDescription {
-  const html = sanitizeHtml(raw ?? "").trim();
+  const html = sanitizeHtml(markYouTube(raw ?? "")).trim();
   const headings = [...html.matchAll(/<h([2-4])[^>]*>([\s\S]*?)<\/h\1>/gi)];
-  const intro = takeImages(headings.length ? html.slice(0, headings[0].index) : html);
+  const introVideos = takeVideos(headings.length ? html.slice(0, headings[0].index) : html);
+  const intro = takeImages(introVideos.html);
 
   const sections = headings.map((h, i) => {
     const title = stripTags(h[2]);
-    const body = html.slice(h.index! + h[0].length, headings[i + 1]?.index ?? html.length).trim();
+    const { html: body, videos } = takeVideos(html.slice(h.index! + h[0].length, headings[i + 1]?.index ?? html.length).trim());
     const kind = KINDS.find(([re]) => re.test(title))?.[1] ?? "content";
     const items =
       kind === "ingredients" ? [stripTags(body)] : kind === "content" ? [] : listItems(body).length ? listItems(body) : paragraphs(body);
     const content = kind === "content" ? takeImages(body) : { html: "", images: [] };
-    return { title, kind, items: items.filter(Boolean), ...content };
+    return { title, kind, items: items.filter(Boolean), ...content, videos };
   });
 
-  return { introHtml: intro.html, introImages: intro.images, sections: sections.filter((s) => s.items.length || s.html || s.images.length) };
+  return {
+    introHtml: intro.html,
+    introImages: intro.images,
+    introVideos: introVideos.videos,
+    sections: sections.filter((s) => s.items.length || s.html || s.images.length || s.videos.length),
+  };
 }
 
 /** Plain-text summary for meta tags and Product JSON-LD. */

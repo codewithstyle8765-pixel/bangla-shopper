@@ -73,7 +73,12 @@ export const PRODUCT_DETAIL_QUERY = gql`
     products(filter: { url_key: { eq: $urlKey } }) {
       items {
         ${PRODUCT_CARD_FIELDS}
-        media_gallery { url position disabled }
+        media_gallery {
+          url
+          position
+          disabled
+          ... on ProductVideo { video_content { video_url video_title } }
+        }
         description { html }
         only_x_left_in_stock
         custom_attributesV2(filters: { is_visible_on_front: true }) {

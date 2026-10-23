@@ -7,10 +7,15 @@ import {
 } from "@/packages/module-common/carousel/useLoopSlider";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { NotchArrow } from "@/packages/module-common/icons/Shapes";
+import { PlayBadge, YouTubeFrame } from "@/packages/module-common/YouTubeVideo";
+import { isYouTubeThumbnail } from "@/utils/video-url";
+import type { GalleryVideo } from "@/types/storefront";
 import { GalleryLightbox } from "./GalleryLightbox";
 
 export interface ProductGalleryProps {
   images?: string[];
+  /** Slides that are YouTube videos; `images[index]` is the video's thumbnail. */
+  videos?: GalleryVideo[];
   productName?: string;
   discountPercent?: number;
   className?: string;
@@ -52,21 +57,27 @@ const clamp = (v: number, max: number) => Math.min(max, Math.max(0, v));
 
 export function ProductGallery({
   images = DEFAULT_GALLERY_IMAGES,
+  videos = [],
   productName = "Absolute New York Supreme Slim Demi Matte Lipstick",
   discountPercent,
   className = "",
 }: ProductGalleryProps) {
   const count = images.length;
+  const videoAt = (index: number) => videos.find((v) => v.index === index);
   const [paused, setPaused] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
+  /* The slide whose video is playing; leaving that slide stops it. */
+  const [playing, setPlaying] = useState<number | null>(null);
   const swiped = useRef(false);
   const touches = useRef(0);
   /* Endless loop like the hero: from the first image a swipe back shows the last one sliding in from the left. */
   const { active, goTo, next, prev, track } = useLoopSlider(count, {
     interval: AUTOPLAY_MS,
     slideMs: 500,
-    paused: paused || viewerOpen,
+    paused: paused || viewerOpen || playing !== null,
   });
+  if (playing !== null && playing !== active) setPlaying(null);
+  const activeVideo = videoAt(active);
   const [thumbStart, setThumbStart] = useState(0);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const [zoomable, setZoomable] = useState(false);
@@ -83,7 +94,7 @@ export function ProductGallery({
   }, []);
 
   const moveLens = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!zoomable) return;
+    if (!zoomable || activeVideo) return;
     const r = e.currentTarget.getBoundingClientRect();
     const summary = rootRef.current?.nextElementSibling?.getBoundingClientRect();
     const paneWidth = summary ? Math.max(r.width / 2, summary.right - r.right - PANE_GAP + PANE_BLEED) : r.width;
@@ -169,7 +180,7 @@ export function ProductGallery({
                 key={idx}
                 type="button"
                 onClick={() => goTo(idx)}
-                aria-label={`Show image ${idx + 1}`}
+                aria-label={videoAt(idx) ? "Show video" : `Show image ${idx + 1}`}
                 aria-current={idx === active ? "true" : undefined}
                 tabIndex={
                   idx >= thumbStart && idx < thumbStart + VISIBLE_THUMBS
@@ -187,8 +198,10 @@ export function ProductGallery({
                   alt=""
                   width={88}
                   height={88}
-                  className="w-full h-full object-cover"
+                  unoptimized={isYouTubeThumbnail(img)}
+                  className={`w-full h-full object-cover ${videoAt(idx) ? "scale-[1.34]" : ""}`}
                 />
+                {videoAt(idx) && <PlayBadge small className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />}
               </button>
             ))}
           </div>
@@ -230,9 +243,10 @@ export function ProductGallery({
           }}
           onClick={() => {
             if (swiped.current) swiped.current = false;
+            else if (activeVideo) setPlaying(active);
             else setViewerOpen(true);
           }}
-          className={`w-full aspect-square bg-white relative overflow-hidden group select-none touch-pan-y touch-pinch-zoom ${zoomable ? "cursor-zoom-in" : "cursor-pointer"}`}
+          className={`w-full aspect-square bg-white relative overflow-hidden group select-none touch-pan-y touch-pinch-zoom ${zoomable && !activeVideo ? "cursor-zoom-in" : "cursor-pointer"}`}
         >
           <button
             type="button"
@@ -264,6 +278,7 @@ export function ProductGallery({
               /* Copies at either end of the loop are decorative. */
               const copy = count > 1 && (i === 0 || i === count + 1);
               const idx = count > 1 ? (i - 1 + count) % count : i;
+              const video = videoAt(idx);
               return (
                 <div
                   key={i}
@@ -271,30 +286,45 @@ export function ProductGallery({
                   aria-roledescription={copy ? undefined : "slide"}
                   aria-label={copy ? undefined : `${idx + 1} of ${count}`}
                   aria-hidden={copy || idx !== active}
-                  className="w-full h-full shrink-0 flex items-center justify-center overflow-hidden"
+                  className={`relative w-full h-full shrink-0 flex items-center justify-center overflow-hidden ${video ? "bg-brand-black" : ""}`}
                 >
-                  <NextImage
-                    src={img}
-                    alt={
-                      idx === 0
-                        ? productName
-                        : `${productName} image ${idx + 1}`
-                    }
-                    width={571}
-                    height={571}
-                    quality={90}
-                    sizes="(min-width: 768px) 571px, 100vw"
-                    priority={!copy && idx === 0}
-                    loading={idx === 0 ? undefined : "eager"}
-                    draggable={false}
-                    className="w-full h-full object-contain transition-transform duration-300 md:max-lg:group-hover:scale-105"
-                  />
+                  {video && !copy && playing === idx ? (
+                    <YouTubeFrame id={video.youtubeId} title={video.title || `${productName} video`} />
+                  ) : (
+                    <>
+                      <NextImage
+                        src={img}
+                        alt={
+                          video
+                            ? `${productName} video`
+                            : idx === 0
+                              ? productName
+                              : `${productName} image ${idx + 1}`
+                        }
+                        width={571}
+                        height={571}
+                        quality={90}
+                        sizes="(min-width: 768px) 571px, 100vw"
+                        priority={!copy && idx === 0}
+                        loading={idx === 0 ? undefined : "eager"}
+                        draggable={false}
+                        unoptimized={isYouTubeThumbnail(img)}
+                        className="w-full h-full object-contain transition-transform duration-300 md:max-lg:group-hover:scale-105"
+                      />
+                      {video && (
+                        <span className="pointer-events-none absolute inset-0 grid place-items-center">
+                          <PlayBadge />
+                          <span className="sr-only">Play video</span>
+                        </span>
+                      )}
+                    </>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {lens?.on && (
+          {lens?.on && !activeVideo && (
             <div
               aria-hidden="true"
               className="pointer-events-none absolute z-10 border border-brand-dark/25 bg-white/35"
@@ -307,7 +337,7 @@ export function ProductGallery({
           <div
             aria-hidden="true"
             className={`pointer-events-none absolute left-[calc(100%+13px)] top-0 z-30 hidden aspect-square w-full overflow-hidden border border-card-border bg-white shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-opacity duration-150 lg:block ${
-              lens?.on ? "opacity-100" : "invisible opacity-0"
+              lens?.on && !activeVideo ? "opacity-100" : "invisible opacity-0"
             }`}
             style={lens ? { width: lens.paneWidth, height: lens.size } : undefined}
           >
@@ -322,6 +352,7 @@ export function ProductGallery({
               <NextImage
                 src={images[active] ?? images[0]}
                 alt=""
+                unoptimized={isYouTubeThumbnail(images[active] ?? images[0])}
                 width={571 * ZOOM}
                 height={571 * ZOOM}
                 quality={90}
@@ -335,6 +366,7 @@ export function ProductGallery({
         <GalleryLightbox
           open={viewerOpen}
           images={images}
+          videos={videos}
           index={active}
           productName={productName}
           onIndexChange={goTo}
@@ -343,19 +375,33 @@ export function ProductGallery({
 
         {count > 1 && (
           <div className="sm:hidden flex w-full items-center justify-center gap-1.5 mt-3 mb-2">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => goTo(idx)}
-                className={`transition-all cursor-pointer ${
-                  active === idx
-                    ? "w-5 h-1.5 bg-black rounded-full"
-                    : "w-1.5 h-1.5 bg-neutral-300 rounded-full hover:bg-neutral-400"
-                }`}
-                aria-label={`Show image ${idx + 1}`}
-              />
-            ))}
+            {images.map((_, idx) =>
+              videoAt(idx) ? (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => goTo(idx)}
+                  className={`grid h-3 w-3 cursor-pointer place-items-center transition-colors ${active === idx ? "text-brand-coral" : "text-neutral-400 hover:text-neutral-500"}`}
+                  aria-label="Show video"
+                >
+                  <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true">
+                    <path d="M2 1v8l7-4z" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => goTo(idx)}
+                  className={`transition-all cursor-pointer ${
+                    active === idx
+                      ? "w-5 h-1.5 bg-black rounded-full"
+                      : "w-1.5 h-1.5 bg-neutral-300 rounded-full hover:bg-neutral-400"
+                  }`}
+                  aria-label={`Show image ${idx + 1}`}
+                />
+              ),
+            )}
           </div>
         )}
       </div>
