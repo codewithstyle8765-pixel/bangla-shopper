@@ -1,11 +1,12 @@
 import type { Operation } from "../define";
+import { affiliateOperations } from "./affiliate";
 import { cartOperations } from "./cart";
 import { catalogOperations } from "./catalog";
 import { checkoutOperations } from "./checkout";
 import { customerOperations } from "./customer";
 
 /** Everything `/api/graphql` will run. Server only; the browser imports types from here, never values. */
-export const OPERATIONS = { ...cartOperations, ...catalogOperations, ...checkoutOperations, ...customerOperations };
+export const OPERATIONS = { ...affiliateOperations, ...cartOperations, ...catalogOperations, ...checkoutOperations, ...customerOperations };
 
 type Operations = typeof OPERATIONS;
 

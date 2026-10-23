@@ -405,3 +405,126 @@ export interface BdDivision {
   name: string;
   cities: Array<{ name: string; areas: string[] }>;
 }
+
+/* ───────────── Affiliate program (Mirasvit Affiliate) ───────────── */
+
+export type AffiliateStatus = "none" | "pending" | "approved";
+
+/** One commission rule, e.g. value "3%" + text "of order amount from first order". */
+export interface AffiliateCommission {
+  value: string;
+  text: string;
+}
+
+/** An affiliate group's rate within a program; groups climb by referred orders. */
+export interface AffiliateGroupRate {
+  name: string;
+  description: string;
+  minOrders: number;
+  commissions: AffiliateCommission[];
+}
+
+export interface AffiliateProgram {
+  id: string;
+  name: string;
+  type: string;
+  description?: string;
+  /** What the signed-in affiliate's own group earns. */
+  commissions: AffiliateCommission[];
+  groups: AffiliateGroupRate[];
+}
+
+export interface AffiliateCoupon {
+  program: string;
+  description?: string;
+  code: string;
+  discount: string;
+}
+
+export interface AffiliateBanner {
+  id: string;
+  title: string;
+  image: string;
+  width: number;
+  height: number;
+  clicks: number;
+  impressions: number;
+  url: string;
+}
+
+export interface AffiliateBalance {
+  current: number;
+  onHold: number;
+  lifetime: number;
+  paid: number;
+  openWithdrawals: number;
+  minPayout: number;
+}
+
+export interface AffiliateProfile {
+  website: string;
+  instagram: string;
+  twitter: string;
+  source: string;
+  paymentMethod: string;
+  paymentDetails: string;
+  notifications: boolean;
+}
+
+export interface AffiliateWidgetProduct {
+  name: string;
+  image: string;
+  price: number;
+}
+
+export interface AffiliateAccount {
+  status: AffiliateStatus;
+  group: string;
+  referralUrl: string;
+  ordersReferred: number;
+  balance: AffiliateBalance;
+  programs: AffiliateProgram[];
+  coupons: AffiliateCoupon[];
+  banners: AffiliateBanner[];
+  profile: AffiliateProfile;
+  paymentMethods: Array<{ value: string; label: string }>;
+  sources: string[];
+  widgetProducts: AffiliateWidgetProduct[];
+}
+
+/** Public program summary for the "Become an Affiliate" page. */
+export interface AffiliateOverview {
+  minPayout: number;
+  programs: AffiliateProgram[];
+}
+
+export interface AffiliateTransaction {
+  id: string;
+  date: string;
+  amount: number;
+  balance: number;
+  details: string;
+}
+
+export type AffiliateWithdrawalStatus = "pending" | "completed" | "denied";
+
+export interface AffiliateWithdrawal {
+  id: string;
+  date: string;
+  amount: number;
+  fee: number;
+  status: AffiliateWithdrawalStatus;
+}
+
+export interface AffiliateStatistics {
+  from: string;
+  to: string;
+  clicks: number;
+  uniqueClicks: number;
+  leads: number;
+  orders: number;
+  views: number;
+  earned: number;
+  chart: Array<{ date: string; balance: number; earned: number }>;
+  events: Array<{ date: string; type: string; details: string }>;
+}

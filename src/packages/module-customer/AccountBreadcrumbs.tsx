@@ -15,6 +15,13 @@ const LABELS: Record<string, string> = {
   reviews: "My Product Reviews",
   newsletter: "Newsletter Subscriptions",
   rewards: "My Reward Points",
+  affiliate: "Affiliate Program",
+  promotion: "Promotion Materials",
+  transactions: "Transactions",
+  withdrawals: "Withdrawals",
+  statistics: "Statistics",
+  settings: "Settings",
+  success: "Application Submitted",
   new: "Add New Address",
 };
 

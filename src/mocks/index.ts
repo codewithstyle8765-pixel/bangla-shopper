@@ -14,6 +14,7 @@ import { MOCK_NAVIGATION, findMockProductBySku, resolveCategory, resolveProducts
 import { MOCK_FOOTER, MOCK_STORE_LOCATIONS } from "./cms";
 import { MOCK_CMS_PAGES } from "./cms-pages";
 import { MOCK_HOME_PAGE } from "./home";
+import { affiliateResolvers } from "./affiliate";
 import { cartResolvers } from "./cart";
 import { checkoutResolvers } from "./checkout";
 import { customerResolvers } from "./customer";
@@ -22,6 +23,7 @@ import { directoryResolvers } from "./directory";
 type Resolver = (variables: Record<string, unknown>, token?: string | null) => unknown | Promise<unknown>;
 
 const RESOLVERS: Record<string, Resolver> = {
+  ...affiliateResolvers,
   ...cartResolvers,
   ...checkoutResolvers,
   ...customerResolvers,

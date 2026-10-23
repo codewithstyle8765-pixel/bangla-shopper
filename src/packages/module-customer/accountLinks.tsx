@@ -90,6 +90,17 @@ export const ACCOUNT_LINKS: AccountLink[] = [
     short: "Downloads",
     icon: <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />,
   },
+  {
+    href: "/customer/account/affiliate",
+    label: "Affiliate Program",
+    short: "Affiliate",
+    icon: (
+      <>
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8" />
+      </>
+    ),
+  },
 ];
 
 /** Hub tile order (phones/tablets): the sections customers open most come first. */
@@ -103,6 +114,7 @@ export const HUB_ORDER = [
   "/customer/account/payment-methods",
   "/customer/account/newsletter",
   "/customer/account/downloadable",
+  "/customer/account/affiliate",
 ];
 
 export const isDashboard = (pathname: string) => pathname === DASHBOARD;
