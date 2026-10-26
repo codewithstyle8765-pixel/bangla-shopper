@@ -160,7 +160,10 @@ function sampleOrder(number: string, date: string, status: string, items: Magent
 }
 
 const SAMPLE_ORDERS: MagentoOrder[] = [
-  sampleOrder("000012602", "2026-10-11 18:42:00", "Pending", [line(4, 1), line(9, 2)], "Cash On Delivery - All Bangladesh"),
+  {
+    ...sampleOrder("000012602", "2026-10-11 18:42:00", "Pending", [line(4, 1), line(9, 2)], "Cash On Delivery - All Bangladesh"),
+    comments: [{ message: "Please call before delivery. If I'm not home, leave the parcel with the building guard.", timestamp: "2026-10-11 18:42:00" }],
+  },
   sampleOrder("000012458", "2026-09-28 10:24:00", "Processing", [line(0, 2), line(5, 1)], "bKash Payment"),
   sampleOrder("000012311", "2026-09-12 15:02:00", "Shipped", [line(3, 1)], "Cash On Delivery - All Bangladesh"),
   sampleOrder("000011876", "2026-08-21 08:40:00", "Complete", [line(8, 1), line(12, 3), line(2, 1)], "Debit & Credit Card (Visa, Master, Amex & Mobile Banking)"),

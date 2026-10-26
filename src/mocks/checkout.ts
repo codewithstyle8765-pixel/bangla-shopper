@@ -22,6 +22,7 @@ interface CheckoutState {
   billing?: MagentoOrderAddress;
   shippingMethod?: { carrier: string; method: string };
   payment?: string;
+  note?: string;
 }
 
 /** Compact order record persisted for the mock "My Orders" pages. */
@@ -35,6 +36,7 @@ export interface MockPlacedOrder {
   shippingTitle: string;
   shippingAddress: MagentoOrderAddress;
   billingAddress: MagentoOrderAddress;
+  note?: string;
 }
 
 /** Rates and methods as configured on the client's live store. */
@@ -121,6 +123,7 @@ export function placedToMagento(o: MockPlacedOrder): MagentoOrder {
       product_sale_price: { value: l.price },
       quantity_ordered: l.qty,
     })),
+    comments: o.note ? [{ message: o.note, timestamp: o.date }] : [],
   };
 }
 
@@ -131,8 +134,12 @@ export async function readPlacedOrders(): Promise<MockPlacedOrder[]> {
 export const checkoutResolvers = {
   SetGuestEmail: () => ({ setGuestEmailOnCart: { cart: { id: "mock" } } }),
   SetShippingAddress: async (v: Record<string, unknown>, token?: string | null) => {
-    const address = await resolveAddress(v.shippingAddress as Record<string, unknown>, token);
-    await updateCheckout((s) => void (s.shipping = address));
+    const input = v.shippingAddress as Record<string, unknown>;
+    const address = await resolveAddress(input, token);
+    await updateCheckout((s) => {
+      s.shipping = address;
+      s.note = typeof input.customer_notes === "string" && input.customer_notes.trim() ? input.customer_notes.trim() : undefined;
+    });
     const { cart } = await cartResolvers.Cart();
     const subtotal = cart.prices?.subtotal_including_tax?.value ?? 0;
     return {
@@ -189,6 +196,7 @@ export const checkoutResolvers = {
       shippingTitle: `${rate.carrier_title} - ${rate.method_title}`,
       shippingAddress: state.shipping,
       billingAddress: state.billing,
+      note: state.note,
     };
 
     const orders = [order, ...(await readPlacedOrders())].slice(0, 2);

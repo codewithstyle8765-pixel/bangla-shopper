@@ -4,9 +4,9 @@ import { useEffect, useId, useRef, useState } from "react";
 import clsx from "clsx";
 import { Collapse } from "@/packages/module-common/Collapse";
 
-export function OrderNoteForm() {
+/** The checkout summary renders twice (phone and desktop), so the note lives in CheckoutView and both copies share it. */
+export function OrderNoteForm({ note, onChange }: { note: string; onChange: (note: string) => void }) {
   const [open, setOpen] = useState(false);
-  const [note, setNote] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isFirstRender = useRef(true);
   const uid = useId();
@@ -23,8 +23,6 @@ export function OrderNoteForm() {
 
   return (
     <div className="pt-1">
-      <input type="hidden" name="orderNote" value={note} />
-
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -55,7 +53,7 @@ export function OrderNoteForm() {
             id={`${uid}-note`}
             rows={3}
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder="Notes about your order, e.g. special delivery instructions"
             className="w-full resize-y rounded-[4px] border border-card-border bg-white px-3 py-2 text-[13px] text-brand-dark placeholder:text-footer-text/70 focus:border-brand-coral focus:outline-none focus:ring-1 focus:ring-brand-coral"
           />

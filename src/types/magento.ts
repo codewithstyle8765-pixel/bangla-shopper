@@ -168,6 +168,8 @@ export interface MagentoOrder {
     product_sale_price: { value: number };
     quantity_ordered: number;
   }>;
+  /** Comments visible on the storefront; the shopper's checkout note is saved as one of them. */
+  comments?: Array<{ message: string; timestamp: string }> | null;
 }
 
 export interface MagentoOrderAddress {

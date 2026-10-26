@@ -6,6 +6,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { AccountSection, AddressBlock } from "@/packages/module-customer/AccountUi";
+import { OrderComments } from "@/packages/module-customer/OrderComments";
 import { CancelOrderButton } from "@/packages/module-customer/CancelOrderButton";
 import { ReorderAction, PrintOrderAction } from "@/packages/module-customer/OrderDetailActions";
 import { PrintInvoiceHeader } from "@/packages/module-customer/PrintInvoiceHeader";
@@ -114,6 +115,12 @@ async function OrderDetailPageContent({ params }: { params: Promise<{ number: st
           </AccountSection>
         </div>
       </div>
+
+      {!!order.comments?.length && (
+        <AccountSection title={order.comments.length > 1 ? "Order Comments" : "Order Comment"} className="print:mt-4">
+          <OrderComments comments={order.comments} />
+        </AccountSection>
+      )}
 
       <div data-print-hide className="flex justify-end pt-1">
         <PrintOrderAction className="w-full sm:w-auto" />

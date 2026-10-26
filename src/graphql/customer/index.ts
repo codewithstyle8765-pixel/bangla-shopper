@@ -50,6 +50,7 @@ export const ORDER_FIELDS = /* GraphQL */ `
     product_sale_price { value }
     quantity_ordered
   }
+  comments { message timestamp }
 `;
 
 export const GENERATE_TOKEN = gql`

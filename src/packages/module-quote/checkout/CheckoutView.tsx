@@ -151,6 +151,7 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
       else setRewardError(r.message ?? "Reward points could not be updated. Please try again.");
     });
   const [isEstimating, startEstimate] = useTransition();
+  const [orderNote, setOrderNote] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const submitOrder = useSubmitWithoutReset(formRef, formAction, state);
   const cityTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -270,12 +271,13 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
       )}
       <CartTotals shipping={selectedShipping ? selectedShipping.amount : undefined} reward={rewardApplied} />
       <EarnPointsNote amount={cart.subtotal - cart.discount - (rewardApplied?.amount ?? 0)} signedIn={Boolean(customer)} />
-      <OrderNoteForm />
+      <OrderNoteForm note={orderNote} onChange={setOrderNote} />
     </>
   );
 
   return (
     <form ref={formRef} onSubmit={submitOrder} noValidate className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <input type="hidden" name="orderNote" value={orderNote} />
       <div className="space-y-4">
         {!customer && (
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[6px] border border-brand-coral/30 bg-brand-coral/5 px-4 py-3 text-[13px] text-brand-dark">

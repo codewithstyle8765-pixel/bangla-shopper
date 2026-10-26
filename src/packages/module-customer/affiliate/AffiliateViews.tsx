@@ -242,7 +242,8 @@ const shareAction = (
   </Link>
 );
 
-export function AffiliateDashboardView({ account, recent }: { account: AffiliateAccount; recent: AffiliateTransaction[] }) {
+/** `sections` (the phone tiles) sits under the balances, so the dashboard summary comes first. */
+export function AffiliateDashboardView({ account, recent, sections }: { account: AffiliateAccount; recent: AffiliateTransaction[]; sections?: ReactNode }) {
   return (
     <div className="space-y-5">
       <section className="relative overflow-hidden rounded-[8px] bg-gradient-to-br from-brand-charcoal to-brand-black p-5 text-white sm:p-6">
@@ -257,6 +258,8 @@ export function AffiliateDashboardView({ account, recent }: { account: Affiliate
       </section>
 
       <BalanceCards balance={account.balance} />
+
+      {sections}
 
       <AccountSection
         title="Your referral link"

@@ -18,8 +18,7 @@ async function AffiliateContent() {
     return (
       <>
         <AffiliateHeader title="Affiliate Dashboard" description="Your earnings, referral link and commission rates at a glance." />
-        <AffiliateHub />
-        <AffiliateDashboardView account={account} recent={recent} />
+        <AffiliateDashboardView account={account} recent={recent} sections={<AffiliateHub />} />
       </>
     );
   }
