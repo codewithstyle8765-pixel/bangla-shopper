@@ -47,6 +47,9 @@ const SORT_MAP: Record<string, Record<string, "ASC" | "DESC"> | undefined> = {
   name_desc: { name: "DESC" },
 };
 
+/** Product types Magento cannot add to the cart without a choice. */
+const NEEDS_CHOICE = new Set(["ConfigurableProduct", "BundleProduct", "GroupedProduct"]);
+
 export function mapProduct(p: MagentoProduct): ProductSummary {
   const final = p.price_range.minimum_price.final_price.value;
   const regular = p.price_range.minimum_price.regular_price.value;
@@ -68,6 +71,7 @@ export function mapProduct(p: MagentoProduct): ProductSummary {
     reviewCount: p.review_count ?? 0,
     origin: p.country_of_manufacture ?? undefined,
     inStock: p.stock_status !== "OUT_OF_STOCK",
+    hasOptions: NEEDS_CHOICE.has(p.__typename ?? ""),
   };
 }
 

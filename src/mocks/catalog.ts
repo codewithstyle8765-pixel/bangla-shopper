@@ -437,6 +437,9 @@ const MOCK_CONFIGURABLE: Record<string, MockConfigurable> = {
   },
 };
 
+/* Listing cards need the product type, as Magento returns it, to know which products need options first. */
+for (const p of [DEMO_PRODUCT, ...MOCK_PRODUCTS]) p.__typename = p.url_key in MOCK_CONFIGURABLE ? "ConfigurableProduct" : "SimpleProduct";
+
 const optionUid = (code: string, label: string) => `${code}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
 /** The child picked for a demo configurable product (its option value uids), for the mock cart line. */

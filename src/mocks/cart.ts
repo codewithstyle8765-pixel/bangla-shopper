@@ -106,8 +106,11 @@ export const cartResolvers = {
   CustomerCart: async () => ({ customerCart: toMagentoCart(await read()) }),
   AddToCart: async (v: Record<string, unknown>) => {
     const sku = String(v.sku);
-    if (!findMockProductBySku(sku)) throw new Error("The product that was requested doesn't exist.");
+    const product = findMockProductBySku(sku);
+    if (!product) throw new Error("The product that was requested doesn't exist.");
     const options = Array.isArray(v.selectedOptions) && v.selectedOptions.length ? v.selectedOptions.map(String) : undefined;
+    /* Magento refuses a configurable product without its options. */
+    if (product.__typename === "ConfigurableProduct" && !options) throw new Error("You need to choose options for your item.");
     const uid = lineUid(sku, options);
     const result = await mutate((s) => {
       const line = s.lines.find((l) => lineUid(l.sku, l.options) === uid);

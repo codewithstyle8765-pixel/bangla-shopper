@@ -20,12 +20,16 @@ export interface ProductCardProps {
   reviewCount?: number;
   origin?: string;
   inStock?: boolean;
+  /** Options (size, colour…) must be picked on the product page, so the button links there. */
+  hasOptions?: boolean;
   /** fixed: 207px (carousels). fluid: fills its grid cell. */
   layout?: "fixed" | "fluid";
   ctaLabel?: string;
   onAddToCart?: (sku: string) => Promise<void> | void;
   className?: string;
 }
+
+const ctaClass = "btn-dark block h-[40px] shrink-0 text-center text-[16.68px] leading-[38px] font-semibold tracking-normal";
 
 export function ProductCard({
   sku = "MLIH05",
@@ -39,6 +43,7 @@ export function ProductCard({
   reviewCount = 0,
   origin,
   inStock = true,
+  hasOptions = false,
   layout = "fixed",
   ctaLabel = "Add to Cart",
   onAddToCart,
@@ -148,19 +153,20 @@ export function ProductCard({
         </p>
       </Link>
 
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={isAdding || !inStock}
-        className={clsx(
-          "btn-dark block h-[40px] shrink-0 text-center text-[16.68px] leading-[38px] font-semibold tracking-normal cursor-pointer disabled:cursor-not-allowed disabled:opacity-70",
-          inset,
-          "mt-[4px]",
-          !fluid && "w-[181px]",
-        )}
-      >
-        {!inStock ? "Sold Out" : isAdding ? "Adding..." : ctaLabel}
-      </button>
+      {hasOptions && inStock ? (
+        <Link href={`/product/${urlKey}`} className={clsx(ctaClass, inset, "mt-[4px]", !fluid && "w-[181px]")}>
+          Select Options
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          disabled={isAdding || !inStock}
+          className={clsx(ctaClass, "cursor-pointer disabled:cursor-not-allowed disabled:opacity-70", inset, "mt-[4px]", !fluid && "w-[181px]")}
+        >
+          {!inStock ? "Sold Out" : isAdding ? "Adding..." : ctaLabel}
+        </button>
+      )}
     </article>
   );
 }

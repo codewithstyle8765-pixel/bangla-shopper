@@ -20,6 +20,8 @@ export interface ProductSummary {
   brand?: string;
   inStock: boolean;
   createdAt?: string;
+  /** Size, colour or other options must be chosen first (configurable, bundle, grouped). */
+  hasOptions?: boolean;
 }
 
 export interface ProductDetail extends ProductSummary {

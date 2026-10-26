@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const PRODUCT_CARD_FIELDS = /* GraphQL */ `
+  __typename
   uid
   sku
   name

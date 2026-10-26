@@ -4,6 +4,8 @@
  */
 
 export interface MagentoProduct {
+  /** "SimpleProduct", "ConfigurableProduct"… */
+  __typename?: string;
   uid: string;
   sku: string;
   name: string;

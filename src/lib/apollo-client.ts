@@ -9,6 +9,7 @@ import { setContext } from "@apollo/client/link/context";
 import { DEFAULT_STORE, MAGENTO_ENDPOINT } from "@/util/Constants";
 import { FALLBACK_MODE } from "@/lib/config";
 import { createMockLink } from "@/mocks/link";
+import { graphqlDebugLink } from "@/lib/graphql-debug";
 
 /** Server only: the browser talks to /api/graphql, never to Apollo. */
 function createApolloClient() {
@@ -27,7 +28,7 @@ function createApolloClient() {
   });
 
   /* FALLBACK_MODE: answer from src/mocks. Remove this line together with src/mocks/. */
-  const link = FALLBACK_MODE ? from([authLink, createMockLink()]) : from([authLink, httpLink]);
+  const link = FALLBACK_MODE ? from([authLink, graphqlDebugLink, createMockLink()]) : from([authLink, graphqlDebugLink, httpLink]);
 
   return new ApolloClient({
     ssrMode: true,
