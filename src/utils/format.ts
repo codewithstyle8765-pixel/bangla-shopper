@@ -16,3 +16,10 @@ export function formatPriceRange(value: string): string {
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
+
+/** "26 Oct 2026, 05:15 PM": 12-hour clock with a zero-padded hour and capital AM/PM. */
+export function formatDateTime(iso: string): string {
+  const date = new Date(iso);
+  const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+  return `${formatDate(iso)}, ${time}`;
+}

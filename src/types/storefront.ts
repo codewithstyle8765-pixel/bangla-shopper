@@ -206,7 +206,13 @@ export interface Order {
   shippingMethod: string;
   shippingAddress: AddressInput;
   billingAddress?: AddressInput;
-  orderNote?: string;
+  /** Order comments, e.g. the note the shopper left at checkout. */
+  comments?: OrderComment[];
+}
+
+export interface OrderComment {
+  message: string;
+  date: string;
 }
 
 export interface ShippingMethod {

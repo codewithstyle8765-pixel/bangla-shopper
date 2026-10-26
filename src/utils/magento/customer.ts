@@ -109,11 +109,14 @@ function normalizeStatus(status: string): OrderStatus {
   return "pending";
 }
 
+/** Magento sends "2026-10-11 18:42:00" (UTC) or an ISO string. */
+const toIsoDate = (value: string) => new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`).toISOString();
+
 export function mapOrder(o: MagentoOrder): Order {
   return {
     id: o.id,
     number: o.number,
-    createdAt: new Date(o.order_date.includes("T") ? o.order_date : `${o.order_date.replace(" ", "T")}Z`).toISOString(),
+    createdAt: toIsoDate(o.order_date),
     status: normalizeStatus(o.status),
     items: o.items.map((i) => ({
       sku: i.product_sku,
@@ -131,6 +134,9 @@ export function mapOrder(o: MagentoOrder): Order {
     shippingMethod: o.shipping_method ?? "",
     shippingAddress: o.shipping_address ? mapAddressInput(o.shipping_address) : { ...EMPTY_ADDRESS },
     billingAddress: o.billing_address ? mapAddressInput(o.billing_address) : undefined,
+    comments: (o.comments ?? [])
+      .filter((c) => c.message?.trim())
+      .map((c) => ({ message: c.message.trim(), date: toIsoDate(c.timestamp) })),
   };
 }
 

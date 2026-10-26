@@ -109,7 +109,8 @@ export async function placeOrder(input: PlaceOrderInput): Promise<{ number: stri
   const [carrier, method] = input.shippingMethod.split("|");
 
   if (!token && input.email) await graphqlMutate(SET_GUEST_EMAIL, { cartId, email: input.email });
-  await graphqlMutate(SET_SHIPPING_ADDRESS, { cartId, shippingAddress: toShippingInput(input.shipping) }, token);
+  const shippingAddress = { ...toShippingInput(input.shipping), ...(input.orderNote && { customer_notes: input.orderNote }) };
+  await graphqlMutate(SET_SHIPPING_ADDRESS, { cartId, shippingAddress }, token);
   await graphqlMutate(SET_BILLING_ADDRESS, { cartId, billingAddress: toBillingInput(input.billing) }, token);
   await graphqlMutate(SET_SHIPPING_METHOD, { cartId, carrier, method }, token);
   await graphqlMutate(SET_PAYMENT_METHOD, { cartId, code: input.paymentMethod }, token);
@@ -122,5 +123,7 @@ export async function placeOrder(input: PlaceOrderInput): Promise<{ number: stri
   if (!token) await clearGuestCartId();
   const placed = data.placeOrder.orderV2;
   const order = placed.items ? (await attachItemImages([mapOrder(placed)]))[0] : null;
+  /* Until the order returns it, the confirmation still shows what the shopper wrote. */
+  if (order && input.orderNote && !order.comments?.length) order.comments = [{ message: input.orderNote, date: order.createdAt }];
   return { number: placed.number, order };
 }
