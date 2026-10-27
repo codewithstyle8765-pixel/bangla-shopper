@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Noto_Sans_Bengali } from "next/font/google";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
 import type { SelectOption } from "@/packages/module-common/form";
@@ -22,6 +23,9 @@ interface OrderConfirmationProps {
   /** Customer care number from the admin footer block. */
   hotline?: string;
 }
+
+/* Roboto has no Bangla letters; the client's font for the Bangla lines only, loaded on this page only. */
+const bangla = Noto_Sans_Bengali({ subsets: ["bengali"], display: "swap", variable: "--font-bangla" });
 
 const NEXT_STEPS = [
   { title: "Confirmation call", text: "Our team calls you to confirm the order and delivery address." },
@@ -80,7 +84,7 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
   const itemCount = order?.items.reduce((n, i) => n + i.quantity, 0) ?? 0;
 
   return (
-    <div className="mx-auto max-w-[1100px]">
+    <div className={`${bangla.variable} mx-auto max-w-[1100px] [&_[lang=bn]]:font-(family-name:--font-bangla)`}>
       {order && (
         <PrintInvoiceHeader
           orderNumber={number ?? order.number}
@@ -118,13 +122,7 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
                   <span lang="bn" className="normal-case tracking-normal">অর্ডার নম্বর</span> · Order number
                 </dt>
                 <dd className="mt-1 text-[18px] font-black text-brand-dark">
-                  {signedIn ? (
-                    <Link href={`/customer/account/orders/${number}`} className="text-brand-link hover:underline">
-                      #{number}
-                    </Link>
-                  ) : (
-                    <>#{number}</>
-                  )}
+                  {number}
                 </dd>
               </div>
             )}
