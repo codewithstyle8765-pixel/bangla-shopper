@@ -5,6 +5,8 @@ export interface AccountLink {
   label: string;
   /** Hub tile label (phones/tablets), where the sidebar wording is too long. */
   short?: string;
+  /** Hub tile label on phones only. */
+  phone?: string;
   exact?: boolean;
   icon?: ReactNode;
 }
@@ -17,11 +19,13 @@ export const ACCOUNT_LINKS: AccountLink[] = [
   {
     href: "/customer/account/orders",
     label: "My Orders",
+    phone: "Orders",
     icon: <path d="M21 8 12 3 3 8v8l9 5 9-5zM3 8l9 5 9-5M12 13v8" />,
   },
   {
     href: "/customer/account/wishlist",
     label: "My Wishlist",
+    phone: "Wishlist",
     icon: <path d="M12 20s-7-4.4-9.3-8.7A5.2 5.2 0 0 1 12 6.4a5.2 5.2 0 0 1 9.3 4.9C19 15.6 12 20 12 20z" />,
   },
   {

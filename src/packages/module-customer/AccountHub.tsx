@@ -3,8 +3,11 @@ import { ACCOUNT_LINKS, HUB_ORDER } from "./accountLinks";
 
 const tiles = HUB_ORDER.map((href) => ACCOUNT_LINKS.find((l) => l.href === href)!);
 
-/** Phones/tablets: every account section as a tile on the dashboard (the desktop sidebar covers lg+). */
-export function AccountHub() {
+/**
+ * Phones/tablets: every account section as a tile on the dashboard (the desktop sidebar covers lg+). `counts` adds
+ * "(10)" after a tile's label; a long count wraps under the label inside the same tile height.
+ */
+export function AccountHub({ counts = {} }: { counts?: Record<string, number> }) {
   return (
     <nav aria-labelledby="account-hub-title" className="lg:hidden">
       <h2 id="account-hub-title" className="text-[15px] font-black uppercase tracking-[0.1em] text-brand-dark sm:text-[16px]">
@@ -23,7 +26,17 @@ export function AccountHub() {
                   {link.icon}
                 </svg>
               </span>
-              <span className="min-w-0">{link.short ?? link.label}</span>
+              <span className="flex min-w-0 flex-wrap gap-x-1 leading-[1.25]">
+                {link.phone ? (
+                  <>
+                    <span className="sm:hidden">{link.phone}</span>
+                    <span className="max-sm:hidden">{link.short ?? link.label}</span>
+                  </>
+                ) : (
+                  (link.short ?? link.label)
+                )}
+                {counts[link.href] !== undefined && <span className="whitespace-nowrap">({counts[link.href].toLocaleString("en-US")})</span>}
+              </span>
             </Link>
           </li>
         ))}

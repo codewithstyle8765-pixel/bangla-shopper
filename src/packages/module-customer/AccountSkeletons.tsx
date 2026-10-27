@@ -77,9 +77,22 @@ export function DashboardSkeleton() {
   return (
     <div className="min-w-0 space-y-5" aria-busy="true">
       <TitleSkeleton withDescription />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="overflow-hidden rounded-[6px] border border-card-border lg:hidden">
+        <div className="flex items-center gap-3 p-4">
+          <Shimmer width={48} height={48} rounded="rounded-full" className="shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Shimmer width="55%" height={16} rounded="rounded" />
+            <Shimmer width="80%" height={12} rounded="rounded" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between border-t border-card-border px-4 py-3">
+          <Shimmer width={130} height={20} rounded="rounded" />
+          <Shimmer width={80} height={16} rounded="rounded" />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3 max-lg:hidden">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className={`space-y-2 rounded-[6px] border border-card-border p-3 sm:p-4 ${i === 2 ? "col-span-2 sm:col-span-1" : ""}`}>
+          <div key={i} className="space-y-2 rounded-[6px] border border-card-border p-4">
             <Shimmer width="45%" height={24} rounded="rounded" />
             <Shimmer width="80%" height={12} rounded="rounded" />
           </div>

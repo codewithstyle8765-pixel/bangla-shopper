@@ -34,6 +34,18 @@ export const getCustomerToken = cache(async (): Promise<string | null> => {
   }
 });
 
+/** Email and social login photo (Google / Facebook) stored in the next-auth session. Server only. */
+export const getSessionProfile = cache(async (): Promise<{ email: string | null; picture: string | null }> => {
+  const raw = await sessionCookie();
+  if (!raw) return { email: null, picture: null };
+  try {
+    const jwt = await decode({ token: raw, secret: authSecret() });
+    return { email: jwt?.email ?? null, picture: jwt?.picture ?? null };
+  } catch {
+    return { email: null, picture: null };
+  }
+});
+
 /** True when a session cookie exists, even if its token has expired. */
 export async function hasSessionCookie() {
   return Boolean(await sessionCookie());

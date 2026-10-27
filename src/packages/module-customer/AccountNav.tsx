@@ -14,7 +14,7 @@ const signOutClass = "w-full cursor-pointer text-left text-[14px] font-medium te
  * lg+: sidebar. Below lg the dashboard shows every section as tiles (AccountHub), so other pages only need a way
  * back, aligned with the page title.
  */
-function AccountNavView({ name, pathname }: { name: ReactNode; pathname: string | null }) {
+function AccountNavView({ profile, pathname }: { profile: ReactNode; pathname: string | null }) {
   const isActive = (href: string, exact?: boolean) => pathname !== null && (exact ? pathname === href : pathname.startsWith(href));
   const back = pathname && !isDashboard(pathname) ? backLinkFor(pathname) : null;
 
@@ -33,10 +33,7 @@ function AccountNavView({ name, pathname }: { name: ReactNode; pathname: string 
       )}
 
       <div className="hidden lg:block">
-        <div className="mb-4 rounded-[6px] bg-brand-navy p-4 text-white">
-          <p className="text-[12px] uppercase tracking-[0.1em] text-white/70">Hello,</p>
-          <p className="truncate text-[18px] font-bold">{name}</p>
-        </div>
+        <div className="mb-4 rounded-[6px] border border-card-border bg-white p-4">{profile}</div>
         <ul className="rounded-[6px] border border-card-border">
           {ACCOUNT_LINKS.map((link) => {
             const active = isActive(link.href, link.exact);
@@ -67,15 +64,15 @@ function AccountNavView({ name, pathname }: { name: ReactNode; pathname: string 
   );
 }
 
-function AccountNavForRoute({ name }: { name: ReactNode }) {
-  return <AccountNavView name={name} pathname={usePathname()} />;
+function AccountNavForRoute({ profile }: { profile: ReactNode }) {
+  return <AccountNavView profile={profile} pathname={usePathname()} />;
 }
 
-/** `name` may be streamed (e.g. a Suspense-wrapped server component); the links render immediately. */
-export function AccountNav({ name }: { name: ReactNode }) {
+/** `profile` (avatar, name, email) may be streamed; the links render immediately. */
+export function AccountNav({ profile }: { profile: ReactNode }) {
   return (
-    <Suspense fallback={<AccountNavView name={name} pathname={null} />}>
-      <AccountNavForRoute name={name} />
+    <Suspense fallback={<AccountNavView profile={profile} pathname={null} />}>
+      <AccountNavForRoute profile={profile} />
     </Suspense>
   );
 }

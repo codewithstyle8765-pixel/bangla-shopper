@@ -9,6 +9,43 @@
  */
 export const FALLBACK_MODE: boolean = process.env.FALLBACK_MODE !== "false";
 
+/**
+ * Page-by-page Magento integration: while FALLBACK_MODE is on, these GraphQL operations already go to the real
+ * endpoint and every other one is still answered by the mocks. Add an operation once its page is integrated.
+ */
+export const LIVE_OPERATIONS: ReadonlySet<string> = new Set([
+  "HomeCategoryProducts",
+  "MegaMenu",
+  "CategoryByPath",
+  "ProductListing",
+  "ProductDetail",
+  "CartById",
+  "CustomerCartId",
+  "NewGuestCart",
+  "AddItemsToCart",
+  "UpdateCartItemQty",
+  "DeleteCartItem",
+  "ApplyCartCoupon",
+  "RemoveCartCoupon",
+  "MergeGuestCart",
+]);
+
+/** Help channels until the admin footer block (`headless-footer`) provides them; its values win when present. */
+export const SUPPORT_CONTACT = {
+  hotline: "01879 222 444",
+  whatsapp: "01879 222 444",
+  facebook: "https://www.facebook.com/banglashoppers",
+} as const;
+
+/** Magento category (url_path) that feeds each Home page product row. */
+export const HOME_PRODUCT_ROWS = {
+  trends: "hot-offers",
+  cashback: "fatafati-combos",
+  "beauty-tech": "editors-choice",
+} as const;
+
+export type HomeProductRow = keyof typeof HOME_PRODUCT_ROWS;
+
 export const CUSTOMER_NAME_COOKIE = "bs_customer_name";
 /** Full name for the account sidebar greeting, so it renders instantly on reload. */
 export const CUSTOMER_FULL_NAME_COOKIE = "bs_customer_full_name";
