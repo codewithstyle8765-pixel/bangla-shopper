@@ -1,10 +1,11 @@
 import { Shimmer } from "@/packages/module-common/Shimmer";
 
-function TitleSkeleton({ withDescription = false }: { withDescription?: boolean }) {
+/** `descriptionClassName`: e.g. "max-lg:hidden" where the page hides its description below lg. */
+function TitleSkeleton({ withDescription = false, descriptionClassName = "" }: { withDescription?: boolean; descriptionClassName?: string }) {
   return (
     <div className="mb-5 space-y-2">
       <Shimmer width={220} height={24} rounded="rounded" className="max-w-full" />
-      {withDescription && <Shimmer width={420} height={14} rounded="rounded" className="max-w-full" />}
+      {withDescription && <Shimmer width={420} height={14} rounded="rounded" className={`max-w-full ${descriptionClassName}`} />}
     </div>
   );
 }
@@ -76,7 +77,7 @@ function AddressLinesSkeleton() {
 export function DashboardSkeleton() {
   return (
     <div className="min-w-0 space-y-5" aria-busy="true">
-      <TitleSkeleton withDescription />
+      <TitleSkeleton withDescription descriptionClassName="max-lg:hidden" />
       <div className="overflow-hidden rounded-[6px] border border-card-border lg:hidden">
         <div className="flex items-center gap-3 p-4">
           <Shimmer width={48} height={48} rounded="rounded-full" className="shrink-0" />
