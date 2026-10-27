@@ -55,7 +55,8 @@ export function HeaderTopBar({ onDismiss, messages }: HeaderTopBarProps) {
       className="w-full bg-brand-black py-[10px] sm:py-[12px] relative z-20"
     >
       <Container className="relative flex items-center justify-center font-sans text-[13px] leading-none sm:grid sm:grid-cols-[1fr_auto_1fr] sm:text-[14px]">
-        <div className="hidden sm:flex sm:self-start items-center justify-start shrink-0">
+        {/* Desktop only: below lg the email is hidden but its column stays, so the message keeps its centre. */}
+        <div className="hidden sm:flex sm:self-start items-center justify-start shrink-0 max-lg:[&>*]:hidden">
           <MailIcon className="w-[18px] h-[13px] self-start mt-px text-brand-coral" />
           <Link
             href="mailto:support@banglashoppers.com"
