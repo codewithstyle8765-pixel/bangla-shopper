@@ -24,32 +24,27 @@ export function AccountHelp({ footer }: { footer: FooterData | null }) {
   const facebook = footer?.social.find((s) => s.network === "facebook")?.href || SUPPORT_CONTACT.facebook;
   const channels: HelpChannel[] = [
     {
-      title: "Support Request",
-      text: "Send us your question or issue",
+      title: "Submit a Support Request",
+      text: "Need help? Send us your questions or concerns.",
       href: "/contact",
-      icon: <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12zM8.5 10.5h7M8.5 13.5h4.5" />,
+      icon: <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" />,
     },
     {
-      title: "Connect on WhatsApp",
-      text: "Chat with our customer care",
+      title: "Chat on WhatsApp",
+      text: "Get quick assistance from our support team.",
       href: `https://wa.me/${internationalBd(SUPPORT_CONTACT.whatsapp)}`,
       external: true,
-      icon: (
-        <>
-          <path d="M20.5 12a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.2-4.2A8.5 8.5 0 1 1 20.5 12z" />
-          <path d="M9 8.5c0 3.6 2.9 6.5 6.5 6.5l.9-1.6-1.9-1-1 .8a4.2 4.2 0 0 1-2.2-2.2l.8-1-1-1.9z" />
-        </>
-      ),
+      icon: <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12zM8.5 12h.01M12 12h.01M15.5 12h.01" />,
     },
     {
-      title: "Connect on Facebook",
-      text: "Message us on our Facebook page",
+      title: "Message Us on Facebook",
+      text: "Connect with us directly on Messenger.",
       href: facebook,
       external: true,
       icon: <path d="M14.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4a21 21 0 0 0-2.3-.1c-2.3 0-3.9 1.4-3.9 4v2.2H8.8v3h2.6V21" />,
     },
     {
-      title: "Customer Helpline",
+      title: "Call Customer Care",
       text: hotline,
       href: `tel:${hotline.replace(/\s+/g, "")}`,
       icon: <path d="M5 4h3.5l1.8 4.5-2.3 1.4a11 11 0 0 0 6.1 6.1l1.4-2.3L20 15.5V19a1.5 1.5 0 0 1-1.5 1.5A16.5 16.5 0 0 1 3.5 5.5 1.5 1.5 0 0 1 5 4z" />,
@@ -57,7 +52,8 @@ export function AccountHelp({ footer }: { footer: FooterData | null }) {
   ];
 
   return (
-    <AccountSection title="We're Here to Help">
+    <AccountSection title="Need Help? We're Here for You!">
+      <p className="-mt-2 mb-4 text-[13px] text-footer-text">Our customer care team is ready to assist you.</p>
       <ul className="grid gap-3 sm:grid-cols-2">
         {channels.map((channel) => (
           <li key={channel.title}>
@@ -73,7 +69,7 @@ export function AccountHelp({ footer }: { footer: FooterData | null }) {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[14px] font-semibold leading-[1.3] text-brand-dark transition-colors group-hover:text-brand-coral">{channel.title}</span>
-                <span className="mt-0.5 block truncate text-[12px] leading-[1.4] text-footer-text">{channel.text}</span>
+                <span className="mt-0.5 block text-[12px] leading-[1.4] text-footer-text">{channel.text}</span>
               </span>
               <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-footer-text transition-colors group-hover:text-brand-coral" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17 17 7M8 7h9v9" />

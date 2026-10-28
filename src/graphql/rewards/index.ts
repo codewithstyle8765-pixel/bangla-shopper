@@ -26,3 +26,15 @@ export const REMOVE_REWARD_POINTS = gql`
     removeRewardPointsFromCart(cartId: $cartId) { cart { ${REWARD_FIELDS} } }
   }
 `;
+
+/** Mirasvit Rewards: the tier ladder (current tier flagged) and the customer's transactions; pending = not activated yet. */
+export const CUSTOMER_REWARD_TIER = gql`
+  query CustomerRewardTier {
+    mstRewardsTiers { name min_earn_points tier_logo is_current_tier }
+    customer {
+      mstRewardPointsBalance {
+        transactions { transaction_id code comment amount is_activated created_at }
+      }
+    }
+  }
+`;

@@ -399,6 +399,20 @@ export interface RewardPoints {
   history: RewardTransaction[];
 }
 
+/** Membership tier (Mirasvit Rewards), e.g. Silver from 0, Gold from 50,000 earned points. */
+export interface RewardTier {
+  name: string;
+  minPoints: number;
+  logo?: string;
+}
+
+/** Tier ladder, the customer's tier, and points from orders not completed yet. */
+export interface RewardTierStatus {
+  tiers: RewardTier[];
+  current: RewardTier | null;
+  pending: Array<{ id: string; label: string; points: number }>;
+}
+
 /** Reward points at checkout: balance, and what is applied to the current cart. */
 export interface CheckoutRewards {
   balance: number;

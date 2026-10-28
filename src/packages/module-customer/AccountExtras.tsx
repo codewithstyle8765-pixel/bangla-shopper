@@ -1,9 +1,11 @@
 import Link from "next/link";
 import clsx from "clsx";
-import type { DownloadableItem, RewardPoints } from "@/types/storefront";
+import type { DownloadableItem, RewardPoints, RewardTierStatus } from "@/types/storefront";
 import { formatDate, formatTk } from "@/utils/format";
+
 import { ListPager } from "@/packages/module-common/ListPager";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
+import { NextImage } from "@/packages/module-common/NextImage";
 import { AccountEmptyState, AccountIcons, AccountSection } from "./AccountUi";
 
 const primaryButton = "inline-flex h-10 items-center rounded-[4px] bg-brand-coral px-5 text-[14px] font-semibold text-white hover:bg-brand-coral-hover";
@@ -95,6 +97,97 @@ const EARN_WAYS = [
 
 const points = (n: number) => n.toLocaleString("en-US");
 
+/** Where `earned` sits on a track with the tiers spaced evenly: 0-100. */
+function tierProgress(tiers: RewardTierStatus["tiers"], earned: number) {
+  if (tiers.length < 2) return 100;
+  const next = tiers.findIndex((t) => earned < t.minPoints);
+  if (next === -1) return 100;
+  if (next === 0) return 0;
+  const from = tiers[next - 1].minPoints;
+  const part = (earned - from) / (tiers[next].minPoints - from);
+  return ((next - 1 + part) / (tiers.length - 1)) * 100;
+}
+
+/** Silver → Gold → Platinum: badges on a track filled up to the points earned so far. */
+function TierProgress({ status, earned }: { status: RewardTierStatus; earned: number }) {
+  const { tiers, current } = status;
+  const next = tiers.find((t) => earned < t.minPoints);
+  return (
+    <AccountSection title="Membership Tier">
+      <div className="relative pt-1">
+        {/* From the first badge's centre to the last one's. */}
+        <div
+          aria-hidden="true"
+          className="absolute top-[calc(1.75rem+1px)] h-1.5 rounded-full bg-card-border sm:top-[calc(2rem+1px)]"
+          style={{ left: `${50 / tiers.length}%`, right: `${50 / tiers.length}%` }}
+        >
+          <div className="h-full rounded-full bg-brand-coral" style={{ width: `${tierProgress(tiers, earned)}%` }} />
+        </div>
+        <ol className="relative grid" style={{ gridTemplateColumns: `repeat(${tiers.length}, minmax(0, 1fr))` }}>
+          {tiers.map((t, i) => {
+            const isCurrent = t.name === current?.name;
+            return (
+              <li key={t.name} className="flex flex-col items-center text-center" aria-current={isCurrent ? "step" : undefined}>
+                <span className="grid h-14 w-14 place-items-center rounded-full bg-white sm:h-16 sm:w-16">
+                  {t.logo ? (
+                    <NextImage src={t.logo} alt="" width={128} height={128} className="h-full w-full object-contain" />
+                  ) : (
+                    <RewardCoin className="h-10 w-10" />
+                  )}
+                </span>
+                <span className={clsx("mt-2 text-[12px] font-bold leading-[1.3] sm:text-[13px]", isCurrent ? "text-brand-coral" : "text-brand-dark")}>{t.name}</span>
+                <span className="mt-1 rounded-full bg-brand-coral px-2 py-0.5 text-[11px] font-bold text-white tabular-nums">
+                  {points(t.minPoints)}
+                  {i === tiers.length - 1 ? "+" : ""}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+      <p className="mt-4 text-center text-[13px] text-footer-text">
+        {current && (
+          <>
+            Your current tier is <strong className="text-brand-dark">{current.name}</strong>.{" "}
+          </>
+        )}
+        {next ? (
+          <>
+            Earn <strong className="text-brand-dark">{points(next.minPoints - earned)}</strong> more points to reach {next.name}.
+          </>
+        ) : (
+          "You have reached the highest tier."
+        )}
+      </p>
+    </AccountSection>
+  );
+}
+
+/** Points from orders that are not complete yet; they move to the balance once the order is delivered. */
+function PendingRewards({ pending }: { pending: RewardTierStatus["pending"] }) {
+  return (
+    <AccountSection title="Pending Transactions">
+      <p className="-mt-2 mb-3 text-[13px] text-footer-text">Points from these orders are added to your balance once the order is delivered.</p>
+      <table className="w-full text-left text-[14px]">
+        <thead>
+          <tr className="border-b-2 border-brand-dark text-[12px] uppercase tracking-[0.1em] text-brand-dark">
+            <th className="py-2 font-bold">Order</th>
+            <th className="py-2 text-right font-bold">Points</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-card-border">
+          {pending.map((p) => (
+            <tr key={p.id}>
+              <td className="py-3 text-brand-dark">{p.label}</td>
+              <td className="py-3 text-right font-bold text-success">+{points(p.points)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </AccountSection>
+  );
+}
+
 interface RewardsPager {
   page: number;
   pageSize: number;
@@ -102,10 +195,11 @@ interface RewardsPager {
   sizes: number[];
 }
 
-export function RewardPointsView({ rewards, pager }: { rewards: RewardPoints; pager: RewardsPager }) {
+export function RewardPointsView({ rewards, tier, pager }: { rewards: RewardPoints; tier: RewardTierStatus; pager: RewardsPager }) {
   const rows = rewards.history.slice((pager.page - 1) * pager.pageSize, pager.page * pager.pageSize);
   return (
     <div className="space-y-5">
+      {tier.tiers.length > 0 && <TierProgress status={tier} earned={rewards.earned} />}
       <div className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="relative overflow-hidden rounded-[8px] bg-gradient-to-br from-brand-charcoal to-brand-black p-5 text-white sm:p-6">
           <span aria-hidden="true" className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-coral/20" />
@@ -139,6 +233,8 @@ export function RewardPointsView({ rewards, pager }: { rewards: RewardPoints; pa
           </ul>
         </div>
       </div>
+
+      {tier.pending.length > 0 && <PendingRewards pending={tier.pending} />}
 
       <AccountSection title="Transactions">
         {rewards.history.length === 0 ? (

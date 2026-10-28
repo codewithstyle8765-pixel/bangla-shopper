@@ -217,6 +217,16 @@ const MOCK_REWARD_HISTORY = [
 
 const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 19).replace("T", " ");
 
+/** Mirasvit tiers as on the client's live store; the logos come from Magento (tier_logo). */
+const MOCK_TIERS = [
+  { name: "Silver Member", min_earn_points: 0, tier_logo: "/assets/images/mock/rewards/tier-silver.webp" },
+  { name: "Gold Member", min_earn_points: 50000, tier_logo: "/assets/images/mock/rewards/tier-gold.webp" },
+  { name: "Platinum Member", min_earn_points: 100000, tier_logo: "/assets/images/mock/rewards/tier-platinum.webp" },
+];
+
+/** Points from orders not delivered yet (not activated). */
+const MOCK_PENDING_REWARDS = [{ transaction_id: 9101, code: "order_earn", comment: "Cash Back for order #000012602", amount: 52, is_activated: false }];
+
 export const customerResolvers = {
   GenerateToken: (v: Vars) => {
     const email = String(v.email).trim().toLowerCase();
@@ -298,6 +308,14 @@ export const customerResolvers = {
     });
     const points = MOCK_REWARD_HISTORY.reduce((sum, h) => sum + h.change, 0);
     return { customer: { reward_points: { balance: { points, money: { value: points / 10 } }, balance_history: history } } };
+  },
+  CustomerRewardTier: () => {
+    const earned = MOCK_REWARD_HISTORY.filter((h) => h.change > 0).reduce((sum, h) => sum + h.change, 0);
+    const current = [...MOCK_TIERS].reverse().find((t) => earned >= t.min_earn_points);
+    return {
+      mstRewardsTiers: MOCK_TIERS.map((t) => ({ ...t, is_current_tier: t === current })),
+      customer: { mstRewardPointsBalance: { transactions: MOCK_PENDING_REWARDS.map((t) => ({ ...t, created_at: daysAgo(1) })) } },
+    };
   },
   Customer: async (_v: Vars, token?: string | null) => ({ customer: await readProfile(emailFromToken(token)) }),
   UpdateCustomer: async (v: Vars, token?: string | null) => {

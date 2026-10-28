@@ -396,6 +396,27 @@ html[data-zoomed] body {
   }
 }
 
+/* Thin scrollbar for menus and panels: brand-tinted thumb, no track. */
+@utility thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-brand-coral) 35%, transparent) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-brand-coral) 35%, transparent);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand-coral);
+  }
+}
+
 /* Product card frame: single clean 1px border matching reference */
 @utility card-surface {
   position: relative;

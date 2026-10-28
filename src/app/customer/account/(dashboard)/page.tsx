@@ -12,13 +12,14 @@ import { AccountHub } from "@/packages/module-customer/AccountHub";
 import { AccountHelp } from "@/packages/module-customer/AccountHelp";
 import { ProfileSummary } from "@/packages/module-customer/AccountProfile";
 import { getFooterData } from "@/utils/magento/cms";
+import { getRewardTier } from "@/utils/magento/rewards";
 import { getSessionProfile } from "@/utils/session";
 import { countryName, getCountries } from "@/utils/magento/directory";
 
 export const metadata: Metadata = { title: "My Dashboard | BanglaShoppers", robots: { index: false } };
 
 async function DashboardPageContent() {
-  const [customer, orders, wishlist, countries, rewards, footer, session] = await Promise.all([
+  const [customer, orders, wishlist, countries, rewards, footer, session, tier] = await Promise.all([
     getCustomer(),
     getOrders(),
     getWishlist(),
@@ -26,6 +27,7 @@ async function DashboardPageContent() {
     getRewardPoints().catch(() => null),
     getFooterData(),
     getSessionProfile(),
+    getRewardTier(),
   ]);
   if (!customer) return null;
   const defaultAddress = customer.addresses.find((a) => a.isDefaultShipping) ?? customer.addresses[0];
@@ -51,7 +53,7 @@ async function DashboardPageContent() {
 
       <section aria-label="Your profile" className="overflow-hidden rounded-[6px] border border-card-border bg-white lg:hidden">
         <div className="flex items-center justify-between gap-3 p-4">
-          <ProfileSummary name={`${customer.firstName} ${customer.lastName}`.trim()} email={customer.email} picture={session.picture} />
+          <ProfileSummary name={`${customer.firstName} ${customer.lastName}`.trim()} email={customer.email} picture={session.picture} tier={tier.current} />
           <Link
             href="/customer/account/edit"
             aria-label="Edit account information"
@@ -67,9 +69,14 @@ async function DashboardPageContent() {
             href="/customer/account/rewards"
             className="group flex items-center justify-between gap-3 border-t border-card-border px-4 py-3 transition-colors hover:bg-brand-coral/5"
           >
-            <span className="flex min-w-0 items-center gap-2 text-[14px] font-semibold text-brand-dark">
-              <RewardCoin className="h-6 w-6 shrink-0" />
-              Reward Points
+            <span className="flex min-w-0 items-center gap-2.5">
+              <RewardCoin className="h-8 w-8 shrink-0" />
+              <span className="min-w-0">
+                <span className="block text-[14px] font-semibold leading-[1.3] text-brand-dark">Reward Points</span>
+                <span className="block text-[12px] leading-[1.4] text-footer-text">
+                  Worth {formatTk(rewards.balanceValue, false)}
+                </span>
+              </span>
             </span>
             <span className="flex shrink-0 items-center gap-1 text-[14px] font-bold text-brand-coral">
               {rewards.balance.toLocaleString("en-US")} points
