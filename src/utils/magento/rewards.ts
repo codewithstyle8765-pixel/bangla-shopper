@@ -42,7 +42,7 @@ export async function setRewardPoints(points: number): Promise<CheckoutRewards> 
 }
 
 type RewardTierData = {
-  mstRewardsTiers: Array<{ name?: string | null; min_earn_points?: number | null; tier_logo?: string | null; is_current_tier?: boolean | null } | null> | null;
+  mstRewardsTiers: Array<{ name?: string | null; description?: string | null; min_earn_points?: number | null; tier_logo?: string | null; is_current_tier?: boolean | null } | null> | null;
   customer?: {
     mstRewardPointsBalance?: {
       transactions: Array<{ transaction_id?: number | null; code?: string | null; comment?: string | null; amount?: number | null; is_activated?: boolean | null } | null>;
@@ -65,7 +65,7 @@ export async function getRewardTier(): Promise<RewardTierStatus> {
     const data = await graphqlRequestNoCache<RewardTierData>(CUSTOMER_REWARD_TIER, undefined, { context: authContext(token) });
     const list = (data.mstRewardsTiers ?? []).flatMap((t) => (t?.name ? [t] : []));
     const tiers = list
-      .map((t) => ({ name: t.name ?? "", minPoints: t.min_earn_points ?? 0, logo: t.tier_logo ?? undefined }))
+      .map((t) => ({ name: t.name ?? "", minPoints: t.min_earn_points ?? 0, logo: t.tier_logo ?? undefined, description: t.description || undefined }))
       .sort((a, b) => a.minPoints - b.minPoints);
     const currentName = list.find((t) => t.is_current_tier)?.name;
     const pending = (data.customer?.mstRewardPointsBalance?.transactions ?? []).flatMap((t) =>

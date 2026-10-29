@@ -5,7 +5,9 @@ import { formatDate, formatTk } from "@/utils/format";
 
 import { ListPager } from "@/packages/module-common/ListPager";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
+import { sanitizeHtml } from "@/utils/product-description";
 import { NextImage } from "@/packages/module-common/NextImage";
+import { TierProgress } from "./TierProgress";
 import { AccountEmptyState, AccountIcons, AccountSection } from "./AccountUi";
 
 const primaryButton = "inline-flex h-10 items-center rounded-[4px] bg-brand-coral px-5 text-[14px] font-semibold text-white hover:bg-brand-coral-hover";
@@ -97,72 +99,6 @@ const EARN_WAYS = [
 
 const points = (n: number) => n.toLocaleString("en-US");
 
-/** Where `earned` sits on a track with the tiers spaced evenly: 0-100. */
-function tierProgress(tiers: RewardTierStatus["tiers"], earned: number) {
-  if (tiers.length < 2) return 100;
-  const next = tiers.findIndex((t) => earned < t.minPoints);
-  if (next === -1) return 100;
-  if (next === 0) return 0;
-  const from = tiers[next - 1].minPoints;
-  const part = (earned - from) / (tiers[next].minPoints - from);
-  return ((next - 1 + part) / (tiers.length - 1)) * 100;
-}
-
-/** Silver → Gold → Platinum: badges on a track filled up to the points earned so far. */
-function TierProgress({ status, earned }: { status: RewardTierStatus; earned: number }) {
-  const { tiers, current } = status;
-  const next = tiers.find((t) => earned < t.minPoints);
-  return (
-    <AccountSection title="Membership Tier">
-      <div className="relative pt-1">
-        {/* From the first badge's centre to the last one's. */}
-        <div
-          aria-hidden="true"
-          className="absolute top-[calc(1.75rem+1px)] h-1.5 rounded-full bg-card-border sm:top-[calc(2rem+1px)]"
-          style={{ left: `${50 / tiers.length}%`, right: `${50 / tiers.length}%` }}
-        >
-          <div className="h-full rounded-full bg-brand-coral" style={{ width: `${tierProgress(tiers, earned)}%` }} />
-        </div>
-        <ol className="relative grid" style={{ gridTemplateColumns: `repeat(${tiers.length}, minmax(0, 1fr))` }}>
-          {tiers.map((t, i) => {
-            const isCurrent = t.name === current?.name;
-            return (
-              <li key={t.name} className="flex flex-col items-center text-center" aria-current={isCurrent ? "step" : undefined}>
-                <span className="grid h-14 w-14 place-items-center rounded-full bg-white sm:h-16 sm:w-16">
-                  {t.logo ? (
-                    <NextImage src={t.logo} alt="" width={128} height={128} className="h-full w-full object-contain" />
-                  ) : (
-                    <RewardCoin className="h-10 w-10" />
-                  )}
-                </span>
-                <span className={clsx("mt-2 text-[12px] font-bold leading-[1.3] sm:text-[13px]", isCurrent ? "text-brand-coral" : "text-brand-dark")}>{t.name}</span>
-                <span className="mt-1 rounded-full bg-brand-coral px-2 py-0.5 text-[11px] font-bold text-white tabular-nums">
-                  {points(t.minPoints)}
-                  {i === tiers.length - 1 ? "+" : ""}
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-      <p className="mt-4 text-center text-[13px] text-footer-text">
-        {current && (
-          <>
-            Your current tier is <strong className="text-brand-dark">{current.name}</strong>.{" "}
-          </>
-        )}
-        {next ? (
-          <>
-            Earn <strong className="text-brand-dark">{points(next.minPoints - earned)}</strong> more points to reach {next.name}.
-          </>
-        ) : (
-          "You have reached the highest tier."
-        )}
-      </p>
-    </AccountSection>
-  );
-}
-
 /** Points from orders that are not complete yet; they move to the balance once the order is delivered. */
 function PendingRewards({ pending }: { pending: RewardTierStatus["pending"] }) {
   return (
@@ -199,29 +135,64 @@ export function RewardPointsView({ rewards, tier, pager }: { rewards: RewardPoin
   const rows = rewards.history.slice((pager.page - 1) * pager.pageSize, pager.page * pager.pageSize);
   return (
     <div className="space-y-5">
-      {tier.tiers.length > 0 && <TierProgress status={tier} earned={rewards.earned} />}
+      {tier.tiers.length > 0 && (
+        <TierProgress
+          status={{ ...tier, tiers: tier.tiers.map((t) => ({ ...t, description: t.description && sanitizeHtml(t.description) })) }}
+          earned={rewards.earned}
+        />
+      )}
       <div className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <div className="relative overflow-hidden rounded-[8px] bg-gradient-to-br from-brand-charcoal to-brand-black p-5 text-white sm:p-6">
-          <span aria-hidden="true" className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-coral/20" />
-          <p className="relative text-[12px] font-bold uppercase tracking-[0.15em] text-brand-coral">Cash Back Reward balance</p>
-          <p className="relative mt-2 flex items-center gap-3 text-[36px] font-black leading-none sm:text-[42px]">
-            <RewardCoin className="h-10 w-10 sm:h-12 sm:w-12" />
-            <span>
-              {points(rewards.balance)} <span className="text-[16px] font-semibold text-white/70">points</span>
-            </span>
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[10px] bg-gradient-to-br from-brand-charcoal via-brand-charcoal to-brand-black p-5 text-white shadow-card sm:p-6">
+          <span aria-hidden="true" className="absolute -right-12 -top-14 h-44 w-44 rounded-full bg-brand-coral/25 blur-[2px]" />
+          <span aria-hidden="true" className="absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-white/5" />
+          <span aria-hidden="true" className="absolute right-16 top-20 h-16 w-16 rounded-full border border-white/10 max-sm:hidden" />
+
+          <div className="relative flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.15em] text-brand-coral">Cash Back Reward balance</p>
+            {tier.current && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 py-1 pl-1 pr-3 text-[12px] font-semibold text-white/90 ring-1 ring-white/15">
+                {tier.current.logo && <NextImage src={tier.current.logo} alt="" width={40} height={40} className="h-5 w-5 rounded-full object-contain" />}
+                {tier.current.name}
+              </span>
+            )}
+          </div>
+
+          <p className="relative mt-4 flex items-center gap-3 sm:mt-5">
+            <RewardCoin className="h-11 w-11 shrink-0 drop-shadow sm:h-14 sm:w-14" />
+            <span className="text-[40px] font-black leading-none tracking-tight tabular-nums sm:text-[48px]">{points(rewards.balance)}</span>
+            <span className="self-end pb-1 text-[15px] font-semibold text-white/70 sm:text-[16px]">points</span>
           </p>
-          <p className="relative mt-2 text-[15px] text-white/85">
-            Worth <span className="font-bold text-white">{formatTk(rewards.balanceValue)}</span> on your next order
+
+          <p className="relative mt-4 inline-flex w-fit flex-wrap items-baseline gap-x-1.5 rounded-[6px] bg-white/10 px-3 py-2 text-[14px] text-white/85 sm:text-[15px]">
+            Worth <span className="text-[16px] font-bold text-white sm:text-[17px]">{formatTk(rewards.balanceValue)}</span> on your next order
           </p>
-          <p className="relative mt-4 text-[12px] text-white/60">Redeem points in the payment step at checkout.</p>
+
+          <div className="relative mt-auto flex flex-col gap-3 border-t border-white/10 pt-4 max-sm:mt-5 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex items-center gap-2 text-[12px] text-white/65 sm:text-[13px]">
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-brand-coral" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="6" width="18" height="13" rx="2" />
+                <path d="M3 10h18M7 15h4" />
+              </svg>
+              Redeem points in the payment step at checkout.
+            </p>
+            <Link
+              href="/"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-[4px] bg-brand-coral px-5 text-[14px] font-semibold text-white transition-colors hover:bg-brand-coral-hover max-sm:w-full"
+            >
+              Start Shopping
+              <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 8h10M9 4.5 12.5 8 9 11.5" />
+              </svg>
+            </Link>
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-[8px] border border-card-border p-4">
-            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-footer-text">Total earned</p>
+          <div className="flex flex-col items-center justify-center rounded-[8px] border border-card-border p-4 text-center md:max-xl:px-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-footer-text md:max-xl:tracking-[0.04em]">Total earned</p>
             <p className="mt-2 text-[24px] font-black text-success">+{points(rewards.earned)}</p>
           </div>
-          <div className="rounded-[8px] border border-card-border p-4">
-            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-footer-text">Total redeemed</p>
+          <div className="flex flex-col items-center justify-center rounded-[8px] border border-card-border p-4 text-center md:max-xl:px-2">
+            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-footer-text md:max-xl:tracking-[0.04em]">Total redeemed</p>
             <p className="mt-2 text-[24px] font-black text-brand-dark">{points(rewards.spent)}</p>
           </div>
           <ul className="col-span-2 grid gap-2 rounded-[8px] bg-brand-surface/60 p-4 text-[13px] text-footer-text">

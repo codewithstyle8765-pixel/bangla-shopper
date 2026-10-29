@@ -91,7 +91,7 @@ async function DashboardPageContent() {
       <ul className={rewards ? "grid grid-cols-3 gap-3 max-lg:hidden" : "grid grid-cols-2 gap-3 max-lg:hidden"}>
         {stats.map((s) => (
           <li key={s.label}>
-            <Link href={s.href} className="block h-full rounded-[6px] border border-card-border bg-white p-3 transition-colors hover:border-brand-coral sm:p-4">
+            <Link href={s.href} className="flex h-full flex-col items-center justify-center rounded-[6px] border border-card-border bg-white p-3 text-center transition-colors hover:border-brand-coral sm:p-4">
               <span className="block text-[20px] font-bold text-brand-coral sm:text-[24px]">{s.value}</span>
               <span className="mt-0.5 block text-[12px] text-footer-text sm:text-[13px]">{s.label}</span>
             </Link>

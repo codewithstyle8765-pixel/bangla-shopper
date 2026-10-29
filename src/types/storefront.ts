@@ -404,6 +404,8 @@ export interface RewardTier {
   name: string;
   minPoints: number;
   logo?: string;
+  /** Text shown when the tier name is clicked (Rewards › Tiers in Magento admin). */
+  description?: string;
 }
 
 /** Tier ladder, the customer's tier, and points from orders not completed yet. */

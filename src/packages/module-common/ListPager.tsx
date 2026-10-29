@@ -38,7 +38,8 @@ function Arrow({ direction }: { direction: "prev" | "next" }) {
 
 /**
  * Footer for account lists: "Showing 1–5 of 8 transactions", rows per page and ‹ › page arrows.
- * State lives in the URL (?page&limit), so refresh and back/forward keep it.
+ * State lives in the URL (?page&limit), so refresh and back/forward keep it. Changing page keeps the scroll
+ * position, so the list stays where the customer is looking.
  */
 export function ListPager({ pathname, page, pageSize, total, totalPages, noun, sizes = [5, 10, 20, 50] }: ListPagerProps) {
   const router = useRouter();
@@ -69,7 +70,7 @@ export function ListPager({ pathname, page, pageSize, total, totalPages, noun, s
                 aria-label={`${noun} per page`}
                 options={options.map((s) => ({ value: String(s), label: String(s) }))}
                 value={String(pageSize)}
-                onChange={(size) => router.push(href(pathname, 1, Number(size)))}
+                onChange={(size) => router.push(href(pathname, 1, Number(size)), { scroll: false })}
                 className="h-9"
               />
             </div>
@@ -80,7 +81,7 @@ export function ListPager({ pathname, page, pageSize, total, totalPages, noun, s
         {totalPages > 1 && (
           <nav aria-label={`${noun} pages`} className="flex items-center gap-2">
             {page > 1 ? (
-              <Link href={href(pathname, page - 1, pageSize)} rel="prev" aria-label="Previous page" className={clsx(arrowClass, "border-card-border text-brand-dark hover:border-brand-dark")}>
+              <Link href={href(pathname, page - 1, pageSize)} scroll={false} rel="prev" aria-label="Previous page" className={clsx(arrowClass, "border-card-border text-brand-dark hover:border-brand-dark")}>
                 <Arrow direction="prev" />
               </Link>
             ) : (
@@ -92,7 +93,7 @@ export function ListPager({ pathname, page, pageSize, total, totalPages, noun, s
               {page} / {totalPages}
             </span>
             {page < totalPages ? (
-              <Link href={href(pathname, page + 1, pageSize)} rel="next" aria-label="Next page" className={clsx(arrowClass, "border-brand-coral bg-brand-coral text-white hover:bg-brand-coral-hover")}>
+              <Link href={href(pathname, page + 1, pageSize)} scroll={false} rel="next" aria-label="Next page" className={clsx(arrowClass, "border-brand-coral bg-brand-coral text-white hover:bg-brand-coral-hover")}>
                 <Arrow direction="next" />
               </Link>
             ) : (

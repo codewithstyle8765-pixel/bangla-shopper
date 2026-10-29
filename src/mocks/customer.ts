@@ -219,9 +219,27 @@ const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISO
 
 /** Mirasvit tiers as on the client's live store; the logos come from Magento (tier_logo). */
 const MOCK_TIERS = [
-  { name: "Silver Member", min_earn_points: 0, tier_logo: "/assets/images/mock/rewards/tier-silver.webp" },
-  { name: "Gold Member", min_earn_points: 50000, tier_logo: "/assets/images/mock/rewards/tier-gold.webp" },
-  { name: "Platinum Member", min_earn_points: 100000, tier_logo: "/assets/images/mock/rewards/tier-platinum.webp" },
+  {
+    name: "Silver Member",
+    min_earn_points: 0,
+    tier_logo: "/assets/images/mock/rewards/tier-silver.webp",
+    description:
+      "Welcome to BanglaShoppers Rewards! As a <strong>Silver Member</strong> you earn reward points on every purchase. Keep shopping to reach <strong>Gold Member</strong> status at <strong>50,000 reward points</strong>.",
+  },
+  {
+    name: "Gold Member",
+    min_earn_points: 50000,
+    tier_logo: "/assets/images/mock/rewards/tier-gold.webp",
+    description:
+      "Congratulations! You've reached <strong>Gold Member</strong> status at BanglaShoppers! With <strong>50,000 reward points</strong>, you've unlocked a new milestone in your loyalty journey. Keep shopping, earning points, and enjoying your Gold Membership as you work toward our prestigious Platinum Member tier at 100,000 points!",
+  },
+  {
+    name: "Platinum Member",
+    min_earn_points: 100000,
+    tier_logo: "/assets/images/mock/rewards/tier-platinum.webp",
+    description:
+      "Congratulations on becoming a <strong>Platinum Member</strong> of BanglaShoppers! With <strong>100,000 reward points</strong>, you've achieved our highest and most prestigious membership tier. Your loyalty means the world to us! Enjoy the recognition of being among our most valued shoppers and continue earning rewards with every purchase. Thank you for being part of the BanglaShoppers family!",
+  },
 ];
 
 /** Points from orders not delivered yet (not activated). */
@@ -256,7 +274,7 @@ export const customerResolvers = {
     if (String(v.current).length < 6) throw new Error("The password doesn't match this account. Verify the password and try again.");
     return { changeCustomerPassword: { email } };
   },
-  MergeCarts: () => ({ mergeCarts: { id: "mock" } }),
+  MergeGuestCart: () => ({ mergeCarts: { id: "mock" } }),
   UpdateNewsletter: async (v: Vars, token?: string | null) => {
     const profile = await updateProfile(token, (p) => {
       p.is_subscribed = Boolean(v.subscribed);

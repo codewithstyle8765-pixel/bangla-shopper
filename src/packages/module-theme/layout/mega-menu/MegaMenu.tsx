@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { Container } from "@/packages/module-common/Container";
 import type { NavCategory } from "@/types/storefront";
 import { useCustomerName } from "@/packages/module-customer/session";
+import { MEGA_MENU_PANEL_HEADING } from "@/lib/config";
 
 /** Merchandising links (mobile drawer). */
 export const PROMO_LINKS: Array<{ label: string; href: string; highlight?: boolean }> = [
@@ -21,7 +22,8 @@ export const REWARDS_HREF = "/customer/account/rewards";
 
 const href = (c: NavCategory) => `/category/${c.urlPath}`;
 const count = (n?: number) => (n ?? 0).toLocaleString("en-US");
-const fade = "transition-[opacity,visibility] duration-(--duration-panel) ease-(--ease-panel)";
+/* Faster than the shared panel duration: menus should feel instant. */
+const fade = "transition-[opacity,visibility] duration-150 ease-(--ease-panel)";
 /** Links shown per sub-category column before "View all". */
 const COLUMN_LIMIT = 8;
 /** Top-bar items rendered before the bar is measured (server render). */
@@ -90,7 +92,7 @@ function useHoverOpen() {
       if (timer.current) clearTimeout(timer.current);
       setOpen(value);
     },
-    hoverProps: { onMouseEnter: () => schedule(true, 120), onMouseLeave: () => schedule(false, 150) },
+    hoverProps: { onMouseEnter: () => schedule(true, 50), onMouseLeave: () => schedule(false, 100) },
   };
 }
 
@@ -178,8 +180,9 @@ function CategoryColumns({ category, columns, onNavigate }: { category: NavCateg
   );
 }
 
-/** Title row of a category panel with its "Shop all" link. */
+/** Title row of a category panel with its "View all" link; switched off with MEGA_MENU_PANEL_HEADING. */
 function PanelHeading({ category, onNavigate }: { category: NavCategory; onNavigate: () => void }) {
+  if (!MEGA_MENU_PANEL_HEADING) return null;
   return (
     <div className="mb-5 flex items-center justify-between gap-4">
       <h3 className="text-[22px] font-bold leading-[1.2] text-brand-charcoal">{category.name}</h3>
@@ -188,7 +191,7 @@ function PanelHeading({ category, onNavigate }: { category: NavCategory; onNavig
         onClick={onNavigate}
         className="inline-flex shrink-0 items-center gap-1.5 text-[14px] font-bold text-brand-coral transition-colors hover:text-brand-coral-hover"
       >
-        Shop all{category.productCount !== undefined ? ` ${count(category.productCount)}` : ""}
+        View all{category.productCount !== undefined ? ` ${count(category.productCount)}` : ""}
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M2.5 8h10M9 4.5 12.5 8 9 11.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -290,7 +293,7 @@ function AllCategories({ departments }: { departments: NavCategory[] }) {
           <rect x="2" y="14.6" width="16" height="2.2" rx="1.1" />
         </svg>
         <span className="whitespace-nowrap">All Categories</span>
-        <Chevron className={clsx("shrink-0 transition-transform duration-(--duration-panel)", open && "rotate-180")} />
+        <Chevron className={clsx("shrink-0 transition-transform duration-150", open && "rotate-180")} />
       </button>
 
       <div

@@ -64,6 +64,12 @@ export const FREE_SHIPPING_THRESHOLD = 3000;
 export const REWARD_EARN_PERCENT = 1;
 export const REWARD_POINTS_PER_TAKA = 10;
 /** Products per page on category/search listings (`?limit=`); the first is the default. */
+/**
+ * Mega menu panels: the category name and its "View all 653" link above the sub-categories.
+ * Magento has no admin setting for this yet, so it is switched here (true = shown).
+ */
+export const MEGA_MENU_PANEL_HEADING = true;
+
 export const PLP_PAGE_SIZES = [24, 48, 96] as const;
 export const PLP_PAGE_SIZE: number = PLP_PAGE_SIZES[0];
 
