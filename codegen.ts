@@ -10,7 +10,6 @@ const schemaUrl = process.env.NEXT_SERVER_MAGENTO_ENDPOINT;
 if (!schemaUrl) {
   console.warn("⚠️ NEXT_SERVER_MAGENTO_ENDPOINT environment variable is not set");
 }
-
 /**
  * Run `npm run generate` once the Magento endpoint is reachable.
  *
