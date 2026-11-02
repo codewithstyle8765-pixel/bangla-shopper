@@ -1,0 +1,76 @@
+# Set one or more delivery methods on a cart.
+mutation SetShippingMethodsOnCart($input: SetShippingMethodsOnCartInput) {
+  setShippingMethodsOnCart(input: $input) {
+    cart {
+      applied_coupons {
+        code
+      }
+      available_payment_methods {
+        code
+        is_deferred
+        title
+      }
+      billing_address {
+        city
+        company
+        customer_address_uid
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        street
+        suffix
+        telephone
+        uid
+        vat_id
+      }
+      email
+      gift_message {
+        from
+        message
+        to
+      }
+      id
+      is_virtual
+      itemsV2 {
+        total_count
+      }
+      mstRewardPoints {
+        earn_points
+        is_applied
+        spend_max_points
+        spend_min_points
+        spend_points
+      }
+      rules {
+        uid
+      }
+      selected_payment_method {
+        code
+        purchase_order_number
+        title
+      }
+      shipping_addresses {
+        city
+        company
+        customer_address_uid
+        customer_notes
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        same_as_billing
+        street
+        suffix
+        telephone
+        uid
+        vat_id
+      }
+      total_quantity
+    }
+  }
+}

@@ -1,0 +1,7 @@
+# price alert information
+query Price($storeId: Int, $productId: Int, $customerToken: String) {
+  price(storeId: $storeId, productId: $productId, customerToken: $customerToken) {
+    message
+    success
+  }
+}

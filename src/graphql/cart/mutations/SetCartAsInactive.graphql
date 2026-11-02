@@ -1,0 +1,7 @@
+# Sets the cart as inactive
+mutation SetCartAsInactive($cartId: String!) {
+  setCartAsInactive(cartId: $cartId) {
+    error
+    success
+  }
+}

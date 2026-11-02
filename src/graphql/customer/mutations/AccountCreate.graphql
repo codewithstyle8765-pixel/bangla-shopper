@@ -1,0 +1,7 @@
+# Remove from compare request
+mutation AccountCreate($storeId: Int, $orderId: Int) {
+  accountCreate(storeId: $storeId, orderId: $orderId) {
+    message
+    success
+  }
+}

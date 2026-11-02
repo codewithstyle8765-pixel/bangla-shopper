@@ -1,0 +1,4 @@
+# Q&A tab "Ask a question": shown once an admin answers it. name / email come from the account when signed in.
+mutation AskProductQuestion($sku: String!, $question: String!, $name: String, $email: String) {
+  askProductQuestion(sku: $sku, question: $question, name: $name, email: $email)
+}

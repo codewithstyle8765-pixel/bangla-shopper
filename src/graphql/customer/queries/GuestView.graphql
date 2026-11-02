@@ -1,0 +1,35 @@
+# guest order view information
+query GuestView($storeId: Int, $incrementId: String, $lastName: String, $email: String, $type: String, $zipCode: String) {
+  guestView(
+    storeId: $storeId
+    incrementId: $incrementId
+    lastName: $lastName
+    email: $email
+    type: $type
+    zipCode: $zipCode
+  ) {
+    message
+    orderData {
+      itemList {
+        name
+        price
+        qty
+        sku
+        subTotal
+      }
+      orderInfo {
+        billingAddress
+        paymentMethod
+        shippingAddress
+        shippingMethod
+      }
+      totals {
+        code
+        formattedValue
+        label
+        value
+      }
+    }
+    success
+  }
+}

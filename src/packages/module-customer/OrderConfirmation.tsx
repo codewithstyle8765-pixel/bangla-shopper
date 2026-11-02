@@ -11,7 +11,8 @@ import { AddressBlock } from "@/packages/module-customer/AccountUi";
 import { PrintInvoiceHeader } from "@/packages/module-customer/PrintInvoiceHeader";
 import { CommentIcon, OrderComments } from "@/packages/module-customer/OrderComments";
 import type { Order } from "@/types/storefront";
-import { formatDateTime, formatTk } from "@/utils/format";
+import { formatDateTime } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { estimateEarnPoints } from "@/utils/rewards";
 
 interface OrderConfirmationProps {
@@ -70,6 +71,7 @@ const button = "flex h-11 items-center justify-center gap-2 rounded-[4px] px-5 t
 
 /** Order confirmation: header + actions, items ordered, summary with delivery/payment, what happens next. Printable. */
 export function OrderConfirmation({ number, initialOrder, signedIn, countries, hotline }: OrderConfirmationProps) {
+  const money = useMoney();
   const [order, setOrder] = useState<Order | null>(initialOrder);
   useEffect(() => {
     if (!number) return;
@@ -215,8 +217,8 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
       </div>
 
       {earn > 0 && (
-        <div className="mx-auto mt-6 flex items-center gap-3 lg:max-w-[640px] rounded-[8px] bg-brand-coral/8 px-4 py-3 text-left">
-          <RewardCoin className="h-9 w-9" />
+        <div className="mx-auto mt-6 flex items-center gap-3.5 lg:max-w-[640px] rounded-[8px] bg-brand-coral/8 px-4 py-3 text-left">
+          <RewardCoin className="h-11 w-auto sm:h-12 lg:h-13" />
           <p className="text-[14px] leading-[1.45] text-brand-dark">
             {signedIn ? (
               <>
@@ -248,17 +250,17 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
                   <NextImage src={item.image} alt="" width={72} height={72} className="h-16 w-16 shrink-0 rounded-[6px] border border-card-border object-contain sm:h-[72px] sm:w-[72px]" />
                   <div className="min-w-0 flex-1">
                     {item.urlKey ? (
-                      <Link href={`/product/${item.urlKey}`} className="line-clamp-2 text-[14px] font-medium leading-[1.35] text-brand-dark hover:text-brand-coral">
+                      <Link href={`/product/${item.urlKey}`} prefetch className="line-clamp-2 text-[14px] font-medium leading-[1.35] text-brand-dark hover:text-brand-coral">
                         {item.name}
                       </Link>
                     ) : (
                       <p className="line-clamp-2 text-[14px] font-medium leading-[1.35] text-brand-dark">{item.name}</p>
                     )}
                     <p className="mt-1 text-[12px] text-footer-text">
-                      SKU: {item.sku} · Qty {item.quantity} × {formatTk(item.price)}
+                      SKU: {item.sku} · Qty {item.quantity} × {money(item.price)}
                     </p>
                   </div>
-                  <p className="shrink-0 text-[14px] font-bold text-brand-dark">{formatTk(item.price * item.quantity)}</p>
+                  <p className="shrink-0 text-[14px] font-bold text-brand-dark">{money(item.price * item.quantity)}</p>
                 </li>
               ))}
             </ul>
@@ -270,21 +272,21 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
               <dl className="mt-3 space-y-2 text-[14px]">
                 <div className="flex justify-between">
                   <dt className="text-footer-text">Subtotal</dt>
-                  <dd className="text-brand-dark">{formatTk(order.subtotal)}</dd>
+                  <dd className="text-brand-dark">{money(order.subtotal)}</dd>
                 </div>
                 {order.discount > 0 && (
                   <div className="flex justify-between">
                     <dt className="text-footer-text">Discount</dt>
-                    <dd className="text-brand-coral">− {formatTk(order.discount)}</dd>
+                    <dd className="text-brand-coral">− {money(order.discount)}</dd>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <dt className="text-footer-text">Shipping</dt>
-                  <dd className="text-brand-dark">{order.shipping ? formatTk(order.shipping) : "FREE"}</dd>
+                  <dd className="text-brand-dark">{order.shipping ? money(order.shipping) : "FREE"}</dd>
                 </div>
                 <div className="flex items-baseline justify-between border-t border-card-border pt-3">
                   <dt className="font-bold uppercase tracking-[0.1em] text-brand-dark">Total</dt>
-                  <dd className="text-[20px] font-bold text-brand-alert">{formatTk(order.grandTotal)}</dd>
+                  <dd className="text-[20px] font-bold text-brand-alert">{money(order.grandTotal)}</dd>
                 </div>
               </dl>
             </div>

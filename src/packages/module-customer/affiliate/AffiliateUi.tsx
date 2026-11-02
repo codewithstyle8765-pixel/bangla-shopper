@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
 import type { AffiliateBalance, AffiliateCommission, AffiliateWithdrawalStatus } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 
 export const AFFILIATE_ROOT = "/customer/account/affiliate";
 
@@ -85,10 +85,10 @@ export function StatCard({ label, value, tone = "default", hint }: { label: stri
 export function BalanceCards({ balance }: { balance: AffiliateBalance }) {
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-      <StatCard label="Current balance" value={formatTk(balance.current)} tone="brand" />
-      <StatCard label="On hold" value={formatTk(balance.onHold)} />
-      <StatCard label="Lifetime earned" value={formatTk(balance.lifetime)} tone="success" />
-      <StatCard label="Paid out" value={formatTk(balance.paid)} />
+      <StatCard label="Current balance" value={<Money value={balance.current} />} tone="brand" />
+      <StatCard label="On hold" value={<Money value={balance.onHold} />} />
+      <StatCard label="Lifetime earned" value={<Money value={balance.lifetime} />} tone="success" />
+      <StatCard label="Paid out" value={<Money value={balance.paid} />} />
     </div>
   );
 }

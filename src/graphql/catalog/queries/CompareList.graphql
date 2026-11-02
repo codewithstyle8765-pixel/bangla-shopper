@@ -1,0 +1,98 @@
+# Return products that have been added to the specified compare list.
+query CompareList($uid: ID!) {
+  compareList(uid: $uid) {
+    attributeValueList {
+      attributeName
+      value
+    }
+    attributes {
+      code
+      label
+    }
+    item_count
+    items {
+      attributes {
+        code
+        value
+      }
+      product {
+        __typename
+        canonical_url
+        country_of_manufacture
+        gift_message_available
+        max_sale_qty
+        meta_description
+        meta_keyword
+        meta_title
+        min_sale_qty
+        name
+        new_from_date
+        new_to_date
+        only_x_left_in_stock
+        options_container
+        quantity
+        rating_summary
+        review_count
+        sku
+        special_price
+        special_to_date
+        stock_status
+        swatch_image
+        uid
+        url_key
+        url_suffix
+      }
+      uid
+    }
+    message
+    productList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    showSwatchOnCollection
+    success
+    uid
+  }
+}

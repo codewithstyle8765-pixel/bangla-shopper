@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/packages/module-common/Breadcrumbs";
 import { Container } from "@/packages/module-common/Container";
 import type { AffiliateOverview } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 
 /* A full page load: signed-out visitors are redirected to login by the proxy, which a client-side navigation would have to abort mid-stream. */
 const APPLY_HREF = "/customer/account/affiliate";
@@ -111,7 +111,7 @@ export function AffiliateProgramView({ overview }: { overview: AffiliateOverview
   const facts = [
     { value: "Free", label: "to join" },
     ...(top ? [{ value: `Up to ${top}`, label: "commission" }] : []),
-    ...(overview ? [{ value: formatTk(overview.minPayout, false), label: "minimum payout" }] : []),
+    ...(overview ? [{ value: <Money value={overview.minPayout} decimals={false} />, label: "minimum payout" }] : []),
   ];
 
   return (

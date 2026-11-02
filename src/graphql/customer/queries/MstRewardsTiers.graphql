@@ -1,0 +1,18 @@
+# List of tiers
+query MstRewardsTiers {
+  mstRewardsTiers {
+    description
+    is_active
+    is_current_tier
+    min_earn_points
+    name
+    remaining {
+      money {
+        currency
+        value
+      }
+      points
+    }
+    tier_logo
+  }
+}

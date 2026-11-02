@@ -1,0 +1,69 @@
+# address form information
+query AddressFormData($customerToken: String, $storeId: Int, $addressId: Int) {
+  addressFormData(
+    customerToken: $customerToken
+    storeId: $storeId
+    addressId: $addressId
+  ) {
+    addressData {
+      city
+      company
+      country_id
+      created_at
+      entity_id
+      fax
+      firstname
+      increment_id
+      isDefaultBilling
+      isDefaultShipping
+      is_active
+      lastname
+      middlename
+      parent_id
+      postcode
+      prefix
+      region
+      region_id
+      street
+      suffix
+      telephone
+      updated_at
+      vat_id
+      vat_is_valid
+      vat_request_date
+      vat_request_id
+      vat_request_success
+    }
+    allowToChooseState
+    countryData {
+      country_id
+      isStateRequired
+      isZipOptional
+      name
+      states {
+        code
+        name
+        region_id
+      }
+    }
+    defaultCountry
+    firstName
+    isAddressTitleRequired
+    isAddressTitleVisible
+    isCompanyRequired
+    isCompanyVisible
+    isDOBVisible
+    isFaxVisible
+    isGenderVisible
+    isMiddlenameVisible
+    isPrefixVisible
+    isSuffixVisible
+    isTaxVisible
+    isTelephoneRequired
+    isTelephoneVisible
+    lastName
+    message
+    streetLineCount
+    success
+  }
+}

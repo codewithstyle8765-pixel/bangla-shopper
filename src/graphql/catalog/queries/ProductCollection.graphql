@@ -1,0 +1,93 @@
+# product collection all information
+query ProductCollection($customerToken: String, $storeId: Int, $currency: String, $width: String, $quoteId: Int, $mFactor: String, $id: String, $type: String, $sortData: collectionSort, $filterData: [collectionFilter], $pageNumber: Int) {
+  productCollection(
+    customerToken: $customerToken
+    storeId: $storeId
+    currency: $currency
+    width: $width
+    quoteId: $quoteId
+    mFactor: $mFactor
+    id: $id
+    type: $type
+    sortData: $sortData
+    filterData: $filterData
+    pageNumber: $pageNumber
+  ) {
+    banners {
+      bannerImage
+      dominantColor
+    }
+    cartCount
+    childCategories {
+      hasChildren
+      id
+      name
+    }
+    criteriaData
+    layeredData {
+      code
+      is_filterable
+      label
+      options {
+        count
+        id
+        label
+      }
+    }
+    message
+    productList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    reviewEnable
+    sortingData {
+      code
+      label
+    }
+    success
+    totalCount
+    wishlistEnable
+  }
+}

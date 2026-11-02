@@ -1,0 +1,14 @@
+# Delete customer account
+mutation DeleteAccount($websiteId: Int, $storeId: Int, $customerToken: String, $password: String, $confirmPassword: String) {
+  deleteAccount(
+    websiteId: $websiteId
+    storeId: $storeId
+    customerToken: $customerToken
+    password: $password
+    confirmPassword: $confirmPassword
+  ) {
+    message
+    otherError
+    success
+  }
+}

@@ -1,0 +1,6 @@
+# Request a customer token so that an administrator can perform remote shopping assistance.
+mutation GenerateCustomerTokenAsAdmin($input: GenerateCustomerTokenAsAdminInput!) {
+  generateCustomerTokenAsAdmin(input: $input) {
+    customer_token
+  }
+}

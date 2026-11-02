@@ -1,0 +1,4 @@
+# Delete customer account
+mutation DeleteCustomer {
+  deleteCustomer
+}

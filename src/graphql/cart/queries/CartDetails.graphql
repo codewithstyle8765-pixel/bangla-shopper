@@ -1,0 +1,108 @@
+# cart information
+query CartDetails($width: String, $quoteId: Int, $customerToken: String, $storeId: Int, $currency: String, $pageNumber: Int) {
+  cartDetails(
+    width: $width
+    quoteId: $quoteId
+    customerToken: $customerToken
+    storeId: $storeId
+    currency: $currency
+    pageNumber: $pageNumber
+  ) {
+    allowMultipleShipping
+    canGuestCheckoutDownloadable
+    cartCount
+    cartTotal
+    couponCode
+    crossSellList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    descriptionMessage
+    isAllowedGuestCheckout
+    isCheckoutAllowed
+    isVirtual
+    items {
+      canMoveToWishlist
+      dominantColor
+      finalPrice
+      formattedFinalPrice
+      formattedPrice
+      groupedProductId
+      id
+      image
+      isInRange
+      message
+      name
+      options {
+        label
+        optionId
+        value
+        valueIds
+      }
+      price
+      productId
+      qty
+      remainingQty
+      sku
+      subTotal
+      thresholdQty
+      typeId
+    }
+    message
+    minimumAmount
+    minimumFormattedAmount
+    quoteId
+    showThreshold
+    success
+    totalCount
+    totalsData {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    unformattedCartTotal
+  }
+}

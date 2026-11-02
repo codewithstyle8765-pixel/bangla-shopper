@@ -1,0 +1,15 @@
+# share products by mail
+query ProductShare($storeId: Int, $message: String!, $productId: Int!, $customerName: String, $customerEmail: String, $recipientName: [String], $recipientEmail: [String]) {
+  productShare(
+    storeId: $storeId
+    message: $message
+    productId: $productId
+    customerName: $customerName
+    customerEmail: $customerEmail
+    recipientName: $recipientName
+    recipientEmail: $recipientEmail
+  ) {
+    message
+    success
+  }
+}

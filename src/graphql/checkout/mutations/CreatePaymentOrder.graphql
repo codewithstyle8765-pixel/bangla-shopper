@@ -1,0 +1,10 @@
+# Creates a payment order for further payment processing
+mutation CreatePaymentOrder($input: CreatePaymentOrderInput!) {
+  createPaymentOrder(input: $input) {
+    amount
+    currency_code
+    id
+    mp_order_id
+    status
+  }
+}

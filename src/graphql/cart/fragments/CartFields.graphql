@@ -1,0 +1,58 @@
+# Cart fields the mini cart, cart page and checkout summary show (items, options, prices, coupon).
+fragment CartFields on Cart {
+  id
+  total_quantity
+  applied_coupons {
+    code
+  }
+  prices {
+    subtotal_including_tax {
+      value
+    }
+    discounts {
+      amount {
+        value
+      }
+    }
+  }
+  items {
+    uid
+    quantity
+    product {
+      sku
+      name
+      url_key
+      country_of_manufacture
+      small_image {
+        url
+      }
+      price_range {
+        minimum_price {
+          regular_price {
+            value
+          }
+        }
+      }
+    }
+    prices {
+      price {
+        value
+      }
+    }
+    ... on ConfigurableCartItem {
+      configurable_options {
+        option_label
+        value_label
+      }
+      configured_variant {
+        price_range {
+          minimum_price {
+            regular_price {
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}

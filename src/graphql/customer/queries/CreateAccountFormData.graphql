@@ -1,0 +1,25 @@
+# create account form data information
+query CreateAccountFormData($storeId: Int) {
+  createAccountFormData(storeId: $storeId) {
+    dateFormat
+    isDOBRequired
+    isDOBVisible
+    isGenderRequired
+    isGenderVisible
+    isMiddlenameVisible
+    isMobileRequired
+    isMobileVisible
+    isPrefixRequired
+    isPrefixVisible
+    isSuffixRequired
+    isSuffixVisible
+    isTaxRequired
+    isTaxVisible
+    message
+    prefixHasOptions
+    prefixOptions
+    success
+    suffixHasOptions
+    suffixOptions
+  }
+}

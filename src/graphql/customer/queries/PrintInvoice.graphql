@@ -1,0 +1,13 @@
+# Download Invoice
+query PrintInvoice($customerToken: String, $storeId: Int, $invoiceId: Int, $incrementId: String) {
+  printInvoice(
+    customerToken: $customerToken
+    storeId: $storeId
+    invoiceId: $invoiceId
+    incrementId: $incrementId
+  ) {
+    message
+    success
+    url
+  }
+}

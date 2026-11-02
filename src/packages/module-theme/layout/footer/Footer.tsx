@@ -13,11 +13,10 @@ export async function Footer() {
   if (!data) return null;
   const { contact } = data;
 
-  const socialList = [
-    ...data.social,
-    ...(!data.social.some((s) => s.network === "tiktok") ? [{ network: "tiktok" as const, href: "https://www.tiktok.com/@banglashoppers" }] : []),
-    ...(!data.social.some((s) => s.network === "pinterest") ? [{ network: "pinterest" as const, href: "https://www.pinterest.com/banglashoppers" }] : []),
-  ];
+  const socialList = data.social;
+  const hasIosApp = Boolean(data.apps?.ios);
+  const hasAndroidApp = Boolean(data.apps?.android);
+  const hasApps = hasIosApp || hasAndroidApp;
 
   return (
     <footer className="mt-4 bg-white font-sans text-[14px] text-footer-text">
@@ -61,8 +60,8 @@ export async function Footer() {
                 <MailSolidIcon className="h-6 w-6" />
               </span>
               <div>
-                <h2 className="text-[17px] font-bold leading-tight text-brand-dark sm:text-[19px]">{data.newsletterTitle}</h2>
-                <p className="mt-1 text-[13px] sm:text-[14px]">{data.newsletterText}</p>
+                {data.newsletterTitle && <h2 className="text-[17px] font-bold leading-tight text-brand-dark sm:text-[19px]">{data.newsletterTitle}</h2>}
+                {data.newsletterText && <p className="mt-1 text-[13px] sm:text-[14px]">{data.newsletterText}</p>}
               </div>
             </div>
 
@@ -119,65 +118,60 @@ export async function Footer() {
         </Container>
       </div>
 
-      {(() => {
-        const highlightsList = [
-          {
-            icon: "authentic" as const,
-            title: "100% Authentic Products",
-            text: "Authenticity Guaranteed",
-          },
-          ...data.highlights.filter(
-            (h) => h.icon !== "support" && h.icon !== "authentic" && !h.title.toLowerCase().includes("support"),
-          ),
-        ];
-
-        return (
-          <div className="border-t border-b border-card-border py-4">
-            <Container>
-              <ul className="grid grid-cols-3 divide-x divide-card-border">
-                {highlightsList.map(({ icon, title, text }) => (
-                  <li key={title} className="flex flex-col items-center gap-2 px-2 text-center sm:flex-row sm:justify-center sm:gap-3 sm:px-4 sm:text-left xl:px-8">
-                    <HighlightIcon icon={icon} className="h-8 w-8 shrink-0 text-brand-coral sm:h-9 sm:w-9" />
-                    <span className="text-[12px] leading-[1.4]">
-                      <span className="block text-balance text-[13px] font-semibold leading-[1.3] text-brand-dark sm:text-[14px] sm:leading-[1.4]">
-                        <span className="max-sm:hidden">{title.match(/^\d+%\s/)?.[0]}</span>
-                        {title.replace(/^\d+%\s/, "")}
-                      </span>
-                      <span className="max-sm:hidden">{text}</span>
+      {data.highlights.length > 0 && (
+        <div className="border-t border-b border-card-border py-4">
+          <Container>
+            <ul className="grid grid-cols-3 divide-x divide-card-border">
+              {data.highlights.map(({ icon, title, text }) => (
+                <li key={title} className="flex flex-col items-center gap-2 px-2 text-center sm:flex-row sm:justify-center sm:gap-3 sm:px-4 sm:text-left xl:px-8">
+                  <HighlightIcon icon={icon} className="h-8 w-8 shrink-0 text-brand-coral sm:h-9 sm:w-9" />
+                  <span className="text-[12px] leading-[1.4]">
+                    <span className="block text-balance text-[13px] font-semibold leading-[1.3] text-brand-dark sm:text-[14px] sm:leading-[1.4]">
+                      <span className="max-sm:hidden">{title.match(/^\d+%\s/)?.[0]}</span>
+                      {title.replace(/^\d+%\s/, "")}
                     </span>
-                  </li>
-                ))}
-              </ul>
-            </Container>
-          </div>
-        );
-      })()}
+                    {text && <span className="max-sm:hidden">{text}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </div>
+      )}
 
       <Container className="flex flex-col items-center gap-5 py-4 lg:flex-row lg:justify-between">
-        <div className="flex flex-col items-center gap-3 lg:items-start">
-          <h2 className="text-[16px] font-bold text-brand-dark">Check out our app!</h2>
-          <div className="flex items-center gap-2">
-            <a href={data.apps.ios} target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store" className="shrink-0">
-              <NextImage src="/assets/images/footer/download-on-the-app-store.svg" alt="" width={120} height={40} className="block h-10 w-[120px]" />
-            </a>
-            <a href={data.apps.android} target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play" className="shrink-0">
-              <NextImage src="/assets/images/footer/get-it-on-google-play.svg" alt="" width={135} height={40} className="block h-10 w-[135px]" />
-            </a>
+        {hasApps && (
+          <div className="flex flex-col items-center gap-3 lg:items-start">
+            {data.apps.title && <h2 className="text-[16px] font-bold text-brand-dark">{data.apps.title}</h2>}
+            <div className="flex items-center gap-2">
+              {hasIosApp && (
+                <a href={data.apps.ios} target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store" className="shrink-0">
+                  <NextImage src="/assets/images/footer/download-on-the-app-store.svg" alt="" width={120} height={40} className="block h-10 w-[120px]" />
+                </a>
+              )}
+              {hasAndroidApp && (
+                <a href={data.apps.android} target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play" className="shrink-0">
+                  <NextImage src="/assets/images/footer/get-it-on-google-play.svg" alt="" width={135} height={40} className="block h-10 w-[135px]" />
+                </a>
+              )}
+            </div>
           </div>
-        </div>
-        <NextImage
-          src="/assets/images/footer/payment-logos.webp"
-          alt="Accepted payments: Visa, Mastercard, American Express, bKash, Nagad, Rocket, City Bank, upay and more via SSLCommerz"
-          width={1851}
-          height={416}
-          sizes="(max-width: 1023px) 100vw, 400px"
-          className="h-auto w-full max-w-[400px] shrink-0"
-        />
+        )}
+        {data.paymentBanner?.imageUrl && (
+          <NextImage
+            src={data.paymentBanner.imageUrl}
+            alt={data.paymentBanner.altText || ""}
+            width={1851}
+            height={416}
+            sizes="(max-width: 1023px) 100vw, 400px"
+            className="h-auto w-full max-w-[400px] shrink-0"
+          />
+        )}
       </Container>
 
       <div data-footer-bar className="bg-brand-navy py-4 text-[13px] text-white/80">
         <Container className="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
-          <p>{data.copyright}</p>
+          {data.copyright && <p>{data.copyright}</p>}
           <div className="flex items-center gap-5">
             <ul className="flex flex-wrap items-center justify-center gap-y-1">
               {data.legalLinks.map((link) => (

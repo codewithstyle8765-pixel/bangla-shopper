@@ -1,0 +1,86 @@
+# order details information
+query OrderDetails($storeId: Int, $customerToken: String, $incrementId: String) {
+  orderDetails(
+    storeId: $storeId
+    customerToken: $customerToken
+    incrementId: $incrementId
+  ) {
+    billingAddress
+    canReorder
+    creditmemoList {
+      incrementId
+      items {
+        discountAmount
+        name
+        price
+        qty
+        rowTotal
+        sku
+        subTotal
+      }
+      totals {
+        code
+        formattedValue
+        label
+        value
+      }
+    }
+    customerEmail
+    customerName
+    hasCreditmemo
+    hasInvoices
+    hasShipments
+    incrementId
+    invoiceList {
+      id
+      incrementId
+      items {
+        name
+      }
+      price
+      qty
+      sku
+      subTotal
+      totals {
+        code
+        formattedValue
+        label
+        value
+      }
+    }
+    message
+    orderData {
+      itemList {
+        image
+        name
+        price
+        productId
+        sku
+        subTotal
+      }
+      totals {
+        code
+        formattedValue
+        label
+        value
+      }
+    }
+    orderDate
+    paymentMethod
+    shipmentList {
+      id
+      incrementId
+      items {
+        name
+        qty
+        sku
+      }
+    }
+    shippingAddress
+    shippingMethod
+    state
+    statusColorCode
+    statusLabel
+    success
+  }
+}

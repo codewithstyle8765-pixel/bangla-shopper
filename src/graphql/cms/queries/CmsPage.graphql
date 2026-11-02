@@ -1,0 +1,17 @@
+# Return details about a CMS page.
+query CmsPage($id: Int, $identifier: String) {
+  cmsPage(id: $id, identifier: $identifier) {
+    content
+    content_heading
+    identifier
+    meta_description
+    meta_keywords
+    meta_title
+    page_layout
+    redirect_code
+    relative_url
+    title
+    type
+    url_key
+  }
+}

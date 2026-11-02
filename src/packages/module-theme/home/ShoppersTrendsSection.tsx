@@ -1,22 +1,24 @@
 import { Container } from "@/packages/module-common/Container";
 import { ProductCard } from "@/packages/module-catalog/product/ProductCard";
 import { TwoRowProductCarousel } from "@/packages/module-common/carousel/TwoRowProductCarousel";
-import { getCategoryProducts } from "@/utils/magento/catalog";
+import type { ProductSummary } from "@/types/storefront";
 
 interface ShoppersTrendsSectionProps {
+  title: string;
+  viewAllLink: string;
+  products: ProductSummary[];
   className?: string;
 }
 
-export async function ShoppersTrendsSection({ className = "" }: ShoppersTrendsSectionProps) {
-  const products = await getCategoryProducts("trends", 16);
+export function ShoppersTrendsSection({ title, viewAllLink, products, className = "" }: ShoppersTrendsSectionProps) {
   if (!products.length) return null;
 
   return (
     <section className={`w-full mt-[10px] ${className}`}>
       <Container className="desk:max-w-[1298px]">
         <TwoRowProductCarousel
-          title="TRENDING NOW >"
-          viewAllLink="/category/trends"
+          title={title}
+          viewAllLink={viewAllLink}
         >
           {products.map((item) => (
             <ProductCard key={item.id} {...item} layout="fluid" />

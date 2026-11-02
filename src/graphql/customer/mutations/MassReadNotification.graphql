@@ -1,0 +1,8 @@
+# Mark all notifications as read for customer
+mutation MassReadNotification($storeId: Int, $customerToken: String!) {
+  massReadNotification(storeId: $storeId, customerToken: $customerToken) {
+    message
+    success
+    unreadCount
+  }
+}

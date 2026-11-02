@@ -1,0 +1,12 @@
+# Gets the payment SDK urls and values
+query GetPaymentSDK($location: PaymentLocation!) {
+  getPaymentSDK(location: $location) {
+    sdkParams {
+      code
+      params {
+        name
+        value
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Creates a vault payment token
+mutation CreateVaultCardPaymentToken($input: CreateVaultCardPaymentTokenInput!) {
+  createVaultCardPaymentToken(input: $input) {
+    payment_source {
+      card {
+        brand
+        expiry
+        last_digits
+      }
+    }
+    vault_token_id
+  }
+}

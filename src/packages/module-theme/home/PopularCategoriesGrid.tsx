@@ -5,27 +5,15 @@ import { Container } from "@/packages/module-common/Container";
 import type { HomeTile } from "@/types/storefront";
 import { SectionTitle, SectionTitleSkeleton } from "./SectionTitle";
 
-/** Built-in tiles used when the home page API returns none. */
-const DEFAULT_TILES: HomeTile[] = [
-  { name: "Makeup", image: "/assets/images/home/makeup_1000x1000.png", href: "/category/makeup" },
-  { name: "K-Beauty", image: "/assets/images/home/k_beauty_1000x1000.png", href: "/category/k-beauty" },
-  { name: "Hair Care", image: "/assets/images/home/hair_care_1000x1000.png", href: "/category/hair-care" },
-  { name: "Mom & Baby", image: "/assets/images/home/mom_and_baby_1000x1000.png", href: "/category/mom-and-baby" },
-  { name: "Skin Care", image: "/assets/images/home/skin_care_1000x1000.png", href: "/category/skin-care" },
-  { name: "Accessories", image: "/assets/images/home/accessories_1000x1000.png", href: "/category/accessories" },
-  { name: "Undergarments", image: "/assets/images/home/undergarments_1000x1000.png", href: "/category/undergarments" },
-  { name: "Fragrance", image: "/assets/images/home/fragrance_1000x1000.png", href: "/category/fragrance" },
-];
-
 /** "Shop by Popular Category": large square tiles, four per row on desktop. */
-export function PopularCategoriesGrid({ tiles = [] }: { tiles?: HomeTile[] }) {
-  const list = tiles.length > 0 ? tiles : DEFAULT_TILES;
-  const rows = Array.from({ length: Math.ceil(list.length / 4) }, (_, i) => list.slice(i * 4, i * 4 + 4));
+export function PopularCategoriesGrid({ title, tiles }: { title: string; tiles: HomeTile[] }) {
+  if (tiles.length === 0) return null;
+  const rows = Array.from({ length: Math.ceil(tiles.length / 4) }, (_, i) => tiles.slice(i * 4, i * 4 + 4));
 
   return (
     <section aria-label="Shop By Popular Category" className="w-full mt-[14px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
-        <SectionTitle className="mb-[18px]">SHOP BY POPULAR CATEGORY</SectionTitle>
+        <SectionTitle className="mb-[18px]">{title}</SectionTitle>
 
         <div className="flex flex-col gap-3 sm:gap-[26px] w-full">
           {rows.map((row, r) => (

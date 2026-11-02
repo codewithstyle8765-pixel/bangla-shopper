@@ -1,18 +1,16 @@
-import type { DocumentNode } from "graphql";
-import {
-  ADD_TO_CART,
-  APPLY_COUPON,
-  CART_QUERY,
-  CREATE_EMPTY_CART,
-  CUSTOMER_CART_QUERY,
-  REMOVE_CART_ITEM,
-  REMOVE_COUPON,
-  UPDATE_CART_ITEM,
-} from "@/graphql/cart";
+import type { TypedDocumentNode } from "@apollo/client";
+import { AddItemsToCartDocument } from "@/graphql/cart/mutations/__generated__/AddItemsToCart.generated";
+import { ApplyCartCouponDocument } from "@/graphql/cart/mutations/__generated__/ApplyCartCoupon.generated";
+import { DeleteCartItemDocument } from "@/graphql/cart/mutations/__generated__/DeleteCartItem.generated";
+import { NewGuestCartDocument, type NewGuestCartMutation } from "@/graphql/cart/mutations/__generated__/NewGuestCart.generated";
+import { RemoveCartCouponDocument } from "@/graphql/cart/mutations/__generated__/RemoveCartCoupon.generated";
+import { UpdateCartItemQtyDocument } from "@/graphql/cart/mutations/__generated__/UpdateCartItemQty.generated";
+import { CartByIdDocument, type CartByIdQuery, type CartByIdQueryVariables } from "@/graphql/cart/queries/__generated__/CartById.generated";
+import { CustomerCartIdDocument, type CustomerCartIdQuery } from "@/graphql/cart/queries/__generated__/CustomerCartId.generated";
 import { authContext, graphqlMutate, graphqlRequestNoCache } from "@/lib/graphql-fetch";
 import type { MagentoCart } from "@/types/magento";
 import type { Cart } from "@/types/storefront";
-import { getCustomerToken, getGuestCartId, setGuestCartId } from "@/utils/session";
+import { clearGuestCartId, getCustomerToken, getGuestCartId, setGuestCartId } from "@/utils/session";
 
 const PLACEHOLDER_IMAGE = "/assets/images/placeholder.svg";
 
@@ -45,18 +43,21 @@ export function mapCart(c: MagentoCart): Cart {
   };
 }
 
+/** Magento's answer for a guest cart id that expired, was ordered or belongs to someone else. */
+const STALE_CART = /could not find a cart|cart isn't active|cannot perform operations on cart/i;
+const isStaleCart = (error: unknown) => error instanceof Error && STALE_CART.test(error.message);
+
 /** Customer cart when logged in, otherwise the guest cart (created on demand). */
 export async function resolveCartId(create: boolean): Promise<string | null> {
   const token = await getCustomerToken();
   if (token) {
-    const data = await graphqlRequestNoCache<{ customerCart: MagentoCart }>(CUSTOMER_CART_QUERY, undefined, {
-      context: authContext(token),
-    });
+    const data = await graphqlRequestNoCache<CustomerCartIdQuery>(CustomerCartIdDocument, undefined, { context: authContext(token) });
     return data.customerCart.id;
   }
   const guestId = await getGuestCartId();
   if (guestId || !create) return guestId;
-  const created = await graphqlMutate<{ createEmptyCart: string }>(CREATE_EMPTY_CART);
+  const created = await graphqlMutate<NewGuestCartMutation>(NewGuestCartDocument);
+  if (!created.createEmptyCart) throw new Error("Could not create a cart. Please try again.");
   await setGuestCartId(created.createEmptyCart);
   return created.createEmptyCart;
 }
@@ -64,35 +65,51 @@ export async function resolveCartId(create: boolean): Promise<string | null> {
 export async function getCart(): Promise<Cart> {
   const cartId = await resolveCartId(false);
   if (!cartId) return EMPTY_CART;
-  const data = await graphqlRequestNoCache<{ cart: MagentoCart }>(CART_QUERY, { cartId }, {
-    context: authContext(await getCustomerToken()),
-  });
-  return mapCart(data.cart);
+  const token = await getCustomerToken();
+  try {
+    const data = await graphqlRequestNoCache<CartByIdQuery, CartByIdQueryVariables>(CartByIdDocument, { cartId }, { context: authContext(token) });
+    return data.cart ? mapCart(data.cart as MagentoCart) : EMPTY_CART;
+  } catch (error) {
+    if (token || !isStaleCart(error)) throw error;
+    await clearGuestCartId();
+    return EMPTY_CART;
+  }
 }
 
-async function cartMutation(mutation: DocumentNode, variables: Record<string, unknown>, field: string): Promise<Cart> {
+type CartPayload = { cart?: unknown; user_errors?: Array<{ message: string } | null> } | null | undefined;
+
+/** Runs a cart mutation; a stale guest cart is replaced by a new one and the change retried once. */
+async function cartMutation<TData, TVariables extends { cartId: string }>(
+  mutation: TypedDocumentNode<TData, TVariables>,
+  variables: Omit<TVariables, "cartId">,
+  payloadOf: (data: TData) => CartPayload,
+  retry = true,
+): Promise<Cart> {
   const cartId = await resolveCartId(true);
-  const data = await graphqlMutate<Record<string, { cart: MagentoCart; user_errors?: Array<{ message: string }> }>>(
-    mutation,
-    { cartId, ...variables },
-    await getCustomerToken(),
-  );
-  const payload = data[field];
-  if (payload.user_errors?.length) throw new Error(payload.user_errors[0].message);
-  return mapCart(payload.cart);
+  const token = await getCustomerToken();
+  try {
+    const payload = payloadOf(await graphqlMutate<TData, TVariables>(mutation, { ...variables, cartId } as TVariables, token));
+    const userError = payload?.user_errors?.find(Boolean);
+    if (userError) throw new Error(userError.message);
+    return payload?.cart ? mapCart(payload.cart as MagentoCart) : EMPTY_CART;
+  } catch (error) {
+    if (!retry || token || !isStaleCart(error)) throw error;
+    await clearGuestCartId();
+    return cartMutation(mutation, variables, payloadOf, false);
+  }
 }
 
 /** `selectedOptions`: the configurable option value uids (Size: 236 ml) of the chosen child product. */
 export const addToCart = (sku: string, quantity: number, selectedOptions: string[] = []) =>
-  cartMutation(ADD_TO_CART, { sku, quantity, selectedOptions }, "addProductsToCart");
+  cartMutation(AddItemsToCartDocument, { sku, quantity, selectedOptions }, (d) => d.addProductsToCart);
 
 export const updateCartItem = (uid: string, quantity: number) =>
   quantity > 0
-    ? cartMutation(UPDATE_CART_ITEM, { uid, quantity }, "updateCartItems")
-    : cartMutation(REMOVE_CART_ITEM, { uid }, "removeItemFromCart");
+    ? cartMutation(UpdateCartItemQtyDocument, { uid, quantity }, (d) => d.updateCartItems)
+    : removeCartItem(uid);
 
-export const removeCartItem = (uid: string) => cartMutation(REMOVE_CART_ITEM, { uid }, "removeItemFromCart");
+export const removeCartItem = (uid: string) => cartMutation(DeleteCartItemDocument, { uid }, (d) => d.removeItemFromCart);
 
-export const applyCoupon = (code: string) => cartMutation(APPLY_COUPON, { code }, "applyCouponToCart");
+export const applyCoupon = (code: string) => cartMutation(ApplyCartCouponDocument, { code }, (d) => d.applyCouponToCart);
 
-export const removeCoupon = () => cartMutation(REMOVE_COUPON, {}, "removeCouponFromCart");
+export const removeCoupon = () => cartMutation(RemoveCartCouponDocument, {}, (d) => d.removeCouponFromCart);

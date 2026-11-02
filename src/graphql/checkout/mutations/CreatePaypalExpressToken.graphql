@@ -1,0 +1,10 @@
+# Initiate an Express Checkout transaction and receive a token. Use this mutation for Express Checkout and Payments Standard payment methods.
+mutation CreatePaypalExpressToken($input: PaypalExpressTokenInput!) {
+  createPaypalExpressToken(input: $input) {
+    paypal_urls {
+      edit
+      start
+    }
+    token
+  }
+}

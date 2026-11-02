@@ -1,0 +1,23 @@
+# Store locations page content and showrooms list
+query StoreLocations {
+  storeLocations {
+    title
+    subtitle
+    stores {
+      id
+      name
+      area
+      image
+      hours
+      opens
+      closes
+      closed_days
+      phone
+      email
+      address
+      landmark
+      map_embed_url
+      directions_url
+    }
+  }
+}

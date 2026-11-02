@@ -1,0 +1,12 @@
+# Return a list of downloadable products the customer has purchased.
+query CustomerDownloadableProducts {
+  customerDownloadableProducts {
+    items {
+      date
+      download_url
+      order_increment_id
+      remaining_downloads
+      status
+    }
+  }
+}

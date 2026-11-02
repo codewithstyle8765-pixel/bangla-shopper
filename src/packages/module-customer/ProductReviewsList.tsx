@@ -27,7 +27,7 @@ function ReviewDetails({ review }: { review: CustomerReview }) {
           ))}
         </dl>
       )}
-      <Link href={`/product/${review.product.urlKey}#reviews`} className="mt-3 inline-block text-[13px] font-semibold text-brand-link hover:underline">
+      <Link href={`/product/${review.product.urlKey}#reviews`} prefetch className="mt-3 inline-block text-[13px] font-semibold text-brand-link hover:underline">
         View product
       </Link>
     </div>
@@ -65,7 +65,7 @@ export function ProductReviewsList({ reviews }: { reviews: CustomerReviewPage })
               <tr className={clsx("border-t border-card-border first:border-t-0", openRow === i && "bg-brand-surface/30")}>
                 <td className="whitespace-nowrap py-3 pr-4 text-footer-text">{formatDate(review.createdAt)}</td>
                 <td className="py-3 pr-4">
-                  <Link href={`/product/${review.product.urlKey}`} className="group flex items-center gap-3">
+                  <Link href={`/product/${review.product.urlKey}`} prefetch className="group flex items-center gap-3">
                     {review.product.image && (
                       <NextImage src={review.product.image} alt="" width={48} height={48} className="h-12 w-12 shrink-0 rounded-[4px] border border-card-border object-contain" />
                     )}
@@ -99,7 +99,7 @@ export function ProductReviewsList({ reviews }: { reviews: CustomerReviewPage })
       <ul className="space-y-3 md:hidden">
         {reviews.items.map((review, i) => (
           <li key={`${review.product.urlKey}-${review.createdAt}`} className="rounded-[6px] border border-card-border p-4">
-            <Link href={`/product/${review.product.urlKey}`} className="flex items-center gap-3">
+            <Link href={`/product/${review.product.urlKey}`} prefetch className="flex items-center gap-3">
               {review.product.image && (
                 <NextImage src={review.product.image} alt="" width={56} height={56} className="h-14 w-14 shrink-0 rounded-[4px] border border-card-border object-contain" />
               )}

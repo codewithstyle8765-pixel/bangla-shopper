@@ -1,0 +1,48 @@
+# review and payment information
+query ReviewAndPayment($shippingMethod: String, $customerToken: String, $storeId: Int, $quoteId: Int, $currency: String) {
+  reviewAndPayment(
+    shippingMethod: $shippingMethod
+    customerToken: $customerToken
+    storeId: $storeId
+    quoteId: $quoteId
+    currency: $currency
+  ) {
+    billingAddress
+    cartCount
+    cartTotal
+    couponCode
+    currencyCode
+    message
+    orderReviewData {
+      cartTotal
+      items {
+        dominantColor
+        originalPrice
+        price
+        productName
+        qty
+        subTotal
+        thumbnail
+        unformattedOriginalPrice
+        unformattedPrice
+      }
+      totals {
+        formattedValue
+        title
+        unformattedValue
+        value
+      }
+    }
+    paymentMethods {
+      code
+      extraInformation
+      imageUrl
+      link
+      title
+    }
+    quoteId
+    shippingAddress
+    shippingMethod
+    success
+  }
+}

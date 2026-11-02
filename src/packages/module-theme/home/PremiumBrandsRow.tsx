@@ -1,42 +1,25 @@
 import Link from "next/link";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Container } from "@/packages/module-common/Container";
+import type { HomeTile } from "@/types/storefront";
 import { SectionTitle } from "./SectionTitle";
 
-const BRANDS = [
-  {
-    id: "brand-1",
-    name: "The Body Shop",
-    image: "/assets/images/home/layer_607.jpg",
-    link: "/category/outlet-center",
-  },
-  {
-    id: "brand-2",
-    name: "Simple Skincare",
-    image: "/assets/images/home/layer_608.jpg",
-    link: "/category/outlet-center",
-  },
-  {
-    id: "brand-3",
-    name: "Kodomo",
-    image: "/assets/images/home/layer_609.jpg",
-    link: "/category/outlet-center",
-  },
-];
+/** Brand tiles from the home page API. */
+export function PremiumBrandsRow({ title, highlight, tiles }: { title: string; highlight?: string; tiles: HomeTile[] }) {
+  if (tiles.length === 0) return null;
 
-export function PremiumBrandsRow() {
   return (
     <section aria-label="Brands you may try" className="w-full mt-[14px]">
       <Container className="w-full desk:w-[1290px] mx-auto px-(--gutter) desk:px-0">
         <SectionTitle className="mb-[10px]">
-          <span className="text-brand-coral">BRAND</span> YOU MAY TRY
+          {highlight && <span className="text-brand-coral">{highlight}</span>} {title}
         </SectionTitle>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-[15px] w-full">
-          {BRANDS.map((brand) => (
+          {tiles.map((brand) => (
             <Link
-              key={brand.id}
-              href={brand.link}
+              key={`${brand.href}-${brand.name}`}
+              href={brand.href}
               className="relative overflow-hidden group bg-white block"
             >
               <NextImage

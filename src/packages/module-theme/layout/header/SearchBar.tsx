@@ -2,19 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { OnPathnameChange } from "@/packages/module-common/OnPathnameChange";
 
 /** Pill search field used in the mobile and desktop header. */
 export function SearchBar({ id, className }: { id: string; className?: string }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const pathname = usePathname();
-
-  /* The results page shows its query; any other page starts with an empty field. */
-  useEffect(() => {
-    setQuery(pathname === "/search" ? (new URLSearchParams(window.location.search).get("q") ?? "") : "");
-  }, [pathname]);
 
   /* Phones: dragging the page closes the keyboard. While the field keeps focus, Android keeps scrolling it back into
      view, which fights the customer's scroll and shakes the page. */
@@ -41,6 +36,8 @@ export function SearchBar({ id, className }: { id: string; className?: string })
         className,
       )}
     >
+      {/* The results page shows its query; any other page starts with an empty field. */}
+      <OnPathnameChange onChange={(path) => setQuery(path === "/search" ? (new URLSearchParams(window.location.search).get("q") ?? "") : "")} />
       <label htmlFor={id} className="sr-only">
         Search products, brands and categories
       </label>

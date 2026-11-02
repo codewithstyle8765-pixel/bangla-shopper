@@ -3,7 +3,8 @@ import clsx from "clsx";
 import type { ReactNode } from "react";
 import type { AddressInput, Order, OrderStatus } from "@/types/storefront";
 import { formatAddressLines } from "@/utils/address";
-import { formatDate, formatTk } from "@/utils/format";
+import { formatDate } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
   pending: "text-brand-dark",
@@ -84,7 +85,7 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
               <td className="py-3 font-semibold text-brand-dark">#{o.number}</td>
               <td className="py-3 text-footer-text">{formatDate(o.createdAt)}</td>
               <td className="py-3 text-footer-text">{o.items.reduce((a, i) => a + i.quantity, 0)}</td>
-              <td className="py-3 font-semibold text-brand-dark">{formatTk(o.grandTotal)}</td>
+              <td className="py-3 font-semibold text-brand-dark"><Money value={o.grandTotal} /></td>
               <td className="py-3">
                 <StatusBadge status={o.status} />
               </td>
@@ -110,7 +111,7 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
                 <span>
                   {formatDate(o.createdAt)} · {o.items.reduce((a, i) => a + i.quantity, 0)} items
                 </span>
-                <span className="font-bold text-brand-dark">{formatTk(o.grandTotal)}</span>
+                <span className="font-bold text-brand-dark"><Money value={o.grandTotal} /></span>
               </div>
             </Link>
           </li>

@@ -1,0 +1,10 @@
+# Return information about CMS blocks.
+query CmsBlocks($identifiers: [String]) {
+  cmsBlocks(identifiers: $identifiers) {
+    items {
+      content
+      identifier
+      title
+    }
+  }
+}

@@ -7,14 +7,14 @@ import { MobileBottomNav } from "./MobileBottomNav";
 import MobileNavDrawer from "@/packages/module-theme/layout/mega-menu/MobileNavDrawer";
 import type { NavCategory } from "@/types/storefront";
 
-import type { AnnouncementItem } from "./announcements.types";
+import type { AnnouncementBarData } from "./announcements.types";
 
 interface HeaderProps {
   categories: NavCategory[];
   children?: ReactNode;
   cartCount?: number;
   hotline?: string;
-  announcements?: AnnouncementItem[];
+  announcements?: AnnouncementBarData | null;
 }
 
 export function Header({ categories, cartCount, hotline, announcements, children }: HeaderProps) {
@@ -25,10 +25,10 @@ export function Header({ categories, cartCount, hotline, announcements, children
 
   return (
     <>
-      {showAnnouncement && (
+      {showAnnouncement && announcements && (
         <HeaderTopBar
           onDismiss={() => setShowAnnouncement(false)}
-          messages={announcements}
+          bar={announcements}
         />
       )}
       <header data-pin className="sticky top-0 z-40 w-full bg-white">

@@ -1,0 +1,12 @@
+import * as Types from '../../../../types/graphql-types';
+
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type AdvancedSearchFormDataQueryVariables = Types.Exact<{
+  storeId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+}>;
+
+
+export type AdvancedSearchFormDataQuery = { __typename?: 'Query', advancedSearchFormData?: { __typename?: 'AdvancedSearchFormData', message?: string | null, success?: boolean | null, fieldList?: Array<{ __typename?: 'FieldList', attributeCode?: string | null, fieldList?: string | null, label?: string | null, maxQueryLength?: string | null, title?: string | null, options?: Array<{ __typename?: 'FieldListOptions', label?: string | null, value?: string | null } | null> | null } | null> | null } | null };
+
+
+export const AdvancedSearchFormDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AdvancedSearchFormData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"advancedSearchFormData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fieldList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attributeCode"}},{"kind":"Field","name":{"kind":"Name","value":"fieldList"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"maxQueryLength"}},{"kind":"Field","name":{"kind":"Name","value":"options"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<AdvancedSearchFormDataQuery, AdvancedSearchFormDataQueryVariables>;

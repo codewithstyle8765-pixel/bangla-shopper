@@ -1,0 +1,7 @@
+# logout request
+mutation Logout($storeId: Int, $customerToken: String, $token: String) {
+  logout(storeId: $storeId, customerToken: $customerToken, token: $token) {
+    message
+    success
+  }
+}

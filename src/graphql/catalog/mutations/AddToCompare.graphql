@@ -1,0 +1,11 @@
+# Add to compare request
+mutation AddToCompare($storeId: Int, $productId: Int!, $customerToken: String) {
+  addToCompare(
+    storeId: $storeId
+    productId: $productId
+    customerToken: $customerToken
+  ) {
+    message
+    success
+  }
+}

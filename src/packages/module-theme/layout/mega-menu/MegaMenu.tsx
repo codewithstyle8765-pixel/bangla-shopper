@@ -126,7 +126,7 @@ function CategoryColumns({ category, columns, onNavigate }: { category: NavCateg
       <ul className="gap-x-8 space-y-1.5" style={{ columnCount: cols }}>
         {children.map((c) => (
           <li key={c.urlPath} className="break-inside-avoid">
-            <Link href={href(c)} onClick={onNavigate} className={link}>
+            <Link href={href(c)} prefetch onClick={onNavigate} className={link}>
               {c.name}
             </Link>
           </li>
@@ -143,6 +143,7 @@ function CategoryColumns({ category, columns, onNavigate }: { category: NavCateg
           <div key={column.urlPath} className="min-w-0">
             <Link
               href={href(column)}
+              prefetch
               onClick={onNavigate}
               className="mb-2 block border-b-2 border-brand-coral/25 pb-2 text-[14px] font-bold text-brand-charcoal transition-colors hover:text-brand-coral"
             >
@@ -151,14 +152,14 @@ function CategoryColumns({ category, columns, onNavigate }: { category: NavCateg
             <ul className="space-y-1.5">
               {leaves.slice(0, COLUMN_LIMIT).map((leaf) => (
                 <li key={leaf.urlPath}>
-                  <Link href={href(leaf)} onClick={onNavigate} className={link}>
+                  <Link href={href(leaf)} prefetch onClick={onNavigate} className={link}>
                     {leaf.name}
                   </Link>
                   {leaf.children?.length ? (
                     <ul className="mt-1 space-y-1 border-l border-card-border pl-3">
                       {leaf.children.map((sub) => (
                         <li key={sub.urlPath}>
-                          <Link href={href(sub)} onClick={onNavigate} className="text-[13px] text-brand-charcoal/65 transition-colors hover:text-brand-coral">
+                          <Link href={href(sub)} prefetch onClick={onNavigate} className="text-[13px] text-brand-charcoal/65 transition-colors hover:text-brand-coral">
                             {sub.name}
                           </Link>
                         </li>
@@ -169,7 +170,7 @@ function CategoryColumns({ category, columns, onNavigate }: { category: NavCateg
               ))}
             </ul>
             {leaves.length > COLUMN_LIMIT && (
-              <Link href={href(column)} onClick={onNavigate} className="mt-2 inline-flex items-center gap-1 text-[13px] font-bold text-brand-coral hover:text-brand-coral-hover">
+              <Link href={href(column)} prefetch onClick={onNavigate} className="mt-2 inline-flex items-center gap-1 text-[13px] font-bold text-brand-coral hover:text-brand-coral-hover">
                 View all ({leaves.length}) <ArrowRight />
               </Link>
             )}
@@ -188,6 +189,7 @@ function PanelHeading({ category, onNavigate }: { category: NavCategory; onNavig
       <h3 className="text-[22px] font-bold leading-[1.2] text-brand-charcoal">{category.name}</h3>
       <Link
         href={href(category)}
+        prefetch
         onClick={onNavigate}
         className="inline-flex shrink-0 items-center gap-1.5 text-[14px] font-bold text-brand-coral transition-colors hover:text-brand-coral-hover"
       >
@@ -209,6 +211,7 @@ function ShopDepartment({ category, onNavigate }: { category: NavCategory; onNav
       )}
       <Link
         href={href(category)}
+        prefetch
         onClick={onNavigate}
         className="inline-flex h-11 items-center rounded-lg bg-brand-coral px-6 text-[14px] font-bold text-white transition-colors hover:bg-brand-coral-hover"
       >
@@ -231,6 +234,7 @@ function DepartmentBrowser({ departments, onNavigate }: { departments: NavCatego
           <li key={d.urlPath}>
             <Link
               href={href(d)}
+              prefetch
               onMouseOver={() => setActive(i)}
               onFocus={() => setActive(i)}
               onPointerDown={(e) => (touch.current = e.pointerType === "touch")}
@@ -364,6 +368,7 @@ function TopCategory({ category, bounds }: { category: NavCategory; bounds: HTML
     >
       <Link
         href={href(category)}
+        prefetch
         onClick={close}
         {...(hasPanel ? { ...tap, "aria-expanded": open, "aria-controls": id } : {})}
         className={clsx(topItem, open ? "text-brand-coral" : "text-brand-charcoal hover:text-brand-coral")}
@@ -430,6 +435,7 @@ function MoreMenu({ categories }: { categories: NavCategory[] }) {
             <li key={c.urlPath}>
               <Link
                 href={href(c)}
+                prefetch
                 onMouseEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}
                 onPointerDown={(e) => (touch.current = e.pointerType === "touch")}

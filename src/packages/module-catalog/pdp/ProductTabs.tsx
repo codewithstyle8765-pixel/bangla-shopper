@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import {
+  CameraIcon,
   EditNoteIcon,
   SearchIcon,
 } from "@/packages/module-common/icons/UiIcons";
@@ -18,6 +19,7 @@ import { SpecsTable } from "./SpecsTable";
 import { QuestionsPanel } from "./QuestionsPanel";
 import { TabHeading } from "./TabHeading";
 import { PdpSectionNav, type PdpBuyProduct } from "./PdpSectionNav";
+import type { ProductQuestion, ProductReview, ProductReviewSummary } from "@/types/storefront";
 
 const REVIEW_SORTS = [
   { value: "helpful", label: "Most Helpful" },
@@ -59,6 +61,13 @@ function sortReviews(reviews: ProductReviewData[], sort: ReviewSort) {
 export interface ProductTabsProps {
   className?: string;
   reviewCount?: number;
+  /** Average rating out of 5. */
+  rating?: number;
+  reviews?: ProductReview[];
+  reviewSummaries?: ProductReviewSummary[];
+  specs?: Array<{ label: string; value: string }>;
+  /** Answered questions for the Q&A tab. */
+  questions?: ProductQuestion[];
   /** Product the "Write a review" form submits for. */
   sku?: string;
   productName?: string;
@@ -67,137 +76,31 @@ export interface ProductTabsProps {
   product: PdpBuyProduct;
 }
 
-/** Sample reviews until Magento `product.reviews` is wired. */
-const SAMPLE_REVIEWS: ProductReviewData[] = [
-  {
-    id: "r1",
-    author: "Anisha Rozen",
-    verified: true,
-    firstPurchase: "31/12/2021",
-    totalPurchased: 5,
-    rating: 5,
-    title: "Excellent pigmentation with great fragrance!",
-    date: "01/07/2022",
-    time: "6:01:23 PM",
-    sections: [
-      {
-        label: "Pros",
-        text: "Absolutely New York Demi Matte Lipstick-এর কালার ভীষণ সুন্দর ও elegant। লিপে smooth ও comfortable feel দেয়, finish-টা matte হলেও অতিরিক্ত dry লাগে না। Long-lasting এবং everyday look-এর জন্য দারুণ! ❤️",
-      },
-      { label: "Value", text: "Value for money is absolutely spot on!" },
-      { label: "Price", text: "Jusified....." },
-    ],
-    photos: [
-      "/assets/images/pdp/layer_9.png",
-      "/assets/images/pdp/layer_10.png",
-    ],
-    response: {
-      before: "আপনার সুন্দর রিভিউয়ের জন্য অনেক ধন্যবাদ! ❤️",
-      highlight: "Absolutely New York Demi Matte Lipstick",
-      after:
-        "আপনার পছন্দ হয়েছে জেনে আমরা সত্যিই আনন্দিত। আপনাদের ভালোবাসাই আমাদের আরও ভালো সেবা দিতে অনুপ্রাণিত করে। 💕",
-    },
-  },
-  {
-    id: "r2",
-    author: "Faria Islam",
-    verified: true,
-    firstPurchase: "12/12/2021",
-    totalPurchased: 1,
-    rating: 5,
-    title: "Excellent pigmentation with great fragrance!",
-    date: "25/12/2022",
-    time: "10:47:13 AM",
-    sections: [
-      {
-        label: "Pros",
-        text: "Absolutely New York Demi Matte Lipstick-এর শেডটা খুবই সুন্দর! 💄 লিপে সহজে apply হয়, texture creamy এবং finish-টা বেশ classy। অনেকক্ষণ সুন্দর থাকে, আর ঠোঁটও বেশি dry করে না। Overall, খুবই ভালো একটি lipstick! ❤️",
-      },
-      { label: "Value", text: "Value for money is absolutely spot on!" },
-      { label: "Price", text: "Jusified....." },
-    ],
-    photos: [
-      "/assets/images/pdp/layer_11.png",
-      "/assets/images/pdp/layer_12.png",
-    ],
-    response: {
-      before: "আপনার সুন্দর রিভিউয়ের জন্য অসংখ্য ধন্যবাদ! ❤️",
-      highlight: "Absolutely New York Demi Matte Lipstick",
-      after:
-        "আপনার এতটা পছন্দ হয়েছে জেনে আমরা আনন্দিত। আপনার সন্তুষ্টিই আমাদের সবচেয়ে বড় অনুপ্রেরণা। আবারও আমাদের সঙ্গে থাকার জন্য ধন্যবাদ! 💕",
-    },
-  },
-  {
-    id: "r3",
-    author: "Nusrat Jahan",
-    verified: true,
-    firstPurchase: "04/03/2022",
-    totalPurchased: 3,
-    rating: 4,
-    title: "Lovely shade, lasts through lunch",
-    date: "18/02/2023",
-    time: "2:15:40 PM",
-    sections: [
-      { label: "Pros", text: "Rich colour in one swipe and it does not feel heavy. I reapply once after meals." },
-      { label: "Value", text: "Good for the price." },
-    ],
-    photos: ["/assets/images/pdp/rectangle_10.png", "/assets/images/pdp/rectangle_10_copy.png"],
-  },
-  {
-    id: "r4",
-    author: "Tahmina Akter",
-    verified: false,
-    firstPurchase: "22/08/2022",
-    totalPurchased: 1,
-    rating: 5,
-    title: "Authentic and quickly delivered",
-    date: "02/05/2023",
-    time: "11:08:02 AM",
-    sections: [{ label: "Pros", text: "Original product, well packed and delivered in Dhaka the next day." }],
-    photos: ["/assets/images/pdp/rectangle_10_copy_2.png", "/assets/images/pdp/rectangle_10_copy_3.png"],
-  },
-];
+const ddmmyyyy = (at: Date) => `${String(at.getDate()).padStart(2, "0")}/${String(at.getMonth() + 1).padStart(2, "0")}/${at.getFullYear()}`;
 
-/** Sample specification and Q&A content until Magento attributes / Q&A are wired. */
-const SPECS: Array<[string, string]> = [
-  ["Brand", "Absolute New York"],
-  ["Item Weight", "1.3 gm"],
-  ["Finish", "Demi Matte"],
-  ["Country of Origin", "China"],
-  ["Shade", "Night Shade - MLSS60"],
-  ["Formulation", "Slim Stick"],
-  ["Skin Type", "All skin types"],
-  ["Coverage", "Full"],
-  ["Shelf Life", "36 months"],
-  ["Net Quantity", "1 unit"],
-];
-
-const QUESTIONS = [
-  {
-    question: "Is this authentic?",
-    answer: "Yes, all products on BanglaShoppers are 100% genuine and imported directly from the authorized brand distributors.",
-  },
-  {
-    question: "How long does this lipstick stay on?",
-    answer: "It offers a long-lasting wear of up to 6-8 hours with minimal touch-ups.",
-  },
-  {
-    question: "Does it dry out the lips?",
-    answer: "The demi-matte formula is enriched with moisturising oils, so it feels comfortable and does not crack through the day.",
-  },
-  {
-    question: "Is it transfer-proof?",
-    answer: "It is transfer-resistant once set. Blot lightly after applying for the best result.",
-  },
-  {
-    question: "Can I return it if the shade does not suit me?",
-    answer: "Unopened products can be returned within 7 days. Please see our return policy for details.",
-  },
-  {
-    question: "When will it be delivered in Dhaka?",
-    answer: "Orders inside Dhaka are usually delivered within 1-2 working days, outside Dhaka within 3-5 working days.",
-  },
-];
+/** Magento review → the review card's shape (dates dd/mm/yyyy; purchase details only for verified buyers). */
+function toReviewData(r: ProductReview): ProductReviewData {
+  const at = new Date(r.createdAt);
+  const sections = [{ label: "Review", text: r.text }];
+  if (r.pros) sections.push({ label: "Pros", text: r.pros });
+  if (r.value) sections.push({ label: "Value", text: r.value });
+  if (r.price) sections.push({ label: "Price", text: r.price });
+  if (r.breakdown.length) sections.push({ label: "Ratings", text: r.breakdown.map((b) => `${b.name} ${b.value}/5`).join(" · ") });
+  return {
+    id: r.id,
+    author: r.author,
+    verified: r.verified,
+    ...(r.verified && r.firstPurchaseAt && { firstPurchase: ddmmyyyy(new Date(r.firstPurchaseAt)) }),
+    ...(r.verified && r.totalPurchased > 0 && { totalPurchased: r.totalPurchased }),
+    rating: r.rating,
+    title: r.title,
+    date: ddmmyyyy(at),
+    time: at.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true }),
+    sections,
+    photos: r.photos,
+    ...(r.storeReply && { response: { before: r.storeReply } }),
+  };
+}
 
 const REVIEWS_PREVIEW = 3;
 
@@ -209,6 +112,8 @@ function ViewAllButton({ onClick, count, className = "" }: { onClick: () => void
     </button>
   );
 }
+
+
 
 
 function StripArrow({ direction, disabled, onClick }: { direction: "left" | "right"; disabled: boolean; onClick: () => void }) {
@@ -246,17 +151,23 @@ const DURATIONS = [
   ["12m", "Last 12 months"],
 ] as const;
 
-const RATING_BREAKDOWN = [
-  { stars: 5, percentage: 66 },
-  { stars: 4, percentage: 13 },
-  { stars: 3, percentage: 6 },
-  { stars: 2, percentage: 5 },
-  { stars: 1, percentage: 10 },
-] as const;
+const DURATION_DAYS: Record<(typeof DURATIONS)[number][0], number> = { overall: 0, "30d": 30, "60d": 60, "12m": 365 };
+
+/** Share of reviews per star, 5 down to 1. */
+const ratingBreakdown = (reviews: ProductReviewData[]) =>
+  [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    percentage: reviews.length ? Math.round((reviews.filter((r) => r.rating === stars).length / reviews.length) * 100) : 0,
+  }));
 
 export function ProductTabs({
   className = "",
-  reviewCount = 1045,
+  reviewCount = 0,
+  rating = 0,
+  reviews: productReviews = [],
+  reviewSummaries = [],
+  specs = [],
+  questions = [],
   sku = "",
   productName = "",
   description,
@@ -264,9 +175,9 @@ export function ProductTabs({
 }: ProductTabsProps) {
   const sections = [
     { id: "description", label: "Description" },
-    { id: "specifications", label: "Specs" },
+    ...(specs.length ? [{ id: "specifications", label: "Specs" }] : []),
     { id: "reviews", label: `Reviews (${reviewCount.toLocaleString()})` },
-    { id: "questions", label: `Q&A (${QUESTIONS.length})` },
+    { id: "questions", label: `Q&A (${questions.length})` },
     { id: "disclaimer", label: "Disclaimer" },
   ];
 
@@ -284,21 +195,45 @@ export function ProductTabs({
     </section>
   );
 
-  const [reviews, setReviews] = useState<ProductReviewData[]>(SAMPLE_REVIEWS);
+  const [reviews, setReviews] = useState<ProductReviewData[]>(() => productReviews.map(toReviewData));
   const [selectedDuration, setSelectedDuration] = useState<(typeof DURATIONS)[number][0]>("overall");
-  const [verifiedBuyersOnly, setVerifiedBuyersOnly] = useState(true);
+  const [verifiedBuyersOnly, setVerifiedBuyersOnly] = useState(false);
   const [withMediaOnly, setWithMediaOnly] = useState(false);
   const [guestResponses, setGuestResponses] = useState(false);
   const [brandResponses, setBrandResponses] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [reviewSort, setReviewSort] = useState<ReviewSort>("helpful");
   const [appliedQuery, setAppliedQuery] = useState("");
+  const sinceDays = DURATION_DAYS[selectedDuration];
+  const since = sinceDays ? Date.now() - sinceDays * 86_400_000 : 0;
   const visibleReviews = sortReviews(
     searchReviews(reviews, appliedQuery).filter(
-      (r) => !withMediaOnly || r.photos.length > 0,
+      (r) =>
+        (!verifiedBuyersOnly || r.verified) &&
+        (!withMediaOnly || r.photos.length > 0) &&
+        (!guestResponses || !r.verified) &&
+        (!brandResponses || Boolean(r.response)) &&
+        (!since || reviewTime(r) >= since),
     ),
     reviewSort,
   );
+
+  const PERIOD_MAP: Record<(typeof DURATIONS)[number][0], string> = {
+    overall: "ALL",
+    "30d": "LAST_30_DAYS",
+    "60d": "LAST_60_DAYS",
+    "12m": "LAST_12_MONTHS",
+  };
+  const activeSummary = reviewSummaries.find((s) => s.period === PERIOD_MAP[selectedDuration]);
+  const breakdown = activeSummary?.distribution?.length
+    ? [5, 4, 3, 2, 1].map((stars) => {
+        const item = activeSummary.distribution.find((d) => d.stars === stars);
+        return { stars, percentage: item?.percent ?? 0 };
+      })
+    : ratingBreakdown(reviews);
+  const average = activeSummary?.averageRating || rating || (reviews.length ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0);
+  const currentRatingCount = activeSummary?.ratingsCount || reviewCount;
+  const ratingsLabel = `${currentRatingCount.toLocaleString()} rating${currentRatingCount === 1 ? "" : "s"}`;
   /* Customer photos: the strip pages through them, "View All" opens the grid, a photo opens the viewer. */
   const customerPhotos = customerPhotosOf(reviews);
   const [photosOpen, setPhotosOpen] = useState(false);
@@ -327,10 +262,10 @@ export function ProductTabs({
     window.setTimeout(() => setHighlightedReview((cur) => (cur === id ? null : cur)), 2600);
   };
   /* Filters and search show every match; the preview only trims the unfiltered list. */
-  const reviewsCollapsible = !appliedQuery && !withMediaOnly && visibleReviews.length > REVIEWS_PREVIEW;
+  const reviewsCollapsible = !appliedQuery && !withMediaOnly && !since && visibleReviews.length > REVIEWS_PREVIEW;
   const listedReviews = reviewsCollapsible && !allReviews ? visibleReviews.slice(0, REVIEWS_PREVIEW) : visibleReviews;
 
-  const handleReviewSubmitted = (newReview: {
+  const handleReviewSubmitted = useCallback((newReview: {
     nickname: string;
     rating: number;
     summary: string;
@@ -365,7 +300,7 @@ export function ProductTabs({
     };
 
     setReviews((prev) => [created, ...prev]);
-  };
+  }, []);
 
   return (
     <div className={`w-full desk:w-[1291px] font-sans leading-none desk:ml-px ${className}`}>
@@ -373,7 +308,7 @@ export function ProductTabs({
 
       {section("description", "Description", <ReadMore variant="pill" collapsedHeight={420}>{description}</ReadMore>)}
 
-      {section("specifications", "Specifications", <SpecsTable specs={SPECS} />)}
+      {specs.length > 0 && section("specifications", "Specifications", <SpecsTable specs={specs.map((spec) => [spec.label, spec.value])} />)}
 
       {section(
         "reviews",
@@ -421,27 +356,27 @@ export function ProductTabs({
               <div className="flex flex-col items-center text-center md:items-start md:text-left shrink-0 min-w-[95px] sm:min-w-[110px]">
                 <div className="w-full flex items-baseline justify-center md:justify-start">
                   <span className="text-[34px] sm:text-[38px] font-extrabold text-brand-ink leading-none tracking-tight">
-                    4.2
+                    {average.toFixed(1)}
                   </span>
                   <span className="text-[16px] sm:text-[18px] font-bold text-brand-dark/50 ml-0.5">
                     /5
                   </span>
                 </div>
                 <div className="w-full mt-1.5 flex justify-center md:justify-start">
-                  <RatingStars value={4.2} size={15} gap={3} />
+                  <RatingStars value={average} size={15} gap={3} />
                 </div>
                 <p className="w-full text-[13px] font-bold text-brand-ink mt-2 leading-none text-center md:text-left">
-                  1,045 ratings
+                  {ratingsLabel}
                 </p>
                 <p className="w-full text-[11px] text-brand-dark/70 mt-1 leading-none text-center md:text-left">
-                  721 with reviews
+                  {reviews.length.toLocaleString()} with reviews
                 </p>
               </div>
 
               <div className="w-px self-stretch bg-muted-line/50 mx-3 sm:mx-6 shrink-0" />
 
               <div className="flex-1 min-w-0 md:flex-none md:w-[280px] min-[850px]:w-[310px] space-y-1.5 sm:space-y-2">
-                {RATING_BREAKDOWN.map((item) => (
+                {breakdown.map((item) => (
                   <div key={item.stars} className="flex items-center gap-2 text-[12px] sm:text-[13px]">
                     <span className="w-4 shrink-0 font-medium text-brand-ink flex items-center gap-0.5">
                       {item.stars}
@@ -497,26 +432,26 @@ export function ProductTabs({
                 <div className="flex flex-col items-start w-full">
                   <div className="flex items-baseline">
                     <span className="text-[40px] font-extrabold text-brand-ink leading-none tracking-tight">
-                      4.2
+                      {average.toFixed(1)}
                     </span>
                     <span className="text-[18px] font-bold text-brand-dark/50 ml-0.5">
                       /5
                     </span>
                   </div>
                   <div className="mt-1">
-                    <RatingStars value={4.2} size={15} gap={3} />
+                    <RatingStars value={average} size={15} gap={3} />
                   </div>
                   <p className="text-[13px] font-bold text-brand-ink mt-1 leading-none">
-                    1,045 ratings
+                    {ratingsLabel}
                   </p>
                   <p className="text-[11px] text-brand-dark/70 mt-1 leading-none">
-                    721 with reviews
+                    {reviews.length.toLocaleString()} with reviews
                   </p>
                 </div>
 
                 {/* 5 Star Progress Bars */}
                 <div className="w-full space-y-2 pt-2 border-t border-muted-line/60">
-                  {RATING_BREAKDOWN.map((item) => (
+                  {breakdown.map((item) => (
                     <div key={item.stars} className="flex items-center gap-2 text-[13px]">
                       <span className="w-5 shrink-0 font-medium text-brand-ink flex items-center gap-0.5">
                         {item.stars}
@@ -544,7 +479,7 @@ export function ProductTabs({
               className="hidden lg:block w-px self-stretch bg-muted-line/70 shrink-0"
             />
 
-            {customerPhotos.length > 0 && (
+            {customerPhotos.length > 0 ? (
               <div className="w-full lg:hidden mt-[8px]">
                 <div className="flex items-center justify-between mb-[13px] w-full">
                   <p className="text-[16px] font-bold text-brand-ink leading-none">
@@ -560,9 +495,32 @@ export function ProductTabs({
                   </div>
                 </div>
               </div>
+            ) : (
+              <div className="w-full lg:hidden mt-[12px]">
+                <div className="flex items-center justify-between mb-[10px] w-full">
+                  <p className="text-[15px] font-bold text-brand-ink leading-none">
+                    Customer Images / Videos
+                  </p>
+                  <span className="flex items-center gap-[2px] text-[14px] font-bold text-muted-line select-none">
+                    <span>View All</span>
+                    <NotchArrow direction="right" className="w-[12px] h-[14px] ml-[2px] text-muted-line" />
+                  </span>
+                </div>
+                <div className="w-full py-6 px-4 rounded-[8px] border border-card-border flex flex-col items-center justify-center text-center">
+                  <div className="w-12 h-12 rounded-full bg-brand-coral/10 flex items-center justify-center text-brand-coral mb-2.5">
+                    <CameraIcon className="w-6 h-6 text-brand-coral" />
+                  </div>
+                  <p className="text-[14px] font-bold text-brand-dark">
+                    No customer images or videos yet
+                  </p>
+                  <p className="text-[12px] text-text-subtle mt-0.5">
+                    Be the first to share your experience!
+                  </p>
+                </div>
+              </div>
             )}
 
-            {customerPhotos.length > 0 && (
+            {customerPhotos.length > 0 ? (
               <div className="hidden lg:block flex-1 min-w-0 max-w-[986px] mt-[2px] [--strip-vis:3] xl:[--strip-vis:4]">
                 <div className="flex items-center justify-between mb-[13px]">
                   <p className="text-[16px] font-bold text-brand-ink leading-none">Customer Images / Videos</p>
@@ -587,6 +545,27 @@ export function ProductTabs({
                     </ul>
                   </div>
                   <StripArrow direction="right" disabled={stripStart >= stripMax} onClick={() => stepStrip(1)} />
+                </div>
+              </div>
+            ) : (
+              <div className="hidden lg:block flex-1 min-w-0 max-w-[986px] mt-[2px]">
+                <div className="flex items-center justify-between mb-[13px]">
+                  <p className="text-[16px] font-bold text-brand-ink leading-none">Customer Images / Videos</p>
+                  <span className="flex items-center gap-[2px] text-[16px] font-bold text-muted-line select-none">
+                    <span>View All</span>
+                    <NotchArrow direction="right" className="w-[14px] h-[16px] ml-[2px] text-muted-line" />
+                  </span>
+                </div>
+                <div className="w-full h-[154px] rounded-[8px] border border-card-border flex flex-col items-center justify-center text-center p-4">
+                  <div className="w-12 h-12 rounded-full bg-brand-coral/10 flex items-center justify-center text-brand-coral mb-2.5">
+                    <CameraIcon className="w-6 h-6 text-brand-coral" />
+                  </div>
+                  <p className="text-[14px] sm:text-[15px] font-bold text-brand-dark leading-tight">
+                    No customer images or videos yet
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] text-text-subtle mt-1 leading-tight">
+                    Be the first to share your experience!
+                  </p>
                 </div>
               </div>
             )}
@@ -677,7 +656,9 @@ export function ProductTabs({
               <p className="text-[14px] font-medium text-brand-ink">
                 {appliedQuery
                   ? `${visibleReviews.length} result${visibleReviews.length === 1 ? "" : "s"} for “${appliedQuery}”`
-                  : "Showing 1-25 of 721 Reviews"}
+                  : visibleReviews.length
+                    ? `Showing 1-${visibleReviews.length} of ${Math.max(reviewCount, visibleReviews.length).toLocaleString()} Reviews`
+                    : "No reviews yet"}
               </p>
 
               <div className="w-[166px] shrink-0">
@@ -701,19 +682,53 @@ export function ProductTabs({
 
           <div id="review-list" ref={reviewListRef} className="mt-[23px]">
             {appliedQuery && visibleReviews.length === 0 && (
-              <p className="py-6 text-center text-[15px] text-brand-ink">
-                No reviews mention “{appliedQuery}”.{" "}
+              <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                <p className="text-[15px] font-medium text-brand-dark">
+                  No reviews mention “{appliedQuery}”.
+                </p>
                 <button
                   type="button"
                   onClick={() => {
                     setSearchQuery("");
                     setAppliedQuery("");
                   }}
-                  className="cursor-pointer font-semibold text-brand-coral underline-offset-2 hover:underline"
+                  className="mt-2.5 cursor-pointer text-[13px] font-semibold text-brand-coral underline-offset-2 hover:underline"
                 >
                   Show all reviews
                 </button>
-              </p>
+              </div>
+            )}
+            {!appliedQuery && visibleReviews.length === 0 && (
+              reviews.length === 0 ? (
+                <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-brand-coral/10 flex items-center justify-center text-brand-coral mb-3">
+                    <EditNoteIcon className="w-6 h-6 text-brand-coral" />
+                  </div>
+                  <p className="text-[15px] sm:text-[16px] font-bold text-brand-dark">
+                    No reviews yet
+                  </p>
+                  <p className="text-[13px] sm:text-[14px] text-text-subtle mt-1 max-w-[420px] leading-relaxed">
+                    Be the first to review this product! Share your thoughts with other customers and help them make an informed choice.
+                  </p>
+                </div>
+              ) : (
+                <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+                  <p className="text-[15px] font-medium text-brand-dark">
+                    No reviews found in this period.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedDuration("overall");
+                      setWithMediaOnly(false);
+                      setVerifiedBuyersOnly(false);
+                    }}
+                    className="mt-2.5 cursor-pointer text-[13px] font-semibold text-brand-coral underline-offset-2 hover:underline"
+                  >
+                    Show all reviews
+                  </button>
+                </div>
+              )
             )}
             {listedReviews.map((review, i) => (
               <div key={review.id} id={`review-${review.id}`} className="scroll-mt-(--pdp-sticky-top,120px)">
@@ -744,7 +759,7 @@ export function ProductTabs({
         </div>,
       )}
 
-      {section("questions", "Questions & Answers", <QuestionsPanel questions={QUESTIONS} productName={productName} />)}
+      {section("questions", "Questions & Answers", <QuestionsPanel questions={questions} productName={productName} sku={sku} />)}
 
       {section(
         "disclaimer",

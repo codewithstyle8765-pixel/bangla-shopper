@@ -1,0 +1,89 @@
+# public cacheable category page information
+query CategoryPageDataPublic($storeId: Int, $categoryId: Int, $currency: String, $width: String, $mFactor: String) {
+  categoryPageDataPublic(
+    storeId: $storeId
+    categoryId: $categoryId
+    currency: $currency
+    width: $width
+    mFactor: $mFactor
+  ) {
+    bannerImage {
+      dominantColor
+      url
+    }
+    cartCount
+    categories {
+      banner
+      bannerDominantColor
+      childCategories {
+        banner
+        bannerDominantColor
+        hasChildren
+        id
+        name
+        thumbnail
+        thumbnailDominantColor
+      }
+      hasChildren
+      id
+      name
+      thumbnail
+      thumbnailDominantColor
+    }
+    entityId
+    message
+    productList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    reviewEnable
+    smallBannerImage {
+      dominantColor
+      url
+    }
+    success
+    wishlistEnable
+  }
+}

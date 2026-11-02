@@ -1,0 +1,26 @@
+# Retrieve EAV attributes metadata.
+query CustomAttributeMetadataV2($attributes: [AttributeInput!]) {
+  customAttributeMetadataV2(attributes: $attributes) {
+    errors {
+      message
+      type
+    }
+    items {
+      __typename
+      code
+      default_value
+      entity_type
+      frontend_class
+      frontend_input
+      is_required
+      is_unique
+      label
+      options {
+        __typename
+        is_default
+        label
+        value
+      }
+    }
+  }
+}

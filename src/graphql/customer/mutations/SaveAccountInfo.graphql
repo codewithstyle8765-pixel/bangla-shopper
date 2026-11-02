@@ -1,0 +1,26 @@
+# save account info request
+mutation SaveAccountInfo($storeId: Int, $customerToken: String, $dob: String, $email: String, $mobile: String, $prefix: String, $suffix: String, $taxvat: String, $gender: Int, $lastName: String, $firstName: String, $middleName: String, $newPassword: String, $doChangePassword: Int, $confirmPassword: String, $currentPassword: String, $doChangeEmail: Boolean) {
+  saveAccountInfo(
+    storeId: $storeId
+    customerToken: $customerToken
+    dob: $dob
+    email: $email
+    mobile: $mobile
+    prefix: $prefix
+    suffix: $suffix
+    taxvat: $taxvat
+    gender: $gender
+    lastName: $lastName
+    firstName: $firstName
+    middleName: $middleName
+    newPassword: $newPassword
+    doChangePassword: $doChangePassword
+    confirmPassword: $confirmPassword
+    currentPassword: $currentPassword
+    doChangeEmail: $doChangeEmail
+  ) {
+    customerName
+    message
+    success
+  }
+}

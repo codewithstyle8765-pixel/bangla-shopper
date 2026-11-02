@@ -1,0 +1,38 @@
+# reviews And Ratings information
+query ReviewsAndRatings($storeId: Int, $url: String, $width: String, $productId: Int, $websiteId: Int, $pageNumber: Int, $customerToken: String) {
+  reviewsAndRatings(
+    storeId: $storeId
+    url: $url
+    width: $width
+    productId: $productId
+    websiteId: $websiteId
+    pageNumber: $pageNumber
+    customerToken: $customerToken
+  ) {
+    message
+    rating
+    ratingData {
+      ratingCode
+      ratingValue
+    }
+    ratingFormData {
+      id
+      name
+      values
+    }
+    reviewList {
+      avgRatings
+      details
+      ratings {
+        label
+        value
+      }
+      reviewBy
+      reviewOn
+      title
+    }
+    showRatings
+    success
+    totalCount
+  }
+}

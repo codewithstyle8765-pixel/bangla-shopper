@@ -17,18 +17,20 @@ import { BUY_BOX_ID } from "./PdpSectionNav";
 import { setPdpSelection } from "./pdpSelection";
 import type { ProductOption, ProductVariant } from "@/types/storefront";
 import { copyText } from "@/utils/clipboard";
+import { useCurrency } from "@/packages/module-common/currency/Currency";
 
 export interface ProductSummaryProps {
-  name?: string;
-  sku?: string;
+  name: string;
+  sku: string;
   brand?: string;
   origin?: string;
-  rating?: number;
-  ratingCount?: number;
-  reviewCount?: number;
-  price?: number;
+  rating: number;
+  ratingCount: number;
+  reviewCount: number;
+  price: number;
+  /** Regular price, only when the product is discounted. */
   originalPrice?: number;
-  inStock?: boolean;
+  inStock: boolean;
   liveStock?: Array<{ location: string; available: boolean }>;
   /** Category listing for "Click for similar products"; without it the link jumps to the Similar Products row. */
   similarHref?: string;
@@ -41,16 +43,16 @@ export interface ProductSummaryProps {
 }
 
 export function ProductSummary({
-  name = "Absolute New York Supreme Slim Demi Matte Lipstick - Night Shade - MLSS60 - 1.3gm, Imported from the USA.",
-  sku = "888432939323",
+  name,
+  sku,
   brand,
-  origin = "China",
-  rating = 4.2,
-  ratingCount = 1045,
-  reviewCount = 721,
-  price: basePrice = 365,
-  originalPrice: baseOriginalPrice = 650,
-  inStock: baseInStock = false,
+  origin,
+  rating,
+  ratingCount,
+  reviewCount,
+  price: basePrice,
+  originalPrice: baseOriginalPrice,
+  inStock: baseInStock,
   liveStock = [],
   similarHref,
   stockLeft: baseStockLeft,
@@ -59,6 +61,7 @@ export function ProductSummary({
   className = "",
 }: ProductSummaryProps) {
   /* Initially unselected so customer chooses an option explicitly. */
+  const currency = useCurrency();
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [showValidation, setShowValidation] = useState(false);
 
@@ -145,14 +148,16 @@ export function ProductSummary({
                 </p>
               </li>
             )}
-            <li>
-              <p className="text-brand-dark">
-                <strong className="font-semibold text-brand-dark">
-                  Origin:
-                </strong>{" "}
-                <span className="text-brand-coral">{origin}</span>
-              </p>
-            </li>
+            {origin && (
+              <li>
+                <p className="text-brand-dark">
+                  <strong className="font-semibold text-brand-dark">
+                    Origin:
+                  </strong>{" "}
+                  <span className="text-brand-coral">{origin}</span>
+                </p>
+              </li>
+            )}
             <li>
               <p className="text-brand-dark">
                 <strong className="font-semibold text-brand-dark">SKU:</strong>{" "}
@@ -221,14 +226,14 @@ export function ProductSummary({
           <div className="lg:max-w-[445px]">
             <div className="flex items-start flex-wrap gap-x-[1.3px]">
               <span className="text-[30px] font-semibold text-brand-alert leading-none desk:mt-[3px]">
-                TK {price}
+                {currency} {price}
                 <sup>.00</sup>
               </span>
               {originalPrice && (
                 <span className="text-[16px] font-semibold text-text-subtle mt-[3px] desk:mt-[5px]">
                   (
                   <span className="line-through">
-                    TK {originalPrice}.<sup>00</sup>
+                    {currency} {originalPrice}.<sup>00</sup>
                   </span>
                   )
                 </span>

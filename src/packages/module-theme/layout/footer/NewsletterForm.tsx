@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useSubmitWithoutReset } from "@/packages/module-common/form";
 import clsx from "clsx";
 import { useFormOperation } from "@/utils/api/client";
@@ -10,6 +10,17 @@ export function NewsletterForm() {
   const [state, formAction, pending] = useActionState(useFormOperation("SubscribeNewsletter"), null);
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmitWithoutReset(formRef, formAction, state);
+  const [errorDismissed, setErrorDismissed] = useState(false);
+
+  useEffect(() => {
+    if (state) setErrorDismissed(false);
+  }, [state]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value.trim() && !state?.ok) {
+      setErrorDismissed(true);
+    }
+  };
 
   return (
     <form ref={formRef} onSubmit={submit} className="w-full" noValidate>
@@ -25,6 +36,7 @@ export function NewsletterForm() {
           required
           autoComplete="email"
           placeholder="Your email address"
+          onChange={handleInputChange}
           className="h-full min-w-0 flex-1 bg-transparent px-3 text-[16px] text-brand-dark outline-none placeholder:text-footer-text lg:text-[14px]"
         />
         <button
@@ -36,7 +48,7 @@ export function NewsletterForm() {
           <ArrowRightIcon className="hidden h-4 w-4 min-[400px]:block" />
         </button>
       </div>
-      {state && (
+      {state && (state.ok || !errorDismissed) && (
         <p role="status" className={clsx("mt-2 pl-4 text-[12px]", state.ok ? "text-success" : "text-brand-alert")}>
           {state.message}
         </p>

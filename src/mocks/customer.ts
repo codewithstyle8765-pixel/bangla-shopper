@@ -426,7 +426,7 @@ export const customerResolvers = {
       if (product.stock_status === "OUT_OF_STOCK") {
         return { addWishlistItemsToCart: { status: false, add_wishlist_items_to_cart_user_errors: [{ message: `"${product.name}" is out of stock.` }] } };
       }
-      await cartResolvers.AddToCart({ sku: product.sku, quantity: 1 });
+      await cartResolvers.AddItemsToCart({ sku: product.sku, quantity: 1 });
     }
     return { addWishlistItemsToCart: { status: true, add_wishlist_items_to_cart_user_errors: [] } };
   },

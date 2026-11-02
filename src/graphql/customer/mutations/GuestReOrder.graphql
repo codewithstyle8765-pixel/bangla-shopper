@@ -1,0 +1,9 @@
+# guest re order request
+mutation GuestReOrder($storeId: Int, $incrementId: String, $quoteId: Int) {
+  guestReOrder(storeId: $storeId, incrementId: $incrementId, quoteId: $quoteId) {
+    cartCount
+    message
+    quoteId
+    success
+  }
+}

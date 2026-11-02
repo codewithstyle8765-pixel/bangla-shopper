@@ -1,0 +1,14 @@
+# change order status request
+mutation ChangeOrderStatus($storeId: Int, $status: Int, $state: String, $incrementId: String, $transactionId: String, $customerToken: String) {
+  changeOrderStatus(
+    storeId: $storeId
+    status: $status
+    state: $state
+    incrementId: $incrementId
+    transactionId: $transactionId
+    customerToken: $customerToken
+  ) {
+    message
+    success
+  }
+}

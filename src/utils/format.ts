@@ -1,16 +1,19 @@
-export function formatTk(value: number, withDecimals = true): string {
-  return `TK ${value.toLocaleString("en-US", {
+/** 1399 → "TK 1,399.00"; `symbol` is the store currency symbol from Magento (`useCurrency()` / `getStoreSettings()`). */
+export function formatMoney(value: number, symbol: string, withDecimals = true): string {
+  const amount = value.toLocaleString("en-US", {
     minimumFractionDigits: withDecimals ? 2 : 0,
     maximumFractionDigits: withDecimals ? 2 : 0,
-  })}`;
+  });
+  return symbol ? `${symbol} ${amount}` : amount;
 }
 
 /** Price filter value "300_500" → "TK 300 – TK 500"; open ends read "TK 2,000+" / "Up to TK 500". */
-export function formatPriceRange(value: string): string {
+export function formatPriceRange(value: string, symbol: string): string {
   const [from, to] = value.split("_");
   const lo = Number(from) || 0;
-  if (!to || to === "*") return `${formatTk(lo, false)}+`;
-  return lo ? `${formatTk(lo, false)} – ${formatTk(Number(to), false)}` : `Up to ${formatTk(Number(to), false)}`;
+  const money = (v: number) => formatMoney(v, symbol, false);
+  if (!to || to === "*") return `${money(lo)}+`;
+  return lo ? `${money(lo)} – ${money(Number(to))}` : `Up to ${money(Number(to))}`;
 }
 
 export function formatDate(iso: string): string {

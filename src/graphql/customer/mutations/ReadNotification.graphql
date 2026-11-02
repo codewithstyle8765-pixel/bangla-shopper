@@ -1,0 +1,12 @@
+# Mark a single notification as read
+mutation ReadNotification($storeId: Int, $customerToken: String!, $notificationId: Int!) {
+  readNotification(
+    storeId: $storeId
+    customerToken: $customerToken
+    notificationId: $notificationId
+  ) {
+    message
+    success
+    unreadCount
+  }
+}

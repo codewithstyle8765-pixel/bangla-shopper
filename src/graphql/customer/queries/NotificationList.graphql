@@ -1,0 +1,31 @@
+# custom collection information
+query NotificationList($storeId: Int, $width: String, $mFactor: Int, $customerToken: String, $pageNumber: Int) {
+  notificationList(
+    storeId: $storeId
+    width: $width
+    mFactor: $mFactor
+    customerToken: $customerToken
+    pageNumber: $pageNumber
+  ) {
+    message
+    notificationList {
+      banner
+      categoryId
+      categoryName
+      content
+      createdAt
+      dominantColor
+      id
+      incrementId
+      isRead
+      notificationType
+      orderId
+      productId
+      productName
+      productType
+      title
+    }
+    success
+    unreadCount
+  }
+}

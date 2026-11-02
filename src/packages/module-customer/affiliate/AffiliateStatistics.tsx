@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { controlClass } from "@/packages/module-common/form";
 import type { AffiliateStatistics } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 import { AccountEmptyState, AccountSection } from "../AccountUi";
 import { AFFILIATE_ROOT, AffiliateIcons, formatDateTime, primaryButton, StatCard } from "./AffiliateUi";
 
@@ -41,7 +41,9 @@ function ChartSvg({ chart, max, W, H }: { chart: AffiliateStatistics["chart"]; m
         return (
           <g key={c.date}>
             <rect x={x(i) - barW / 2} y={y(c.earned)} width={barW} height={Math.max(0, y(0) - y(c.earned))} rx={2} className="fill-brand-coral">
-              <title>{`${shortDate(c.date)}: earned ${formatTk(c.earned)}`}</title>
+              <title>
+                {shortDate(c.date)}: earned <Money value={c.earned} />
+              </title>
             </rect>
             {i % labelEvery === 0 && (
               <text x={x(i)} y={H - 10} textAnchor="middle" className="fill-footer-text text-[11px]">
@@ -54,7 +56,9 @@ function ChartSvg({ chart, max, W, H }: { chart: AffiliateStatistics["chart"]; m
       <path d={line} fill="none" className="stroke-brand-navy" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
       {chart.map((c, i) => (
         <circle key={c.date} cx={x(i)} cy={y(c.balance)} r={3.5} className="fill-white stroke-brand-navy" strokeWidth={2}>
-          <title>{`${shortDate(c.date)}: balance ${formatTk(c.balance)}`}</title>
+          <title>
+            {shortDate(c.date)}: balance <Money value={c.balance} />
+          </title>
         </circle>
       ))}
     </svg>
@@ -113,7 +117,7 @@ export function AffiliateStatisticsView({ stats }: { stats: AffiliateStatistics 
         <StatCard label="Leads" value={stats.leads} />
         <StatCard label="Orders" value={stats.orders} />
         <div className="col-span-2 md:col-span-1">
-          <StatCard label="Earned" value={formatTk(stats.earned)} tone="brand" />
+          <StatCard label="Earned" value={<Money value={stats.earned} />} tone="brand" />
         </div>
       </div>
 

@@ -1,0 +1,11 @@
+# selectedOptions: the configurable option value uids of the chosen child product (Size: 236 ml).
+mutation AddItemsToCart($cartId: String!, $sku: String!, $quantity: Float!, $selectedOptions: [ID!]) {
+  addProductsToCart(cartId: $cartId, cartItems: [{ sku: $sku, quantity: $quantity, selected_options: $selectedOptions }]) {
+    cart {
+      ...CartFields
+    }
+    user_errors {
+      message
+    }
+  }
+}

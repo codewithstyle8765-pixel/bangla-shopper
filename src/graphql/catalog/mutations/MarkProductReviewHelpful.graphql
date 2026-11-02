@@ -1,0 +1,8 @@
+# Mark an approved review as helpful
+mutation MarkProductReviewHelpful($review_id: Int!) {
+  markProductReviewHelpful(review_id: $review_id) {
+    review_id
+    helpful_count
+    voted
+  }
+}

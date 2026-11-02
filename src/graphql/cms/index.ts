@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
+export { FooterDocument, type FooterQuery } from "./queries/__generated__/Footer.generated";
 
 /**
- * Footer content is managed in a Magento CMS block whose content is JSON
- * matching `FooterData` (src/types/storefront.ts).
+ * Footer content is configured in Magento Admin (Webkul BS Theme > Footer).
  */
 export const FOOTER_BLOCK_ID = "headless-footer";
 

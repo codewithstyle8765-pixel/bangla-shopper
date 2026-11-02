@@ -1,0 +1,28 @@
+# search suggestion information
+query SearchSuggestion($storeId: Int, $categoryId: Int, $searchQuery: String, $currency: String, $customerToken: String) {
+  searchSuggestion(
+    storeId: $storeId
+    categoryId: $categoryId
+    searchQuery: $searchQuery
+    currency: $currency
+    customerToken: $customerToken
+  ) {
+    message
+    search
+    success
+    suggestProductArray {
+      products {
+        hasSpecialPrice
+        price
+        productId
+        productName
+        specialPrice
+        thumbnail
+      }
+      tags {
+        count
+        label
+      }
+    }
+  }
+}

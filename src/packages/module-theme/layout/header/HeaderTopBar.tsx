@@ -5,16 +5,16 @@ import Link from "next/link";
 import clsx from "clsx";
 import { MailIcon } from "@/packages/module-common/icons/UiIcons";
 import { Container } from "@/packages/module-common/Container";
-import type { AnnouncementItem } from "./announcements.types";
-import { MOCK_ANNOUNCEMENTS } from "@/mocks/announcements";
+import type { AnnouncementBarData } from "./announcements.types";
 
 export interface HeaderTopBarProps {
   onDismiss: () => void;
-  messages?: AnnouncementItem[];
+  bar: AnnouncementBarData;
 }
 
-export function HeaderTopBar({ onDismiss, messages }: HeaderTopBarProps) {
-  const items = messages && messages.length > 0 ? messages : MOCK_ANNOUNCEMENTS;
+export function HeaderTopBar({ onDismiss, bar }: HeaderTopBarProps) {
+  const items = bar.messages;
+  const { left, right } = bar;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [isTabVisible, setIsTabVisible] = useState(true);
@@ -57,13 +57,15 @@ export function HeaderTopBar({ onDismiss, messages }: HeaderTopBarProps) {
       <Container className="relative flex items-center justify-center font-sans text-[13px] leading-none sm:grid sm:grid-cols-[1fr_auto_1fr] sm:text-[14px]">
         {/* Desktop only: below lg the email is hidden but its column stays, so the message keeps its centre. */}
         <div className="hidden sm:flex sm:self-start items-center justify-start shrink-0 max-lg:[&>*]:hidden">
-          <MailIcon className="w-[18px] h-[13px] self-start mt-px text-brand-coral" />
-          <Link
-            href="mailto:support@banglashoppers.com"
-            className="ml-[6px] text-white hover:underline whitespace-nowrap tracking-normal"
-          >
-            Email: support@banglashoppers.com
-          </Link>
+          {left?.icon === "EMAIL" && <MailIcon className="w-[18px] h-[13px] self-start mt-px text-brand-coral" />}
+          {left &&
+            (left.link ? (
+              <Link href={left.link} className="ml-[6px] text-white hover:underline whitespace-nowrap tracking-normal">
+                {left.text}
+              </Link>
+            ) : (
+              <p className="ml-[6px] text-white whitespace-nowrap tracking-normal">{left.text}</p>
+            ))}
         </div>
 
         <div
@@ -97,9 +99,14 @@ export function HeaderTopBar({ onDismiss, messages }: HeaderTopBarProps) {
         </div>
 
         <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center justify-end gap-4 sm:static sm:translate-y-0">
-          <p className="hidden md:block text-white whitespace-nowrap tracking-normal">
-            Customer Support 24/7
-          </p>
+          {right &&
+            (right.link ? (
+              <Link href={right.link} className="hidden md:block text-white hover:underline whitespace-nowrap tracking-normal">
+                {right.text}
+              </Link>
+            ) : (
+              <p className="hidden md:block text-white whitespace-nowrap tracking-normal">{right.text}</p>
+            ))}
           <button
             type="button"
             onClick={onDismiss}

@@ -68,34 +68,72 @@ async function updateCheckout(change: (s: CheckoutState) => void) {
   return state;
 }
 
-function fromInput(a: CartAddressInput): MagentoOrderAddress {
+function fromInput(a?: CartAddressInput | null): MagentoOrderAddress {
+  if (!a) {
+    return {
+      firstname: "Guest",
+      lastname: "Customer",
+      telephone: "8801700000000",
+      street: ["-"],
+      city: "Dhaka",
+      postcode: null,
+      country_code: "BD",
+      region: null,
+      custom_attributesV2: [],
+    };
+  }
   return {
-    firstname: a.firstname,
-    lastname: a.lastname,
-    telephone: a.telephone,
-    street: a.street,
-    city: a.city,
+    firstname: a.firstname || "Guest",
+    lastname: a.lastname || "Customer",
+    telephone: a.telephone || "8801700000000",
+    street: a.street || ["-"],
+    city: a.city || "Dhaka",
     postcode: a.postcode ?? null,
-    country_code: a.country_code,
+    country_code: a.country_code || "BD",
     region: (a as { region?: string }).region ?? null,
     custom_attributesV2: (a.custom_attributes ?? []).map((c) => ({ code: c.attribute_code, value: c.value })),
   };
 }
 
-/** Resolves `{ address }` or `{ customer_address_id }` to an address. */
+/** Resolves `{ address }` or `{ customer_address_id / customer_address_uid }` to an address. */
 async function resolveAddress(input: Record<string, unknown>, token?: string | null): Promise<MagentoOrderAddress> {
-  if (input.customer_address_id) {
-    const { findMockCustomerAddress } = await import("./customer");
-    const saved = await findMockCustomerAddress(token, Number(input.customer_address_id));
-    if (!saved) throw new Error("Could not find a address with ID \"" + input.customer_address_id + "\"");
-    return { ...saved, region: saved.region?.region ?? null };
+  const addressId = (input.customer_address_uid as string) || (input.customer_address_id as string | number);
+  if (addressId) {
+    try {
+      const { getCustomer } = await import("@/utils/magento/customer");
+      const customer = await getCustomer().catch(() => null);
+      const found = customer?.addresses.find((a) => String(a.id) === String(addressId));
+      if (found) {
+        return {
+          firstname: found.firstName,
+          lastname: found.lastName,
+          telephone: found.phone,
+          street: found.street,
+          city: found.city,
+          postcode: found.postcode ?? null,
+          country_code: found.countryCode,
+          region: found.region ?? null,
+          custom_attributesV2: [{ code: "thana_name", value: [found.area, found.thana].filter(Boolean).join(", ") || found.thana }],
+        };
+      }
+    } catch {}
+
+    try {
+      const { findMockCustomerAddress } = await import("./customer");
+      const saved = await findMockCustomerAddress(token, Number(addressId)).catch(() => null);
+      if (saved) return { ...saved, region: saved.region?.region ?? null };
+    } catch {}
   }
-  return fromInput(input.address as CartAddressInput);
+
+  if (input.address) {
+    return fromInput(input.address as CartAddressInput);
+  }
+  return fromInput(undefined);
 }
 
 /** Standard rates are free over TK 3000 (announcement bar promise). */
-function ratesFor(city: string, subtotal: number) {
-  const rate = /dhaka/i.test(city) ? RATES.inside : RATES.outside;
+function ratesFor(city?: string | null, subtotal = 0) {
+  const rate = /dhaka/i.test(city || "") ? RATES.inside : RATES.outside;
   return [subtotal >= 3000 ? { ...rate, amount: { value: 0 } } : rate];
 }
 
@@ -140,7 +178,7 @@ export const checkoutResolvers = {
       s.shipping = address;
       s.note = typeof input.customer_notes === "string" && input.customer_notes.trim() ? input.customer_notes.trim() : undefined;
     });
-    const { cart } = await cartResolvers.Cart();
+    const { cart } = await cartResolvers.CartById();
     const subtotal = cart.prices?.subtotal_including_tax?.value ?? 0;
     return {
       setShippingAddressesOnCart: {
@@ -168,7 +206,7 @@ export const checkoutResolvers = {
   },
   PlaceOrder: async () => {
     const state = await readJson<CheckoutState>(CHECKOUT_COOKIE, {});
-    const { cart } = await cartResolvers.Cart();
+    const { cart } = await cartResolvers.CartById();
     if (!cart.items.length) return { placeOrder: { orderV2: null, errors: [{ message: "Your cart is empty." }] } };
     if (!state.shipping || !state.billing || !state.shippingMethod || !state.payment) {
       return { placeOrder: { orderV2: null, errors: [{ message: "Please complete the shipping and payment details." }] } };

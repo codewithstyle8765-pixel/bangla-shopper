@@ -1,0 +1,13 @@
+import * as Types from '../../../../types/graphql-types';
+
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type CmsPageQueryVariables = Types.Exact<{
+  id?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  identifier?: Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+
+export type CmsPageQuery = { __typename?: 'Query', cmsPage?: { __typename?: 'CmsPage', content?: string | null, content_heading?: string | null, identifier?: string | null, meta_description?: string | null, meta_keywords?: string | null, meta_title?: string | null, page_layout?: string | null, redirect_code: number, relative_url?: string | null, title?: string | null, type?: Types.UrlRewriteEntityTypeEnum | null, url_key?: string | null } | null };
+
+
+export const CmsPageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CmsPage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cmsPage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"content_heading"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"meta_description"}},{"kind":"Field","name":{"kind":"Name","value":"meta_keywords"}},{"kind":"Field","name":{"kind":"Name","value":"meta_title"}},{"kind":"Field","name":{"kind":"Name","value":"page_layout"}},{"kind":"Field","name":{"kind":"Name","value":"redirect_code"}},{"kind":"Field","name":{"kind":"Name","value":"relative_url"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"url_key"}}]}}]}}]} as unknown as DocumentNode<CmsPageQuery, CmsPageQueryVariables>;

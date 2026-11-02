@@ -1,5 +1,5 @@
 import type { ApiResult } from "@/types/storefront";
-import { submitProductReview } from "@/utils/magento/catalog";
+import { askProductQuestion, submitProductReview } from "@/utils/magento/catalog";
 import { defineOperation, echo, errorMessage, field, formInput, hasErrors, invalid } from "../define";
 
 export const catalogOperations = {
@@ -35,6 +35,24 @@ export const catalogOperations = {
       if (hasErrors(fieldErrors)) return invalid(fieldErrors, data);
       try {
         await submitProductReview(review);
+        return { ok: true, data: undefined };
+      } catch (error) {
+        return { ok: false, message: errorMessage(error), values: echo(data) };
+      }
+    },
+  }),
+  AskProductQuestion: defineOperation({
+    parse: formInput,
+    run: async (data): Promise<ApiResult> => {
+      const input = { sku: field(data, "sku"), question: field(data, "question"), name: field(data, "name"), email: field(data, "email") };
+      const fieldErrors: Record<string, string> = {};
+      if (input.question.length < 5) fieldErrors.question = "Please write your question (at least 5 characters).";
+      else if (input.question.length > 1000) fieldErrors.question = "Please keep your question under 1000 characters.";
+      if (input.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) fieldErrors.email = "Please enter a valid email address.";
+      if (!input.sku) return { ok: false, message: "This product can't take questions right now." };
+      if (hasErrors(fieldErrors)) return invalid(fieldErrors, data);
+      try {
+        await askProductQuestion({ sku: input.sku, question: input.question, ...(input.name && { name: input.name }), ...(input.email && { email: input.email }) });
         return { ok: true, data: undefined };
       } catch (error) {
         return { ok: false, message: errorMessage(error), values: echo(data) };

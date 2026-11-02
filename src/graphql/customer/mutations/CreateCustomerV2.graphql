@@ -1,0 +1,73 @@
+# Create a customer account.
+mutation CreateCustomerV2($input: CustomerCreateInput!) {
+  createCustomerV2(input: $input) {
+    customer {
+      addresses {
+        city
+        company
+        country_code
+        default_billing
+        default_shipping
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        region_id
+        street
+        suffix
+        telephone
+        uid
+        vat_id
+      }
+      addressesV2 {
+        total_count
+      }
+      allow_remote_shopping_assistance
+      compare_list {
+        item_count
+        message
+        showSwatchOnCollection
+        success
+        uid
+      }
+      confirmation_status
+      created_at
+      custom_attributes {
+        __typename
+        code
+      }
+      date_of_birth
+      default_billing
+      default_shipping
+      email
+      firstname
+      gender
+      group {
+        uid
+      }
+      id
+      is_subscribed
+      lastname
+      middlename
+      mstRewardPointsBalance {
+        balance
+        tier_id
+      }
+      orders {
+        date_of_first_order
+        total_count
+      }
+      prefix
+      suffix
+      taxvat
+      wishlists {
+        id
+        items_count
+        sharing_code
+        updated_at
+      }
+    }
+  }
+}

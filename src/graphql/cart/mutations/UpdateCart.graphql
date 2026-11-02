@@ -1,0 +1,13 @@
+# update cart request
+mutation UpdateCart($storeId: Int, $quoteId: Int, $customerToken: String, $itemData: [cartItemData]) {
+  updateCart(
+    storeId: $storeId
+    quoteId: $quoteId
+    customerToken: $customerToken
+    itemData: $itemData
+  ) {
+    cartCount
+    message
+    success
+  }
+}

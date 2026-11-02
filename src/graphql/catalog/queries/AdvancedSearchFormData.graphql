@@ -1,0 +1,18 @@
+# advanced search form data information
+query AdvancedSearchFormData($storeId: Int) {
+  advancedSearchFormData(storeId: $storeId) {
+    fieldList {
+      attributeCode
+      fieldList
+      label
+      maxQueryLength
+      options {
+        label
+        value
+      }
+      title
+    }
+    message
+    success
+  }
+}

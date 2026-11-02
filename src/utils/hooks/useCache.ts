@@ -8,7 +8,7 @@ export interface PageCacheConfig {
 export const PAGE_CACHE_CONFIG: Record<string, PageCacheConfig> = {
   home: {
     tags: ["home-page"],
-    life: "hours",
+    life: 60,
   },
   product: {
     tags: ["all-products"],
@@ -16,6 +16,10 @@ export const PAGE_CACHE_CONFIG: Record<string, PageCacheConfig> = {
   },
   category: {
     tags: ["categories"],
+    life: "hours",
+  },
+  store: {
+    tags: ["store-config"],
     life: "hours",
   },
   static: {

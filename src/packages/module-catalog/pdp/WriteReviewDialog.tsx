@@ -9,6 +9,39 @@ import { useFormOperation } from "@/utils/api/client";
 
 const STAR_LABELS = ["Poor", "Fair", "Average", "Good", "Excellent"];
 const MAX_PHOTOS = 5;
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+/* Magento takes photos up to 2 MB each (base64 adds a third, so the encoded string is checked). */
+const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
+const MAX_PHOTO_SIDE = 1600;
+
+/** Photo → JPEG data URL, at most 1600 px on its longest side and under Magento's 2 MB limit. */
+async function resizePhoto(file: File): Promise<string> {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = reject;
+      el.src = url;
+    });
+    const scale = Math.min(1, MAX_PHOTO_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(img.naturalWidth * scale);
+    canvas.height = Math.round(img.naturalHeight * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("No canvas");
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    for (let quality = 0.85; quality >= 0.4; quality -= 0.15) {
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      if (dataUrl.length * 0.75 <= MAX_PHOTO_BYTES) return dataUrl;
+    }
+    throw new Error("Photo too large");
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
 
 /** The choice lives in the parent: React resets the form after each submit, which would clear a checked radio. */
 function StarPicker({ value, onChange, error }: { value: number; onChange: (stars: number) => void; error?: string }) {
@@ -94,31 +127,31 @@ function PhotoUploader({
       setPhotoError(`Only ${availableSlots} more photo${availableSlots === 1 ? "" : "s"} could be added (max ${MAX_PHOTOS}).`);
     }
 
-    filesToProcess.forEach((file) => {
-      if (!file.type.startsWith("image/")) {
-        setPhotoError("Please select image files only (PNG, JPG, WEBP).");
-        return;
+    const valid = filesToProcess.filter((file) => {
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        setPhotoError("Please select image files only (PNG, JPG, GIF, WEBP).");
+        return false;
       }
       if (file.size > 10 * 1024 * 1024) {
         setPhotoError(`"${file.name}" exceeds the 10MB limit.`);
-        return;
+        return false;
       }
+      return true;
+    });
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        if (dataUrl) {
-          onChange([
-            ...photos,
-            {
-              id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-              dataUrl,
-              name: file.name,
-            },
-          ]);
-        }
-      };
-      reader.readAsDataURL(file);
+    /* All files first, then one update: adding them one by one kept only the last. */
+    void Promise.all(
+      valid.map((file) =>
+        resizePhoto(file)
+          .then((dataUrl) => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, dataUrl, name: file.name }))
+          .catch(() => {
+            setPhotoError(`"${file.name}" could not be read. Please try another photo.`);
+            return null;
+          }),
+      ),
+    ).then((added) => {
+      const items = added.filter((p): p is PhotoItem => p !== null);
+      if (items.length) onChange([...photos, ...items].slice(0, MAX_PHOTOS));
     });
 
     if (fileInputRef.current) {
@@ -324,9 +357,11 @@ function ReviewForm({
   const errors = useFieldErrors(formRef, state);
   const onSubmit = useSubmitWithoutReset(formRef, action, state);
   const values = state && !state.ok ? (state.values ?? {}) : {};
+  const hasNotifiedRef = useRef(false);
 
   useEffect(() => {
-    if (state?.ok && submittedDataRef.current) {
+    if (state?.ok && submittedDataRef.current && !hasNotifiedRef.current) {
+      hasNotifiedRef.current = true;
       onReviewSubmitted?.(submittedDataRef.current);
     }
   }, [state?.ok, onReviewSubmitted]);

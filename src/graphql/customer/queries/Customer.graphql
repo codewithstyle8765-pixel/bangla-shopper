@@ -1,0 +1,241 @@
+# Return detailed information about a customer account.
+query Customer {
+  customer {
+    addresses {
+      city
+      company
+      country_code
+      custom_attributesV2 {
+        __typename
+        code
+      }
+      default_billing
+      default_shipping
+      extension_attributes {
+        attribute_code
+        value
+      }
+      fax
+      firstname
+      lastname
+      middlename
+      postcode
+      prefix
+      region {
+        region
+        region_code
+        region_id
+      }
+      region_id
+      street
+      suffix
+      telephone
+      uid
+      vat_id
+    }
+    addressesV2 {
+      items {
+        city
+        company
+        country_code
+        default_billing
+        default_shipping
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        region_id
+        street
+        suffix
+        telephone
+        uid
+        vat_id
+      }
+      page_info {
+        current_page
+        page_size
+        total_pages
+      }
+      total_count
+    }
+    allow_remote_shopping_assistance
+    compare_list {
+      attributeValueList {
+        attributeName
+        value
+      }
+      attributes {
+        code
+        label
+      }
+      item_count
+      items {
+        uid
+      }
+      message
+      productList {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        categoryId
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        rating
+        reviewCount
+        reviewEnable
+        thumbNail
+        tierPrice
+        typeId
+        wishlistEnable
+        wishlistItemId
+      }
+      showSwatchOnCollection
+      success
+      uid
+    }
+    confirmation_status
+    created_at
+    custom_attributes {
+      __typename
+      code
+    }
+    date_of_birth
+    default_billing
+    default_shipping
+    email
+    firstname
+    gender
+    group {
+      uid
+    }
+    id
+    is_subscribed
+    lastname
+    middlename
+    mstRewardPointsBalance {
+      balance
+      tier_id
+      transactions {
+        activated_at
+        amount
+        amount_used
+        code
+        comment
+        created_at
+        is_activated
+        is_expiration_email_sent
+        is_expired
+        transaction_id
+      }
+    }
+    orders {
+      date_of_first_order
+      items {
+        available_actions
+        carrier
+        email
+        id
+        is_virtual
+        number
+        order_date
+        order_status_change_date
+        shipping_method
+        status
+        token
+      }
+      page_info {
+        current_page
+        page_size
+        total_pages
+      }
+      total_count
+    }
+    prefix
+    reviews {
+      items {
+        average_rating
+        created_at
+        nickname
+        summary
+        text
+      }
+      page_info {
+        current_page
+        page_size
+        total_pages
+      }
+    }
+    suffix
+    taxvat
+    wishlists {
+      id
+      items_count
+      items_v2 {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        description
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        id
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        productId
+        qty
+        rating
+        reviewCount
+        sku
+        thumbNail
+        tierPrice
+        typeId
+        wishlistItemId
+      }
+      sharing_code
+      updated_at
+    }
+  }
+}

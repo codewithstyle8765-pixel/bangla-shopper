@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 function mediaPatterns(): URL[] {
   const base = process.env.MAGENTO_MEDIA_URL || (process.env.NEXT_PUBLIC_BASE_URL && new URL("media/", process.env.NEXT_PUBLIC_BASE_URL).href);
@@ -21,15 +20,11 @@ const nextConfig: NextConfig = {
     NEXT_SERVER_MAGENTO_ENDPOINT: process.env.NEXT_SERVER_MAGENTO_ENDPOINT,
     DEFAULT_STORE_CODE: process.env.DEFAULT_STORE_CODE || "default",
   },
-  /* Off: Cache Components hangs on Cloudflare Workers (setTimeout semantics). */
-  cacheComponents: false,
+  cacheComponents: true,
+  partialPrefetching: false,
   experimental: {
     optimizePackageImports: ["@apollo/client"],
   },
 };
 
 export default nextConfig;
-
-if (process.env.NODE_ENV === 'development') {
-  initOpenNextCloudflareForDev();
-}

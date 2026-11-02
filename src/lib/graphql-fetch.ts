@@ -14,7 +14,7 @@ export type CacheLifeOption = number | CacheLifePreset;
 
 /**
  * Resolves a CacheLifeOption to seconds (or false for "never revalidate").
- * Consumed by unstable_cache revalidate in cached-graphql.ts.
+ * Consumed by the cacheLife() mapping in cached-graphql.ts.
  */
 export function getRevalidateTime(life?: CacheLifeOption): number | false {
   if (!life) return false;

@@ -1,0 +1,26 @@
+# Header menu and mega menu: the category tree, three levels deep (only the fields the menu uses).
+query MegaMenu {
+  categoryList(filters: {}) {
+    children {
+      name
+      url_path
+      include_in_menu
+      product_count
+      children {
+        name
+        url_path
+        include_in_menu
+        children {
+          name
+          url_path
+          include_in_menu
+          children {
+            name
+            url_path
+            include_in_menu
+          }
+        }
+      }
+    }
+  }
+}

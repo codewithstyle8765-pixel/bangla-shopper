@@ -1,0 +1,26 @@
+# Returns a list of attributes metadata for a given entity type.
+query AttributesList($entityType: AttributeEntityTypeEnum!, $filters: AttributeFilterInput) {
+  attributesList(entityType: $entityType, filters: $filters) {
+    errors {
+      message
+      type
+    }
+    items {
+      __typename
+      code
+      default_value
+      entity_type
+      frontend_class
+      frontend_input
+      is_required
+      is_unique
+      label
+      options {
+        __typename
+        is_default
+        label
+        value
+      }
+    }
+  }
+}

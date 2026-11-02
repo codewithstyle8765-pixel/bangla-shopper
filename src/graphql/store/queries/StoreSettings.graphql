@@ -1,0 +1,11 @@
+# Store-wide settings in one request. storeConfig has the currency code but no symbol, so the symbol ("TK") comes from currency.
+query StoreSettings {
+  storeConfig {
+    store_code
+    locale
+    default_display_currency_code
+  }
+  currency {
+    default_display_currency_symbol
+  }
+}

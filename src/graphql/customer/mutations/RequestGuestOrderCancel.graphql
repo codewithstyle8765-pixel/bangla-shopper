@@ -1,0 +1,113 @@
+# Request to cancel specified guest order.
+mutation RequestGuestOrderCancel($input: GuestOrderCancelInput!) {
+  requestGuestOrderCancel(input: $input) {
+    error
+    errorV2 {
+      code
+      message
+    }
+    order {
+      applied_coupons {
+        code
+      }
+      available_actions
+      billing_address {
+        city
+        company
+        country_code
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        region
+        region_id
+        street
+        suffix
+        telephone
+        vat_id
+      }
+      carrier
+      comments {
+        message
+        timestamp
+      }
+      credit_memos {
+        id
+        number
+      }
+      customer_info {
+        firstname
+        lastname
+        middlename
+        prefix
+        suffix
+      }
+      email
+      gift_message {
+        from
+        message
+        to
+      }
+      id
+      invoices {
+        id
+        number
+      }
+      is_virtual
+      items {
+        __typename
+        id
+        product_name
+        product_sku
+        product_type
+        product_url_key
+        quantity_canceled
+        quantity_invoiced
+        quantity_ordered
+        quantity_refunded
+        quantity_returned
+        quantity_shipped
+        status
+      }
+      mstRewardPoints {
+        earn_activated_at
+        earn_points
+        is_earn_activated
+        spend_points
+      }
+      number
+      order_date
+      order_status_change_date
+      payment_methods {
+        name
+        type
+      }
+      shipments {
+        id
+        number
+      }
+      shipping_address {
+        city
+        company
+        country_code
+        fax
+        firstname
+        lastname
+        middlename
+        postcode
+        prefix
+        region
+        region_id
+        street
+        suffix
+        telephone
+        vat_id
+      }
+      shipping_method
+      status
+      token
+    }
+  }
+}

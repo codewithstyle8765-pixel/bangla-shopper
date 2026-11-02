@@ -1,0 +1,7 @@
+# stock alert information
+query Stock($storeId: Int, $productId: Int, $customerToken: String) {
+  stock(storeId: $storeId, productId: $productId, customerToken: $customerToken) {
+    message
+    success
+  }
+}

@@ -29,8 +29,7 @@ next-env.d.ts
 /.docs
 /reference
 
-# cloudflare & opennext
-/.open-next/
-/.wrangler/
-.dev.vars
-cloudflare-env.d.ts
+# playwright-cli snapshots, logs and screenshots
+.playwright-cli/
+
+/.claude

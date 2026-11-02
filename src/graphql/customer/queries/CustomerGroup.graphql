@@ -1,0 +1,6 @@
+# Provides Customer Group assigned to the Customer or Guest.
+query CustomerGroup {
+  customerGroup {
+    uid
+  }
+}

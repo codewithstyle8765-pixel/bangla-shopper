@@ -1,0 +1,25 @@
+# download list information
+query MyDownloadsList($storeId: Int, $pageNumber: Int, $customerToken: String) {
+  myDownloadsList(
+    storeId: $storeId
+    pageNumber: $pageNumber
+    customerToken: $customerToken
+  ) {
+    downloadsList {
+      canReorder
+      date
+      hash
+      incrementId
+      isOrderExist
+      message
+      proName
+      remainingDownloads
+      state
+      status
+      statusColorCode
+    }
+    message
+    success
+    totalCount
+  }
+}

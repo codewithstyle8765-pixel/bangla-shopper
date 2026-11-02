@@ -1,7 +1,0 @@
-#import "../fragments/_cart.graphql"
-
-mutation MergeCarts($sourceCartId: String!) {
-  mergeCarts(source_cart_id: $sourceCartId) {
-    ...cart
-  }
-}

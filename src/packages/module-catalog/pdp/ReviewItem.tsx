@@ -14,8 +14,9 @@ export interface ProductReviewData {
   id: string;
   author: string;
   verified: boolean;
-  firstPurchase: string;
-  totalPurchased: number;
+  /** Purchase history, when the store provides it. */
+  firstPurchase?: string;
+  totalPurchased?: number;
   rating: number;
   title: string;
   date: string;
@@ -59,12 +60,16 @@ export function ReviewItem({ review, onOpenPhoto }: { review: ProductReviewData;
               Verified Buyer
             </p>
           )}
-          <p>
-            First Purchase: <span className="font-medium">{review.firstPurchase}</span>
-          </p>
-          <p>
-            Total Purchased: <span className="font-medium">{review.totalPurchased} Times</span>
-          </p>
+          {review.firstPurchase && (
+            <p>
+              First Purchase: <span className="font-medium">{review.firstPurchase}</span>
+            </p>
+          )}
+          {review.totalPurchased !== undefined && (
+            <p>
+              Total Purchased: <span className="font-medium">{review.totalPurchased} Times</span>
+            </p>
+          )}
         </div>
 
         <div className="mt-3 w-full min-w-0 md:mt-[5px] md:ml-[44px] md:flex-1">

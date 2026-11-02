@@ -11,7 +11,7 @@ import { useScrollLock } from "@/packages/module-common/useScrollLock";
 import { Collapse } from "@/packages/module-common/Collapse";
 import { signOutCustomer, useCustomerName } from "@/packages/module-customer/session";
 import { callApi } from "@/utils/api/client";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
 
 interface MobileNavDrawerProps {
@@ -29,6 +29,7 @@ function CategoryItem({ category, onNavigate }: { category: NavCategory; onNavig
       <div className="flex items-center">
         <Link
           href={`/category/${category.urlPath}`}
+          prefetch
           onClick={onNavigate}
           className="flex-1 py-3 text-[14px] font-medium text-brand-dark hover:text-brand-coral"
         >
@@ -56,6 +57,7 @@ function CategoryItem({ category, onNavigate }: { category: NavCategory; onNavig
               <li key={child.urlPath}>
                 <Link
                   href={`/category/${child.urlPath}`}
+                  prefetch
                   onClick={onNavigate}
                   className="block py-2 text-[13px] text-brand-muted hover:text-brand-coral"
                 >
@@ -71,6 +73,7 @@ function CategoryItem({ category, onNavigate }: { category: NavCategory; onNavig
 }
 
 export function MobileNavDrawer({ isOpen, onClose, categories }: MobileNavDrawerProps) {
+  const money = useMoney();
   useScrollLock(isOpen);
   const customerName = useCustomerName(isOpen);
   const [rewards, setRewards] = useState<{ points: number; value: number } | null>(null);
@@ -166,7 +169,7 @@ export function MobileNavDrawer({ isOpen, onClose, categories }: MobileNavDrawer
                 {rewards && (
                   <Link href={REWARDS_HREF} prefetch={false} onClick={onClose} className="flex shrink-0 items-center gap-1.5 font-semibold text-brand-coral hover:underline">
                     <RewardCoin className="h-5 w-5" />
-                    {rewards.points.toLocaleString("en-US")} pts · {formatTk(rewards.value, false)}
+                    {rewards.points.toLocaleString("en-US")} pts · {money(rewards.value, false)}
                   </Link>
                 )}
               </div>

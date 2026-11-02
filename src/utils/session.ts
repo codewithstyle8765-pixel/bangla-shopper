@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { decode } from "next-auth/jwt";
-import { CART_ID_COOKIE, CUSTOMER_FULL_NAME_COOKIE, CUSTOMER_NAME_COOKIE, CUSTOMER_TOKEN_LIFETIME_SECONDS } from "@/lib/config";
+import { CART_ID_COOKIE, CUSTOMER_FULL_NAME_COOKIE, CUSTOMER_NAME_COOKIE, CUSTOMER_TOKEN_LIFETIME_SECONDS, LIVE_OPERATIONS } from "@/lib/config";
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 /* Same rule as next-auth's session cookie: browsers drop Secure cookies on plain-http hosts other than localhost (e.g. a LAN IP). */
@@ -28,6 +28,7 @@ export const getCustomerToken = cache(async (): Promise<string | null> => {
   try {
     const jwt = await decode({ token: raw, secret: authSecret() });
     if (!jwt?.accessToken || (jwt.expiresAt && Date.now() > jwt.expiresAt)) return null;
+    if (jwt.accessToken.startsWith("mock-token:") && LIVE_OPERATIONS.has("GenerateToken")) return null;
     return jwt.accessToken;
   } catch {
     return null;

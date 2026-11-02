@@ -1,0 +1,4 @@
+# Creates Client Token for Braintree Javascript SDK initialization.
+mutation CreateBraintreeClientToken {
+  createBraintreeClientToken
+}

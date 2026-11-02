@@ -91,7 +91,8 @@ const listItems = (html: string) => [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>
 const paragraphs = (html: string) => [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map((m) => stripTags(m[1])).filter(Boolean);
 
 export function parseDescription(raw: string): ParsedDescription {
-  const html = sanitizeHtml(markYouTube(raw ?? "")).trim();
+  /* \r\n → \n: the browser normalises line breaks in the HTML, so the server's string would not match on hydration. */
+  const html = sanitizeHtml(markYouTube((raw ?? "").replace(/\r\n?/g, "\n"))).trim();
   const headings = [...html.matchAll(/<h([2-4])[^>]*>([\s\S]*?)<\/h\1>/gi)];
   const introVideos = takeVideos(headings.length ? html.slice(0, headings[0].index) : html);
   const intro = takeImages(introVideos.html);

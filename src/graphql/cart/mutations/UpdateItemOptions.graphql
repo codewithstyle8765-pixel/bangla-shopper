@@ -1,0 +1,17 @@
+# update cart item options request
+mutation UpdateItemOptions($storeId: Int, $quoteId: Int, $customerToken: String, $productId: Int, $itemId: Int, $qty: Int, $params: [String], $relatedProducts: String) {
+  updateItemOptions(
+    storeId: $storeId
+    quoteId: $quoteId
+    customerToken: $customerToken
+    productId: $productId
+    itemId: $itemId
+    qty: $qty
+    params: $params
+    relatedProducts: $relatedProducts
+  ) {
+    cartCount
+    message
+    success
+  }
+}

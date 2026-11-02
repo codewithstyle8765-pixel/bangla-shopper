@@ -4,14 +4,20 @@ import { NextImage } from "@/packages/module-common/NextImage";
 import { ProductCard } from "@/packages/module-catalog/product/ProductCard";
 import { SnapCarousel } from "@/packages/module-common/carousel/SnapCarousel";
 import { CAROUSEL_EDGE } from "@/packages/module-common/carousel/CarouselNavButtons";
-import { getCategoryProducts } from "@/utils/magento/catalog";
+import type { ProductSummary } from "@/types/storefront";
 
 interface BeautyTechDealSectionProps {
+  title: string;
+  description: string;
+  icon: string;
+  buttonLabel: string;
+  buttonLink: string;
+  products: ProductSummary[];
   className?: string;
 }
 
-export async function BeautyTechDealSection({ className = "" }: BeautyTechDealSectionProps) {
-  const products = await getCategoryProducts("beauty-tech", 8);
+export function BeautyTechDealSection({ title, description, icon, buttonLabel, buttonLink, products, className = "" }: BeautyTechDealSectionProps) {
+  if (!products.length) return null;
 
   return (
     <section className={`w-full mt-[9px] ${className}`}>
@@ -19,23 +25,23 @@ export async function BeautyTechDealSection({ className = "" }: BeautyTechDealSe
         <div className="flex flex-col lg:flex-row items-start justify-between gap-3 xl:gap-12 desk:gap-[43px] w-full">
           <div className="w-full lg:w-[320px] xl:w-[383px] desk:w-[388px] max-w-[383px] desk:max-w-[388px] flex flex-col shrink-0 mt-[4px] pl-3 desk:pl-[17px]">
             <NextImage
-              src="/assets/images/home/tech_deal_icon_2.png"
-              alt="Beauty Tech"
+              src={icon}
+              alt=""
               width={100}
               height={100}
               className="w-[100px] h-[100px] object-contain block"
             />
             <h2 className="font-bold text-brand-dark font-sans text-[32px] leading-[1.2] mt-[19px] ml-[1px] w-[382px] max-w-full">
-              Get the Latest and Greatest Beauty Tech.
+              {title}
             </h2>
             <p className="font-normal text-brand-dark font-sans text-[16px] leading-[1.2] mt-[20px] w-[381px] max-w-full">
-              Discover cool gadgets, product reviews, and the newest beauty tech releases, all in one place.
+              {description}
             </p>
             <Link
-              href="/category/beauty-tech"
+              href={buttonLink}
               className="w-[193px] h-[40px] leading-[40px] text-white text-[18px] font-semibold text-center mt-[20px] rounded-[3px] bg-brand-charcoal hover:opacity-95 transition-opacity block font-sans"
             >
-              Explore Deal
+              {buttonLabel}
             </Link>
           </div>
 

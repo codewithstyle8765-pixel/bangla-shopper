@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/packages/module-common/Breadcrumbs";
 import { Container } from "@/packages/module-common/Container";
 import { ProductListingView } from "@/packages/module-catalog/plp/ProductListingView";
 import { ProductListingSkeleton } from "@/packages/module-catalog/plp/ProductListingSkeleton";
-import { getProductListing, parseListingSearchParams } from "@/utils/magento/catalog";
+import { getCategoryByPath, getProductListing, parseListingSearchParams } from "@/utils/magento/catalog";
 import type { SearchParamsRecord } from "@/utils/url";
 import { stripTags } from "@/utils/product-description";
 
@@ -17,11 +17,12 @@ interface CategoryPageProps {
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const path = slug.join("/");
-  const listing = await getProductListing({ category: path, filters: {}, sort: "featured", page: 1, pageSize: 1 });
-  if (!listing) return { title: "Category not found | BanglaShoppers" };
+  /* Only the category: the page itself loads the products. */
+  const category = await getCategoryByPath(path);
+  if (!category) return { title: "Category not found | BanglaShoppers" };
   return {
-    title: `${listing.title} | Buy Online in Bangladesh | BanglaShoppers`,
-    description: stripTags(listing.description ?? "").slice(0, 300) || undefined,
+    title: `${category.name} | Buy Online in Bangladesh | BanglaShoppers`,
+    description: stripTags(category.description ?? "").slice(0, 300) || undefined,
     alternates: { canonical: `/category/${path}` },
   };
 }

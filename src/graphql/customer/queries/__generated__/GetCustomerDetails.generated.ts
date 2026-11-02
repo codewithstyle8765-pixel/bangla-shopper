@@ -1,0 +1,15 @@
+import * as Types from '../../../../types/graphql-types';
+
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type GetCustomerDetailsQueryVariables = Types.Exact<{
+  customerToken?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  storeId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  width?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  mFactor?: Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+
+export type GetCustomerDetailsQuery = { __typename?: 'Query', getCustomerDetails?: { __typename?: 'CustomerDetailsResponse', bannerDominantColor?: string | null, customerBannerImage?: string | null, customerDominantColor?: string | null, customerEmail?: string | null, customerName?: string | null, customerProfileImage?: string | null, message?: string | null, success?: boolean | null } | null };
+
+
+export const GetCustomerDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCustomerDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"customerToken"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"width"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mFactor"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getCustomerDetails"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"customerToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"customerToken"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"width"},"value":{"kind":"Variable","name":{"kind":"Name","value":"width"}}},{"kind":"Argument","name":{"kind":"Name","value":"mFactor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mFactor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bannerDominantColor"}},{"kind":"Field","name":{"kind":"Name","value":"customerBannerImage"}},{"kind":"Field","name":{"kind":"Name","value":"customerDominantColor"}},{"kind":"Field","name":{"kind":"Name","value":"customerEmail"}},{"kind":"Field","name":{"kind":"Name","value":"customerName"}},{"kind":"Field","name":{"kind":"Name","value":"customerProfileImage"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<GetCustomerDetailsQuery, GetCustomerDetailsQueryVariables>;

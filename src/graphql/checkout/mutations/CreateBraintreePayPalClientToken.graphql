@@ -1,0 +1,4 @@
+# Creates Client Token for Braintree PayPal Javascript SDK initialization.
+mutation CreateBraintreePayPalClientToken {
+  createBraintreePayPalClientToken
+}

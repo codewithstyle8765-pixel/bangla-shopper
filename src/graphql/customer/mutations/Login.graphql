@@ -1,0 +1,26 @@
+# customer login request
+mutation Login($os: String, $storeId: Int, $websiteId: Int, $width: String, $token: String, $mobile: String, $quoteId: Int, $mFactor: Int, $username: String, $password: String) {
+  login(
+    os: $os
+    storeId: $storeId
+    websiteId: $websiteId
+    width: $width
+    token: $token
+    mobile: $mobile
+    quoteId: $quoteId
+    mFactor: $mFactor
+    username: $username
+    password: $password
+  ) {
+    bannerImage
+    bearerToken
+    cartCount
+    customerEmail
+    customerId
+    customerName
+    customerToken
+    message
+    profileImage
+    success
+  }
+}

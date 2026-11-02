@@ -52,16 +52,26 @@ export function toCartAddress(a: AddressInput, saveInAddressBook = false) {
 }
 
 function toShippingInput(ref: CheckoutAddressRef) {
-  return ref.customerAddressId
-    ? { customer_address_id: Number(ref.customerAddressId) }
-    : { address: toCartAddress(ref.address!, Boolean(ref.saveInAddressBook)) };
+  if (ref.customerAddressId) {
+    const numId = Number(ref.customerAddressId);
+    return {
+      customer_address_uid: String(ref.customerAddressId),
+      ...(Number.isFinite(numId) ? { customer_address_id: numId } : {}),
+    };
+  }
+  return { address: toCartAddress(ref.address!, Boolean(ref.saveInAddressBook)) };
 }
 
 function toBillingInput(billing: PlaceOrderInput["billing"]) {
   if (billing.sameAsShipping) return { same_as_shipping: true };
-  return billing.customerAddressId
-    ? { customer_address_id: Number(billing.customerAddressId) }
-    : { address: toCartAddress(billing.address!, Boolean(billing.saveInAddressBook)) };
+  if (billing.customerAddressId) {
+    const numId = Number(billing.customerAddressId);
+    return {
+      customer_address_uid: String(billing.customerAddressId),
+      ...(Number.isFinite(numId) ? { customer_address_id: numId } : {}),
+    };
+  }
+  return { address: toCartAddress(billing.address!, Boolean(billing.saveInAddressBook)) };
 }
 
 /** Sets the shipping address on the cart and returns what Magento offers for it. */

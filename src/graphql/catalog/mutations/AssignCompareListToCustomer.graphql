@@ -1,0 +1,62 @@
+# Assign the specified compare list to the logged in customer.
+mutation AssignCompareListToCustomer($uid: ID!) {
+  assignCompareListToCustomer(uid: $uid) {
+    compare_list {
+      attributeValueList {
+        attributeName
+        value
+      }
+      attributes {
+        code
+        label
+      }
+      item_count
+      items {
+        uid
+      }
+      message
+      productList {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        categoryId
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        rating
+        reviewCount
+        reviewEnable
+        thumbNail
+        tierPrice
+        typeId
+        wishlistEnable
+        wishlistItemId
+      }
+      showSwatchOnCollection
+      success
+      uid
+    }
+    result
+  }
+}

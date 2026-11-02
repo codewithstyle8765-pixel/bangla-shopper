@@ -6,6 +6,7 @@ import { ProductCard } from "@/packages/module-catalog/product/ProductCard";
 import type { ProductListing } from "@/types/storefront";
 import { createUrl, toURLSearchParams, type SearchParamsRecord } from "@/utils/url";
 import { formatPriceRange } from "@/utils/format";
+import { getStoreSettings } from "@/utils/magento/store";
 import { ListingLayout } from "./ListingLayout";
 import { Pagination } from "./Pagination";
 import { PerPageSelect } from "./PerPageSelect";
@@ -23,17 +24,18 @@ interface ProductListingViewProps {
   titleAtEnd?: boolean;
 }
 
-export function ProductListingView({ listing, pathname, searchParams, active, sort, pageSize, titleAtEnd = false }: ProductListingViewProps) {
+export async function ProductListingView({ listing, pathname, searchParams, active, sort, pageSize, titleAtEnd = false }: ProductListingViewProps) {
   const from = listing.totalCount ? (listing.currentPage - 1) * pageSize + 1 : 0;
   const to = Math.min(listing.currentPage * pageSize, listing.totalCount);
   const rangeLabel = listing.totalCount
     ? `Showing ${from}–${to} of ${listing.totalCount} products`
     : "No products found";
 
+  const { currencySymbol } = await getStoreSettings();
   const labelFor = (code: string, value: string) => {
     const group = listing.filters.find((g) => g.code === code);
     const option = group?.options.find((o) => o.value === value);
-    return { group: group?.label ?? code, option: group?.type === "range" ? formatPriceRange(value) : (option?.label ?? value) };
+    return { group: group?.label ?? code, option: group?.type === "range" ? formatPriceRange(value, currencySymbol) : (option?.label ?? value) };
   };
 
   const removeHref = (code: string, value: string) => {
@@ -57,6 +59,7 @@ export function ProductListingView({ listing, pathname, searchParams, active, so
         <li key={sub.urlPath} className="shrink-0">
           <Link
             href={`/category/${sub.urlPath}`}
+            prefetch
             className="flex h-9 items-center rounded-full border border-card-border bg-white px-4 text-[13px] font-medium text-brand-dark transition-colors hover:border-brand-coral hover:text-brand-coral"
           >
             {sub.name}
@@ -98,7 +101,7 @@ export function ProductListingView({ listing, pathname, searchParams, active, so
                     aria-label={`Remove filter ${label.group}: ${label.option}`}
                   >
                     <span className="text-footer-text">{label.group}:</span>
-                    <span className="font-medium">{code === "rating" ? `${label.option.replace(" & up", "")}★ & up` : label.option}</span>
+                    <span className="font-medium">{code === "rating" ? (value === "5" ? "5★" : `${value}★ & up`) : label.option}</span>
                     <span aria-hidden="true" className="ml-0.5 text-[16px] leading-none text-brand-coral">
                       ×
                     </span>

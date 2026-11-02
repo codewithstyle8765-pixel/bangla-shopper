@@ -1,0 +1,13 @@
+import * as Types from '../../../../types/graphql-types';
+
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type GetPaymentOrderQueryVariables = Types.Exact<{
+  cartId: Types.Scalars['String']['input'];
+  id: Types.Scalars['String']['input'];
+}>;
+
+
+export type GetPaymentOrderQuery = { __typename?: 'Query', getPaymentOrder?: { __typename?: 'PaymentOrderOutput', id?: string | null, mp_order_id?: string | null, status?: string | null, payment_source_details?: { __typename?: 'PaymentSourceDetails', card?: { __typename?: 'Card', card_expiry_month?: string | null, card_expiry_year?: string | null, last_digits?: string | null, name?: string | null } | null } | null } | null };
+
+
+export const GetPaymentOrderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPaymentOrder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cartId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPaymentOrder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cartId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cartId"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mp_order_id"}},{"kind":"Field","name":{"kind":"Name","value":"payment_source_details"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"card"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"card_expiry_month"}},{"kind":"Field","name":{"kind":"Name","value":"card_expiry_year"}},{"kind":"Field","name":{"kind":"Name","value":"last_digits"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetPaymentOrderQuery, GetPaymentOrderQueryVariables>;

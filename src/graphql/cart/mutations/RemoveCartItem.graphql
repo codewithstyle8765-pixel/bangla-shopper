@@ -1,0 +1,43 @@
+# remove cart item request
+mutation RemoveCartItem($storeId: Int, $quoteId: Int, $customerToken: String, $itemId: Int) {
+  removeCartItem(
+    storeId: $storeId
+    quoteId: $quoteId
+    customerToken: $customerToken
+    itemId: $itemId
+  ) {
+    cartCount
+    discount {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    grandtotal {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    message
+    shipping {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    subtotal {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    success
+    tax {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+  }
+}

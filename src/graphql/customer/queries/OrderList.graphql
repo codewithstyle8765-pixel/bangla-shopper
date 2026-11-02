@@ -1,0 +1,27 @@
+# order list information
+query OrderList($storeId: Int, $customerToken: String, $pageNumber: Int, $forDashboard: Int, $requiredCount: Int) {
+  orderList(
+    storeId: $storeId
+    customerToken: $customerToken
+    pageNumber: $pageNumber
+    forDashboard: $forDashboard
+    requiredCount: $requiredCount
+  ) {
+    message
+    orderList {
+      canReorder
+      date
+      id
+      item_count
+      item_image_url
+      order_id
+      order_total
+      ship_to
+      state
+      status
+      statusColorCode
+    }
+    success
+    totalCount
+  }
+}

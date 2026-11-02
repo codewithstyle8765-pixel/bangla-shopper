@@ -1,0 +1,6 @@
+# Revoke the customer token.
+mutation RevokeCustomerToken {
+  revokeCustomerToken {
+    result
+  }
+}

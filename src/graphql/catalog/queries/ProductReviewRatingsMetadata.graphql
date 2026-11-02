@@ -1,0 +1,13 @@
+# Return the active ratings attributes and the values each rating can have.
+query ProductReviewRatingsMetadata {
+  productReviewRatingsMetadata {
+    items {
+      id
+      name
+      values {
+        value
+        value_id
+      }
+    }
+  }
+}

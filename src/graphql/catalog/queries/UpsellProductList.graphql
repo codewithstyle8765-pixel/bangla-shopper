@@ -1,0 +1,61 @@
+# Upsell product list information
+query UpsellProductList($storeId: Int, $url: String, $width: String, $productId: Int, $websiteId: Int, $pageNumber: Int, $customerToken: String) {
+  upsellProductList(
+    storeId: $storeId
+    url: $url
+    width: $width
+    productId: $productId
+    websiteId: $websiteId
+    pageNumber: $pageNumber
+    customerToken: $customerToken
+  ) {
+    message
+    productList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    success
+  }
+}

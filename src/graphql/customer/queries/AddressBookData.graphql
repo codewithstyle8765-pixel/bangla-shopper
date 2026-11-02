@@ -1,0 +1,28 @@
+# address book information
+query AddressBookData($customerToken: String, $storeId: Int, $forDashboard: Int) {
+  addressBookData(
+    customerToken: $customerToken
+    storeId: $storeId
+    forDashboard: $forDashboard
+  ) {
+    additionalAddress {
+      addressTitle
+      id
+      value
+    }
+    addressCount
+    billingAddress {
+      addressTitle
+      id
+      value
+    }
+    message
+    otherError
+    shippingAddress {
+      addressTitle
+      id
+      value
+    }
+    success
+  }
+}

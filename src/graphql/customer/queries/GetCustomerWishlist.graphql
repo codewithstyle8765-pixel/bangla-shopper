@@ -1,0 +1,12 @@
+# Get customer wishlist item product IDs
+query GetCustomerWishlist($customerToken: String, $storeId: Int) {
+  getCustomerWishlist(customerToken: $customerToken, storeId: $storeId) {
+    message
+    success
+    totalCount
+    wishlist {
+      productId
+      wishlistItemId
+    }
+  }
+}

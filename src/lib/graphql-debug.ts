@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { ApolloLink } from "@apollo/client";
 import { print } from "graphql";
 import { tap } from "rxjs";
-import { FALLBACK_MODE } from "@/lib/config";
+import { FALLBACK_MODE, LIVE_OPERATIONS } from "@/lib/config";
 
 /**
  * Development aid: every GraphQL request an /api/graphql call makes to Magento (or the mocks) is recorded and
@@ -48,7 +48,7 @@ export const graphqlDebugLink = new ApolloLink((operation, forward) => {
     query: print(operation.query),
     variables: masked(operation.variables) as Record<string, unknown>,
     ms: Math.round(performance.now() - started),
-    source: FALLBACK_MODE ? "mock" : "magento",
+    source: FALLBACK_MODE && !LIVE_OPERATIONS.has(operation.operationName ?? "") ? "mock" : "magento",
     ...(error !== undefined && { error: error instanceof Error ? error.message : String(error) }),
   });
   return forward(operation).pipe(

@@ -10,9 +10,9 @@ export function EarnPointsNote({ amount, signedIn }: { amount: number; signedIn:
   if (points <= 0) return null;
 
   return (
-    <div className="flex justify-center rounded-[6px] bg-brand-surface px-3 py-2.5">
-      <div className="inline-flex max-w-full items-center gap-2.5">
-        <RewardCoin className="h-6 w-6" />
+    <div className="flex justify-center rounded-[6px] bg-brand-surface px-3.5 py-3">
+      <div className="inline-flex max-w-full items-center gap-3.5">
+        <RewardCoin className="h-10 w-auto sm:h-11 lg:h-12" />
         <p className="min-w-0 text-left text-[13px] leading-[1.4] text-brand-dark">
           Checkout now and earn <strong className="font-bold text-brand-coral">{points.toLocaleString("en-US")} Reward Points</strong> for this
           order.

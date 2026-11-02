@@ -1,0 +1,37 @@
+# create account request
+mutation CreateAccount($storeId: Int, $os: String, $email: String, $dob: String, $width: String, $token: String, $mobile: String, $prefix: String, $suffix: String, $taxvat: String, $gender: String, $mFactor: Int, $quoteId: Int, $isSocial: Int, $firstName: String, $lastName: String, $websiteId: Int, $password: String, $pictureUrl: String, $middleName: String, $orderId: Int) {
+  createAccount(
+    storeId: $storeId
+    os: $os
+    email: $email
+    dob: $dob
+    width: $width
+    token: $token
+    mobile: $mobile
+    prefix: $prefix
+    suffix: $suffix
+    taxvat: $taxvat
+    gender: $gender
+    mFactor: $mFactor
+    quoteId: $quoteId
+    isSocial: $isSocial
+    firstName: $firstName
+    lastName: $lastName
+    websiteId: $websiteId
+    password: $password
+    pictureUrl: $pictureUrl
+    middleName: $middleName
+    orderId: $orderId
+  ) {
+    bannerImage
+    bearerToken
+    cartCount
+    customerEmail
+    customerId
+    customerName
+    customerToken
+    message
+    profileImage
+    success
+  }
+}

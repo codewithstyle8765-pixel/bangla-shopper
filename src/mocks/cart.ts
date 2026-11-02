@@ -101,10 +101,10 @@ export async function clearMockCart() {
 }
 
 export const cartResolvers = {
-  CreateEmptyCart: () => ({ createEmptyCart: MOCK_CART_ID }),
-  Cart: async () => ({ cart: toMagentoCart(await read()) }),
-  CustomerCart: async () => ({ customerCart: toMagentoCart(await read()) }),
-  AddToCart: async (v: Record<string, unknown>) => {
+  NewGuestCart: () => ({ createEmptyCart: MOCK_CART_ID }),
+  CartById: async () => ({ cart: toMagentoCart(await read()) }),
+  CustomerCartId: async () => ({ customerCart: toMagentoCart(await read()) }),
+  AddItemsToCart: async (v: Record<string, unknown>) => {
     const sku = String(v.sku);
     const product = findMockProductBySku(sku);
     if (!product) throw new Error("The product that was requested doesn't exist.");
@@ -119,20 +119,20 @@ export const cartResolvers = {
     });
     return { addProductsToCart: { ...result, user_errors: [] } };
   },
-  UpdateCartItem: async (v: Record<string, unknown>) => ({
+  UpdateCartItemQty: async (v: Record<string, unknown>) => ({
     updateCartItems: await mutate((s) => {
       s.lines = s.lines.map((l) => (lineUid(l.sku, l.options) === v.uid ? { ...l, qty: Number(v.quantity) } : l)).filter((l) => l.qty > 0);
     }),
   }),
-  RemoveCartItem: async (v: Record<string, unknown>) => ({
+  DeleteCartItem: async (v: Record<string, unknown>) => ({
     removeItemFromCart: await mutate((s) => {
       s.lines = s.lines.filter((l) => lineUid(l.sku, l.options) !== v.uid);
     }),
   }),
-  ApplyCoupon: async (v: Record<string, unknown>) => {
+  ApplyCartCoupon: async (v: Record<string, unknown>) => {
     const code = String(v.code).trim().toUpperCase();
     if (!MOCK_COUPONS[code]) throw new Error(`The coupon code "${v.code}" is not valid.`);
     return { applyCouponToCart: await mutate((s) => void (s.coupon = code)) };
   },
-  RemoveCoupon: async () => ({ removeCouponFromCart: await mutate((s) => void delete s.coupon) }),
+  RemoveCartCoupon: async () => ({ removeCouponFromCart: await mutate((s) => void delete s.coupon) }),
 };

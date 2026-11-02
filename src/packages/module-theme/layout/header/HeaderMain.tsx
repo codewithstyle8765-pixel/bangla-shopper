@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
 import { Collapse } from "@/packages/module-common/Collapse";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { OnPathnameChange } from "@/packages/module-common/OnPathnameChange";
 import { HeaderAccountLink } from "./HeaderAccountLink";
 import { SearchBar } from "./SearchBar";
 import { BrandLogo, CompactBrandLogo } from "./BrandLogo";
@@ -26,16 +26,12 @@ export function HeaderMain({ cartCount: cartCountProp, hotline }: HeaderMainProp
   const wishlistHref = useAuthHref("/customer/account/wishlist");
   /* Below lg the search row opens from the search icon. */
   const [searchOpen, setSearchOpen] = useState(false);
-  const pathname = usePathname();
-
-  /* Open on the results page (also after a reload or filter change), closed everywhere else. */
-  useEffect(() => {
-    setSearchOpen(pathname === "/search");
-  }, [pathname]);
   const cartCount = cartCountProp ?? totalCount;
 
   return (
     <div className="w-full bg-white relative">
+      {/* Open on the results page (also after a reload or filter change), closed everywhere else. */}
+      <OnPathnameChange onChange={(path) => setSearchOpen(path === "/search")} />
       <div className="lg:hidden">
         <Container className="py-2 flex items-center justify-between">
           <div className="flex items-center min-w-0">

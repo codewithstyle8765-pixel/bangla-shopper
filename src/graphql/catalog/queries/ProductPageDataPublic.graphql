@@ -1,0 +1,311 @@
+# public cacheable product page information
+query ProductPageDataPublic($storeId: Int, $productId: Int, $currency: String, $width: String, $sku: String) {
+  productPageDataPublic(
+    storeId: $storeId
+    productId: $productId
+    currency: $currency
+    width: $width
+    sku: $sku
+  ) {
+    additionalInformation {
+      label
+      value
+    }
+    arTextureImages
+    arType
+    arUrl
+    availability
+    bundleOptions {
+      default_title
+      optionValues {
+        defaultQty
+        foramtedPrice
+        isDefault
+        isQtyUserDefined
+        isSingle
+        optionValueId
+        price
+        title
+      }
+      option_id
+      parent_id
+      position
+      required
+      title
+      type
+    }
+    canGuestCheckoutDownloadable
+    cartCount
+    configurableData {
+      attributes {
+        code
+        id
+        label
+        swatchType
+        updateProductPreviewImage
+      }
+      chooseText
+      images
+      index
+      optionPrices {
+        product
+      }
+      productId
+      swatchData
+      template
+    }
+    customOptions {
+      decorated_is_first
+      decorated_is_last
+      decorated_is_odd
+      default_price
+      default_price_type
+      default_title
+      file_extension
+      formatted_default_price
+      formatted_price
+      image_size_x
+      image_size_y
+      is_require
+      max_characters
+      optionValues {
+        default_price
+        default_price_type
+        default_title
+        formatted_default_price
+        formatted_price
+        option_id
+        option_type_id
+        price
+        price_type
+        sku
+        sort_order
+        store_price
+        store_price_type
+        store_title
+        title
+      }
+      option_id
+      price
+      price_type
+      product_id
+      sku
+      sort_order
+      store_price
+      store_price_type
+      store_title
+      title
+      type
+      unformatted_default_price
+      unformatted_price
+    }
+    description
+    dominantColor
+    finalPrice
+    formattedFinalPrice
+    formattedMaxPrice
+    formattedMinPrice
+    formattedMsrp
+    formattedPrice
+    formattedSpecialPrice
+    groupedData {
+      defaultQty
+      dominantColor
+      foramtedPrice
+      id
+      isAvailable
+      isInRange
+      name
+      specialPrice
+      thumbNail
+    }
+    groupedPrice
+    guestCanReview
+    id
+    imageGallery {
+      dominantColor
+      isVideo
+      largeImage
+      smallImage
+      videoUrl
+    }
+    isAllowedGuestCheckout
+    isCheckoutAllowed
+    isInWishlist
+    isThresholdVisible
+    is_new
+    links {
+      linkData {
+        fileName
+        formattedPrice
+        haveLinkSample
+        id
+        linkSampleTitle
+        linkTitle
+        mimeType
+        price
+        url
+      }
+      linksPurchasedSeparately
+      title
+    }
+    maxPrice
+    message
+    minAddToCartQty
+    minPrice
+    msrp
+    msrpDisplayActualPriceType
+    msrpEnabled
+    name
+    price
+    priceFormat {
+      decimalSymbol
+      groupLength
+      groupSymbol
+      integerRequired
+      pattern
+      precision
+      requiredPrecision
+    }
+    priceView
+    productUrl
+    rating
+    ratingArray
+    ratingData {
+      ratingCode
+      ratingValue
+    }
+    ratingFormData {
+      id
+      name
+      values
+    }
+    relatedProductList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    reviewCount
+    reviewEnable
+    reviewList {
+      avgRatings
+      details
+      ratings {
+        label
+        value
+      }
+      reviewBy
+      reviewOn
+      title
+    }
+    samples {
+      hasSample
+      linkSampleData {
+        fileName
+        mimeType
+        sampleTitle
+        url
+      }
+      title
+    }
+    shortDescription
+    showBackInStockAlert
+    showPriceDropAlert
+    sku
+    specialPrice
+    success
+    thresholdQtyLeft
+    thumbNail
+    tierPrices
+    typeId
+    upsellProductList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    wishlistEnable
+    wishlistItemId
+  }
+}

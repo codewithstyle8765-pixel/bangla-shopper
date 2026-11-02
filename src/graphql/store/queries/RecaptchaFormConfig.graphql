@@ -1,0 +1,15 @@
+query RecaptchaFormConfig($formType: ReCaptchaFormEnum!) {
+  recaptchaFormConfig(formType: $formType) {
+    configurations {
+      badge_position
+      language_code
+      minimum_score
+      re_captcha_type
+      technical_failure_message
+      theme
+      validation_failure_message
+      website_key
+    }
+    is_enabled
+  }
+}

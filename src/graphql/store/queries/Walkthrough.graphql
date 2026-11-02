@@ -1,0 +1,15 @@
+# walkthrough information
+query Walkthrough($width: String) {
+  walkthrough(width: $width) {
+    message
+    success
+    walkthroughData {
+      colorCode
+      content
+      image
+      imageDominantColor
+      title
+    }
+    walkthroughVersion
+  }
+}

@@ -14,11 +14,19 @@ export const FALLBACK_MODE: boolean = process.env.FALLBACK_MODE !== "false";
  * endpoint and every other one is still answered by the mocks. Add an operation once its page is integrated.
  */
 export const LIVE_OPERATIONS: ReadonlySet<string> = new Set([
+  "StoreSettings",
+  "Countries",
+  "HomePage",
+  "SiteBanners",
   "HomeCategoryProducts",
   "MegaMenu",
   "CategoryByPath",
   "ProductListing",
   "ProductDetail",
+  "ProductQuestions",
+  "AskProductQuestion",
+  "ProductReviewRatings",
+  "CreateProductReview",
   "CartById",
   "CustomerCartId",
   "NewGuestCart",
@@ -28,6 +36,41 @@ export const LIVE_OPERATIONS: ReadonlySet<string> = new Set([
   "ApplyCartCoupon",
   "RemoveCartCoupon",
   "MergeGuestCart",
+  "Footer",
+  "CmsPage",
+  "SubscribeNewsletter",
+  "ContactPage",
+  "ContactUs",
+  "StoreLocations",
+  "MarkProductReviewHelpful",
+  // Customer Auth
+  "GenerateToken",
+  "RevokeToken",
+  "CreateCustomer",
+  "RequestPasswordReset",
+  "ChangePassword",
+  // Customer Account & Profile
+  "Customer",
+  "UpdateCustomer",
+  "UpdateNewsletter",
+  // Addresses
+  "CreateAddress",
+  "UpdateAddress",
+  "DeleteAddress",
+  // Orders
+  "CustomerOrders",
+  "CustomerOrder",
+  "CancelOrder",
+  // Reviews, Downloads, Stored Payment Methods
+  "CustomerReviews",
+  "CustomerDownloadableProducts",
+  "CustomerPaymentTokens",
+  "DeletePaymentToken",
+  // Wishlist
+  "Wishlist",
+  "AddToWishlist",
+  "RemoveFromWishlist",
+  "AddWishlistItemsToCart",
 ]);
 
 /** Help channels until the admin footer block (`headless-footer`) provides them; its values win when present. */

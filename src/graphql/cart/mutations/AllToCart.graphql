@@ -1,0 +1,14 @@
+# wishlist all to cart request
+mutation AllToCart($storeId: Int, $websiteId: Int, $customerToken: String, $itemData: [cartItemData]) {
+  allToCart(
+    storeId: $storeId
+    websiteId: $websiteId
+    customerToken: $customerToken
+    itemData: $itemData
+  ) {
+    cartCount
+    message
+    success
+    warning
+  }
+}

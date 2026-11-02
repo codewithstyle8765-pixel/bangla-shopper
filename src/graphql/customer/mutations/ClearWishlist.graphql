@@ -1,0 +1,55 @@
+# Remove all the products from the specified wish list.
+mutation ClearWishlist($wishlistId: ID!) {
+  clearWishlist(wishlistId: $wishlistId) {
+    user_errors {
+      code
+      message
+    }
+    wishlist {
+      id
+      items_count
+      items_v2 {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        description
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        id
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        productId
+        qty
+        rating
+        reviewCount
+        sku
+        thumbNail
+        tierPrice
+        typeId
+        wishlistItemId
+      }
+      sharing_code
+      updated_at
+    }
+  }
+}

@@ -1,0 +1,175 @@
+# home page all information
+query HomePageData($customerToken: String, $storeId: Int, $websiteId: Int, $currency: String, $url: String, $width: String, $quoteId: Int, $mFactor: String, $isFromUrl: String) {
+  homePageData(
+    customerToken: $customerToken
+    storeId: $storeId
+    websiteId: $websiteId
+    currency: $currency
+    url: $url
+    width: $width
+    quoteId: $quoteId
+    mFactor: $mFactor
+    isFromUrl: $isFromUrl
+  ) {
+    allowAndroidDownload
+    allowIosDownload
+    allowedCurrencies {
+      code
+      label
+    }
+    androidDownloadLink
+    appButtonColor
+    appLogo
+    appLogoDominantColor
+    appThemeColor
+    appThemeTextColor
+    bannerDominantColor
+    bannerImages {
+      bannerType
+      dominantColor
+      id
+      name
+      url
+    }
+    buttonTextColor
+    carousel {
+      banners {
+        bannerType
+        dominantColor
+        id
+        name
+        url
+      }
+      color
+      dominantColor
+      id
+      image
+      label
+      productList {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        categoryId
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        rating
+        reviewCount
+        reviewEnable
+        thumbNail
+        tierPrice
+        typeId
+        wishlistEnable
+        wishlistItemId
+      }
+      type
+    }
+    cartCount
+    categories {
+      banner
+      bannerDominantColor
+      hasChildren
+      id
+      name
+      thumbnail
+      thumbnailDominantColor
+    }
+    cmsData {
+      id
+      title
+    }
+    currentCurrency
+    customerBannerImage
+    customerDominantColor
+    customerEmail
+    customerName
+    customerProfileImage
+    customerWishlist {
+      productId
+      wishlistItemId
+    }
+    darkAppButtonColor
+    darkAppLogo
+    darkAppLogoDominantColor
+    darkAppThemeColor
+    darkAppThemeTextColor
+    darkButtonTextColor
+    darkSplashImage
+    defaultCurrency
+    featuredCategories {
+      categoryId
+      categoryName
+      dominantColor
+      url
+    }
+    iosDownloadLink
+    launcherIconType
+    message
+    notificationCount
+    otherError
+    priceFormat {
+      decimalSymbol
+      groupLength
+      groupSymbol
+      integerRequired
+      pattern
+      precision
+      requiredPrecision
+    }
+    reviewEnable
+    showSwatchOnCollection
+    sortOrder {
+      id
+      label
+      layoutId
+      position
+      type
+    }
+    splashImage
+    storeData {
+      id
+      name
+      stores {
+        code
+        id
+        name
+      }
+    }
+    storeId
+    success
+    tabCategoryView
+    themeCode
+    themeType
+    walkthroughVersion
+    watchEnabled
+    websiteData {
+      baseUrl
+      defaultStoreId
+      id
+      name
+    }
+    websiteId
+    wishlistEnable
+  }
+}

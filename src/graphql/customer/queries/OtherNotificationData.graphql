@@ -1,0 +1,9 @@
+# other notification information
+query OtherNotificationData($notificationId: Int) {
+  otherNotificationData(notificationId: $notificationId) {
+    content
+    message
+    success
+    title
+  }
+}

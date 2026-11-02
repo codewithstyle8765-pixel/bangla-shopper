@@ -1,0 +1,66 @@
+# customer invoice view information
+query InvoiceView($storeId: Int, $invoiceId: Int, $customerToken: String) {
+  invoiceView(
+    storeId: $storeId
+    invoiceId: $invoiceId
+    customerToken: $customerToken
+  ) {
+    billingAddress {
+      city
+      company
+      country
+      firstname
+      lastname
+      pincode
+      region
+      street
+    }
+    invoiceDate
+    invoiceStatus
+    itemList {
+      discountAmount
+      id
+      name
+      option {
+        label
+        value
+      }
+      orderedQty
+      price
+      productId
+      qty
+      rowTotal
+      sku
+      subTotal
+      taxAmount
+      thumbnail
+    }
+    message
+    orderDate
+    orderId
+    orderStatus
+    paymentMethod {
+      title
+    }
+    shippingAddress {
+      city
+      company
+      country
+      firstname
+      lastname
+      pincode
+      region
+      street
+    }
+    shippingMethod {
+      title
+    }
+    success
+    totals {
+      formattedValue
+      label
+      title
+      value
+    }
+  }
+}

@@ -1,0 +1,8 @@
+# Get real-time unread notification count
+query GetNotificationCount($customerToken: String, $storeId: Int) {
+  getNotificationCount(customerToken: $customerToken, storeId: $storeId) {
+    message
+    notificationCount
+    success
+  }
+}

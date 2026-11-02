@@ -1,0 +1,29 @@
+# shipment view information
+query ShipmentView($storeId: Int, $customerToken: String, $shipmentId: Int) {
+  shipmentView(
+    storeId: $storeId
+    customerToken: $customerToken
+    shipmentId: $shipmentId
+  ) {
+    itemList {
+      id
+      name
+      option {
+        label
+        value
+      }
+      productId
+      qty
+      sku
+    }
+    message
+    orderId
+    success
+    trackingData {
+      carrier
+      id
+      number
+      title
+    }
+  }
+}

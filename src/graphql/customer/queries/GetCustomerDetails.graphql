@@ -1,0 +1,18 @@
+# Get customer name, email and profile images
+query GetCustomerDetails($customerToken: String, $storeId: Int, $width: String, $mFactor: String) {
+  getCustomerDetails(
+    customerToken: $customerToken
+    storeId: $storeId
+    width: $width
+    mFactor: $mFactor
+  ) {
+    bannerDominantColor
+    customerBannerImage
+    customerDominantColor
+    customerEmail
+    customerName
+    customerProfileImage
+    message
+    success
+  }
+}

@@ -1,0 +1,42 @@
+query Footer {
+  footer {
+    newsletter_title
+    newsletter_text
+    columns {
+      title
+      links {
+        label
+        href
+        text
+        icon
+        new_tab
+      }
+    }
+    social {
+      network
+      href
+    }
+    apps {
+      title
+      ios
+      android
+    }
+    payment_banner {
+      image_url
+      alt_text
+    }
+    highlights {
+      icon
+      title
+      text
+    }
+    copyright
+    legal_links {
+      label
+      href
+      text
+      icon
+      new_tab
+    }
+  }
+}

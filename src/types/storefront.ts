@@ -35,7 +35,7 @@ export interface ProductDetail extends ProductSummary {
   related: ProductSummary[];
   recommended: ProductSummary[];
   /** Availability per stock source, shown in the Live Stock dialog. */
-  liveStock: Array<{ location: string; available: boolean }>;
+  liveStock: Array<{ location: string; available: boolean; quantity?: number | null }>;
   /** Magento `description.html` (admin content); empty when the product has none. */
   descriptionHtml: string;
   /** Listing of the product's most specific category (child, else parent); "similar products" links go here. */
@@ -45,6 +45,54 @@ export interface ProductDetail extends ProductSummary {
   /** Configurable products: what the customer picks (Size: 88 ml / 236 ml) and the child product per combination. */
   options?: ProductOption[];
   variants?: ProductVariant[];
+  /** Approved reviews, newest first (Magento `reviews`). */
+  reviews: ProductReview[];
+  /** Specifications tab: the product's storefront-visible attributes. */
+  specs: Array<{ label: string; value: string }>;
+  /** Ratings & reviews summary per time period (overall, 30d, 60d, 12m). */
+  reviewSummaries?: ProductReviewSummary[];
+}
+
+export interface ProductReviewSummary {
+  period: "ALL" | "LAST_30_DAYS" | "LAST_60_DAYS" | "LAST_12_MONTHS" | string;
+  averageRating: number;
+  ratingsCount: number;
+  reviewsCount: number;
+  distribution: Array<{ stars: number; count: number; percent: number }>;
+}
+
+export interface ProductReview {
+  id: string;
+  author: string;
+  /** 1-5 stars. */
+  rating: number;
+  title: string;
+  text: string;
+  /** ISO date-time. */
+  createdAt: string;
+  /** Per-criterion stars, e.g. Value 5, Quality 5, Price 5. */
+  breakdown: Array<{ name: string; value: string }>;
+  /** The author bought this product (signed-in, not canceled order). */
+  verified: boolean;
+  /** ISO date of the author's first order with this product. */
+  firstPurchaseAt?: string;
+  totalPurchased: number;
+  pros?: string;
+  value?: string;
+  price?: string;
+  /** Customer photo URLs (up to 5). */
+  photos: string[];
+  /** The shop's answer under the review. */
+  storeReply?: string;
+  helpfulCount: number;
+}
+
+/** An answered question on the product page Q&A tab. */
+export interface ProductQuestion {
+  question: string;
+  answer: string;
+  author?: string;
+  createdAt?: string;
 }
 
 export interface GalleryVideo {
@@ -260,6 +308,32 @@ export interface StoreLocation {
   directions: string;
 }
 
+export interface StoreLocationsPageData {
+  title: string;
+  subtitle?: string | null;
+  stores: StoreLocation[];
+}
+
+export interface ContactPageData {
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  title: string;
+  subtitle?: string | null;
+  contactCards: {
+    hotline: string;
+    email: string;
+    address: string;
+    hours: string;
+    whatsapp?: string | null;
+  };
+  mapEmbedUrl?: string | null;
+  formTitle: string;
+  formSubtitle?: string | null;
+  showroomCtaLabel?: string | null;
+  showroomCtaLink?: string | null;
+  social: Array<{ network: string; href: string }>;
+}
+
 /** A Magento CMS page (About, Terms, Delivery policy...): admin-managed HTML. */
 export interface CmsPage {
   identifier: string;
@@ -284,7 +358,8 @@ export interface FooterData {
   };
   columns: Array<{ title: string; links: FooterLink[] }>;
   social: Array<{ network: "facebook" | "youtube" | "twitter" | "instagram" | "linkedin" | "tiktok" | "pinterest"; href: string }>;
-  apps: { ios: string; android: string };
+  apps: { title?: string; ios: string; android: string };
+  paymentBanner?: { imageUrl: string; altText: string };
   /** Promise row above the app badges and payment logos (authentic products, secure payments, delivery). */
   highlights: Array<{ icon: "secure" | "delivery" | "support" | "authentic"; title: string; text: string }>;
   copyright: string;
@@ -320,29 +395,30 @@ export type HeroLayout = "grid" | "slider";
 /** Which category section the admin turned on. */
 export type CategoryLayout = "shopByCategory" | "popularCategory";
 
-/** Home sections the admin can order and show/hide (home page API `sort_order`). */
-export type HomeSectionId =
-  | "hero"
-  | "wide_banner"
-  | "vip_offers"
-  | "categories"
-  | "premium_brands"
-  | "shop_by_concern"
-  | "shoppers_trends"
-  | "double_cashback"
-  | "beauty_tech"
-  | "landed_just_now"
-  | "seo_about";
+/** One home section from the home page API, with its content. */
+export type HomeSection =
+  /** Grid template: `gridMain` rotates in the large slot, `gridSide` fills the three small ones. */
+  | { id: "hero"; layout: HeroLayout; slides: HomeBanner[]; gridMain: HomeBanner[]; gridSide: HomeBanner[] }
+  | { id: "wide_banner"; banner: HomeBanner }
+  | { id: "categories"; layout: CategoryLayout; title: string; tiles: HomeTile[] }
+  | { id: "vip_offers" | "premium_brands" | "shop_by_concern"; title: string; highlight?: string; tiles: HomeTile[] }
+  | { id: "shoppers_trends" | "double_cashback"; title: string; viewAllLink: string; products: ProductSummary[] }
+  | { id: "beauty_tech"; title: string; description: string; icon: string; buttonLabel: string; buttonLink: string; products: ProductSummary[] }
+  | {
+      id: "landed_just_now";
+      eyebrow: string;
+      title: string;
+      description: string;
+      icon: string;
+      buttonLabel: string;
+      buttonLink: string;
+      banners: HomeBanner[];
+    }
+  | { id: "seo_about"; title: string; html: string };
 
 export interface HomeContent {
   /** Sections to render, in display order. */
-  sections: HomeSectionId[];
-  /** Grid template: `gridMain` rotates in the large slot, `gridSide` fills the three small ones. */
-  hero: { layout: HeroLayout; slides: HomeBanner[]; gridMain: HomeBanner[]; gridSide: HomeBanner[] };
-  categoryLayout: CategoryLayout;
-  shopByCategory: HomeTile[];
-  popularCategories: HomeTile[];
-  shopByConcern: HomeTile[];
+  sections: HomeSection[];
 }
 
 /* ───────────── Account extras ───────────── */
@@ -390,6 +466,19 @@ export interface RewardTransaction {
   balance: number;
 }
 
+export interface RewardReferral {
+  name: string;
+  email: string;
+  status: string;
+  points: number | null;
+}
+
+export interface RewardReferralsData {
+  referralLink: string;
+  invitedCount: number;
+  referrals: RewardReferral[];
+}
+
 export interface RewardPoints {
   balance: number;
   /** Balance worth in Taka. */
@@ -397,6 +486,9 @@ export interface RewardPoints {
   earned: number;
   spent: number;
   history: RewardTransaction[];
+  expirationDays?: number;
+  expiringPoints?: number;
+  referralsData?: RewardReferralsData;
 }
 
 /** Membership tier (Mirasvit Rewards), e.g. Silver from 0, Gold from 50,000 earned points. */

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/packages/module-common/currency/Currency";
 import { useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
@@ -9,9 +10,9 @@ import { useCart } from "@/packages/module-quote/context/CartContext";
 
 export interface ProductCardProps {
   id?: string | number;
-  sku?: string;
+  sku: string;
   name: string;
-  urlKey?: string;
+  urlKey: string;
   image?: string;
   price: number;
   originalPrice?: number;
@@ -32,9 +33,9 @@ export interface ProductCardProps {
 const ctaClass = "btn-dark block h-[40px] shrink-0 text-center text-[16.68px] leading-[38px] font-semibold tracking-normal";
 
 export function ProductCard({
-  sku = "MLIH05",
+  sku,
   name,
-  urlKey = "absolute-new-york-matte-lipstick",
+  urlKey,
   image = "/assets/images/placeholder.svg",
   price,
   originalPrice,
@@ -49,16 +50,12 @@ export function ProductCard({
   onAddToCart,
   className = "",
 }: ProductCardProps) {
+  const currency = useCurrency();
   const [isAdding, setIsAdding] = useState(false);
   const { addItem } = useCart();
   const fluid = layout === "fluid";
   const inset = fluid ? "ml-[9px] mr-[8px]" : "ml-[9px]";
 
-  const effectiveDiscount =
-    discountPercentage ??
-    (originalPrice && originalPrice > price
-      ? Math.round(((originalPrice - price) / originalPrice) * 100)
-      : undefined);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -81,13 +78,13 @@ export function ProductCard({
         className,
       )}
     >
-      <Link href={`/product/${urlKey}`} className="block">
-        {effectiveDiscount && effectiveDiscount > 0 ? (
+      <Link href={`/product/${urlKey}`} prefetch className="block">
+        {discountPercentage && discountPercentage > 0 ? (
           <span
             className="absolute top-[6px] left-[6px] sm:top-[8px] sm:left-[8px] z-10 rounded-[3px] bg-brand-coral px-2 py-[3px] text-[12px] font-bold leading-none uppercase tracking-wide text-white shadow-xs pointer-events-none"
-            aria-label={`${effectiveDiscount}% off`}
+            aria-label={`${discountPercentage}% off`}
           >
-            {effectiveDiscount}% OFF
+            {discountPercentage}% OFF
           </span>
         ) : null}
         <div className={clsx("relative overflow-hidden bg-white", inset, fluid ? "aspect-square" : "w-[182px] h-[182px]")}>
@@ -134,12 +131,12 @@ export function ProductCard({
           )}
         >
           <span className={clsx("min-h-[18px] text-brand-alert text-[15.71px] font-bold whitespace-nowrap", fluid ? "mr-[5px] shrink-0 @max-[230px]:text-[14.5px] @max-[175px]:text-[13.5px]" : "mr-[6px]")}>
-            TK{price.toLocaleString()}
+            {currency}{price.toLocaleString()}
             <sup>.00</sup>
           </span>
           {originalPrice && originalPrice > price && (
             <span className={clsx("text-price-strikethrough font-medium line-through whitespace-nowrap", fluid ? "min-w-0 truncate @max-[230px]:text-[10.5px] @max-[175px]:text-[10px]" : "mt-[4px]")}>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  (TK {originalPrice.toLocaleString()}.00)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ({currency} {originalPrice.toLocaleString()}.00)
             </span>
           )}
         </div>
@@ -154,7 +151,7 @@ export function ProductCard({
       </Link>
 
       {hasOptions && inStock ? (
-        <Link href={`/product/${urlKey}`} className={clsx(ctaClass, inset, "mt-[4px]", !fluid && "w-[181px]")}>
+        <Link href={`/product/${urlKey}`} prefetch className={clsx(ctaClass, inset, "mt-[4px]", !fluid && "w-[181px]")}>
           Select Options
         </Link>
       ) : (

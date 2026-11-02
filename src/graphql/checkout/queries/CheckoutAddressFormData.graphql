@@ -1,0 +1,87 @@
+# checkout address form data information
+query CheckoutAddressFormData($isGuest: Boolean, $customerToken: String, $storeId: Int, $addressId: Int) {
+  checkoutAddressFormData(
+    isGuest: $isGuest
+    customerToken: $customerToken
+    storeId: $storeId
+    addressId: $addressId
+  ) {
+    address {
+      id
+      value
+    }
+    addressData {
+      city
+      company
+      country_id
+      created_at
+      entity_id
+      fax
+      firstname
+      increment_id
+      isDefaultBilling
+      isDefualtShipping
+      is_active
+      lastname
+      middlename
+      parent_id
+      postcode
+      prifix
+      region
+      region_id
+      street
+      suffix
+      telephone
+      updated_at
+      var_request_success
+      vat_id
+      vat_is_valid
+      vat_request_date
+      vat_request_id
+    }
+    countryData {
+      country_id
+      isStateRequired
+      isZipOptional
+      name
+      states {
+        code
+        name
+        region_id
+      }
+    }
+    defaultCountry
+    firstName
+    isAddressTitleRequired
+    isAddressTitleVisible
+    isCompanyRequired
+    isCompanyVisible
+    isDOBRequired
+    isDOBVisible
+    isFaxRequired
+    isFaxVisible
+    isGenderRequired
+    isGenderVisible
+    isGuest
+    isMiddlenameVisible
+    isPrefixRequired
+    isPrefixVisible
+    isSuffixRequired
+    isSuffixVisible
+    isTaxRequired
+    isTaxVisible
+    isTelephoneRequired
+    isTelephoneVisible
+    lastName
+    message
+    middleName
+    prefixHasOptions
+    prefixOptions
+    prefixValue
+    streetLineCount
+    success
+    suffixHasOptions
+    suffixOptions
+    suffixValue
+  }
+}

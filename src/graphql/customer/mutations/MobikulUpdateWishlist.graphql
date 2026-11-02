@@ -1,0 +1,7 @@
+# update wishlist request
+mutation MobikulUpdateWishlist($itemData: String, $customerToken: String) {
+  mobikulUpdateWishlist(itemData: $itemData, customerToken: $customerToken) {
+    message
+    success
+  }
+}

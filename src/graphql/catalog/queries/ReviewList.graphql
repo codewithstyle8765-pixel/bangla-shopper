@@ -1,0 +1,22 @@
+# review list information
+query ReviewList($storeId: Int, $customerToken: String, $pageNumber: Int, $forDashboard: Int, $width: Int) {
+  reviewList(
+    storeId: $storeId
+    customerToken: $customerToken
+    pageNumber: $pageNumber
+    forDashboard: $forDashboard
+    width: $width
+  ) {
+    message
+    reviewList {
+      customerRating
+      dominantColor
+      id
+      productId
+      productName
+      thumbNail
+    }
+    success
+    totalCount
+  }
+}

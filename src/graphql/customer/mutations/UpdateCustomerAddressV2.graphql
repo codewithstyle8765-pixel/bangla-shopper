@@ -1,0 +1,35 @@
+# Update the billing or shipping address of a customer or guest.
+mutation UpdateCustomerAddressV2($uid: ID!, $input: CustomerAddressInput) {
+  updateCustomerAddressV2(uid: $uid, input: $input) {
+    city
+    company
+    country_code
+    custom_attributesV2 {
+      __typename
+      code
+    }
+    default_billing
+    default_shipping
+    extension_attributes {
+      attribute_code
+      value
+    }
+    fax
+    firstname
+    lastname
+    middlename
+    postcode
+    prefix
+    region {
+      region
+      region_code
+      region_id
+    }
+    region_id
+    street
+    suffix
+    telephone
+    uid
+    vat_id
+  }
+}

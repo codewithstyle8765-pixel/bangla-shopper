@@ -1,0 +1,34 @@
+# checkout address information
+query CheckoutAddress($quoteId: Int, $customerToken: String, $storeId: Int) {
+  checkoutAddress(
+    quoteId: $quoteId
+    customerToken: $customerToken
+    storeId: $storeId
+  ) {
+    SuffixHasOptions
+    SuffixOptions
+    address {
+      id
+      value
+    }
+    allowToChooseState
+    cartCount
+    defaultCountry
+    firstName
+    isMiddlenameVisible
+    isPrefixRequired
+    isPrefixVisible
+    isSuffixRequired
+    isSuffixVisible
+    isVirtual
+    lastName
+    message
+    middleName
+    prefixHasOptions
+    prefixOptions
+    prefixValue
+    streetLineCount
+    success
+    suffixValue
+  }
+}

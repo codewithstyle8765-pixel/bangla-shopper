@@ -1,0 +1,6 @@
+# Guest or customer cart by its masked id (the customer's needs the Authorization header).
+query CartById($cartId: String!) {
+  cart(cart_id: $cartId) {
+    ...CartFields
+  }
+}

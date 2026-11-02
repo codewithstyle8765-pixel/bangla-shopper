@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/packages/module-common/Breadcrumbs";
 import { Container } from "@/packages/module-common/Container";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { PageTitle } from "@/packages/module-common/PageTitle";
-import type { StoreLocation } from "@/types/storefront";
+import type { StoreLocation, StoreLocationsPageData } from "@/types/storefront";
 import { ArrowRightIcon, ClockIcon, HighlightIcon, MailIcon, PhoneIcon, PinIcon } from "../layout/footer/FooterIcons";
 
 type OpenStatus = { open: boolean; label: string };
@@ -141,12 +141,14 @@ function MapPanel({ stores, current, onSelect, className = "" }: { stores: Store
 }
 
 /** Store Locations: highlights, one map that follows the chosen showroom, and a card per showroom. */
-export function StoreLocationsView({ stores }: { stores: StoreLocation[] }) {
+export function StoreLocationsView({ stores, pageData }: { stores: StoreLocation[]; pageData?: StoreLocationsPageData | null }) {
   const [selected, setSelected] = useState(stores[0]?.id);
   const [statuses, setStatuses] = useState<Record<string, OpenStatus | undefined>>({});
   const mapRef = useRef<HTMLDivElement>(null);
   const current = stores.find((s) => s.id === selected) ?? stores[0];
   const city = commonCity(stores);
+  const title = pageData?.title || "Our Showrooms";
+  const subtitle = pageData?.subtitle || "Visit a BanglaShoppers showroom to see, try and buy 100% authentic beauty products, with friendly advice from our team.";
 
   /* Worked out in the browser (Dhaka time, refreshed every minute) so the server render never disagrees with it. */
   useEffect(() => {
@@ -167,15 +169,13 @@ export function StoreLocationsView({ stores }: { stores: StoreLocation[] }) {
 
   const highlights = [
     { icon: "delivery" as const, text: `${stores.length} ${stores.length === 1 ? "showroom" : "showrooms"}${city ? ` in ${city}` : ""}` },
-    { icon: "secure" as const, text: "100% authentic products" },
-    { icon: "support" as const, text: "Expert beauty advice" },
   ];
 
   return (
     <Container className="font-sans">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Store Locations" }]} />
-      <PageTitle className="mb-3" description="Visit a BanglaShoppers showroom to see, try and buy 100% authentic beauty products, with friendly advice from our team.">
-        Our Showrooms
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: title }]} />
+      <PageTitle className="mb-3" description={subtitle || undefined}>
+        {title}
       </PageTitle>
 
       {stores.length === 0 ? (

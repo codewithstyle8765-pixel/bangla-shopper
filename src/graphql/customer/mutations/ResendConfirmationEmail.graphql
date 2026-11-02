@@ -1,0 +1,4 @@
+# Resends the confirmation email to a customer.
+mutation ResendConfirmationEmail($email: String!) {
+  resendConfirmationEmail(email: $email)
+}

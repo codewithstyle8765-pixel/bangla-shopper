@@ -1,0 +1,38 @@
+# customer account information
+query AccountInfoData($customerToken: String, $storeId: Int) {
+  accountInfoData(customerToken: $customerToken, storeId: $storeId) {
+    DOBValue
+    dateFormat
+    email
+    firstName
+    genderValue
+    isDOBRequired
+    isDOBVisible
+    isFaxRequired
+    isFaxVisible
+    isGenderRequired
+    isGenderVisible
+    isMiddlenameVisible
+    isMobileRequired
+    isMobileVisible
+    isPrefixRequired
+    isPrefixVisible
+    isSuffixRequired
+    isSuffixVisible
+    isTaxRequired
+    isTaxVisible
+    isTelephoneRequired
+    isTelephoneVisible
+    lastName
+    message
+    middleName
+    prefixHasOptions
+    prefixOptions
+    prefixValue
+    success
+    suffixHasOptions
+    suffixOptions
+    suffixValue
+    taxValue
+  }
+}

@@ -1,0 +1,10 @@
+# download product information
+query DownloadProduct($hash: String, $customerToken: String) {
+  downloadProduct(hash: $hash, customerToken: $customerToken) {
+    fileName
+    message
+    mimeType
+    success
+    url
+  }
+}

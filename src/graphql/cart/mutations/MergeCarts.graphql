@@ -1,0 +1,165 @@
+# Transfer the contents of a guest cart into the cart of a logged-in customer.
+mutation MergeCarts($source_cart_id: String!, $destination_cart_id: String) {
+  mergeCarts(
+    source_cart_id: $source_cart_id
+    destination_cart_id: $destination_cart_id
+  ) {
+    applied_coupons {
+      code
+    }
+    available_payment_methods {
+      code
+      is_deferred
+      title
+    }
+    billing_address {
+      city
+      company
+      country {
+        code
+        label
+      }
+      customer_address_uid
+      fax
+      firstname
+      lastname
+      middlename
+      postcode
+      prefix
+      region {
+        code
+        label
+        region_id
+      }
+      street
+      suffix
+      telephone
+      uid
+      vat_id
+    }
+    email
+    gift_message {
+      from
+      message
+      to
+    }
+    id
+    is_virtual
+    itemsV2 {
+      items {
+        __typename
+        is_available
+        not_available_message
+        quantity
+        uid
+      }
+      page_info {
+        current_page
+        page_size
+        total_pages
+      }
+      total_count
+    }
+    mstRewardPoints {
+      base_spend_amount {
+        currency
+        value
+      }
+      earn_points
+      is_applied
+      spend_amount {
+        currency
+        value
+      }
+      spend_max_points
+      spend_min_points
+      spend_points
+    }
+    prices {
+      applied_taxes {
+        label
+      }
+      discounts {
+        applied_to
+        label
+      }
+      grand_total {
+        currency
+        value
+      }
+      grand_total_excluding_tax {
+        currency
+        value
+      }
+      subtotal_excluding_tax {
+        currency
+        value
+      }
+      subtotal_including_tax {
+        currency
+        value
+      }
+      subtotal_with_discount_excluding_tax {
+        currency
+        value
+      }
+    }
+    rules {
+      uid
+    }
+    selected_payment_method {
+      code
+      purchase_order_number
+      title
+    }
+    shipping_addresses {
+      available_shipping_methods {
+        available
+        carrier_code
+        carrier_title
+        error_message
+        method_code
+        method_title
+      }
+      cart_items_v2 {
+        __typename
+        is_available
+        not_available_message
+        quantity
+        uid
+      }
+      city
+      company
+      country {
+        code
+        label
+      }
+      customer_address_uid
+      customer_notes
+      fax
+      firstname
+      lastname
+      middlename
+      postcode
+      prefix
+      region {
+        code
+        label
+        region_id
+      }
+      same_as_billing
+      selected_shipping_method {
+        carrier_code
+        carrier_title
+        method_code
+        method_title
+      }
+      street
+      suffix
+      telephone
+      uid
+      vat_id
+    }
+    total_quantity
+  }
+}

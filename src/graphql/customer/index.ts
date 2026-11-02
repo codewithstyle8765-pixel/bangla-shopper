@@ -2,7 +2,8 @@ import { gql } from "@apollo/client";
 import { PRODUCT_CARD_FIELDS } from "@/graphql/catalog";
 
 const ADDRESS_FIELDS = /* GraphQL */ `
-  id
+  id: uid
+  uid
   firstname
   lastname
   telephone
@@ -25,7 +26,6 @@ const ORDER_ADDRESS_FIELDS = /* GraphQL */ `
   postcode
   country_code
   region
-  custom_attributesV2 { code ... on AttributeValue { value } }
 `;
 
 export const ORDER_FIELDS = /* GraphQL */ `
@@ -38,7 +38,7 @@ export const ORDER_FIELDS = /* GraphQL */ `
   shipping_address { ${ORDER_ADDRESS_FIELDS} }
   billing_address { ${ORDER_ADDRESS_FIELDS} }
   total {
-    subtotal { value }
+    subtotal: subtotal_incl_tax { value }
     total_shipping { value }
     discounts { amount { value } }
     grand_total { value }
@@ -83,12 +83,6 @@ export const CHANGE_PASSWORD = gql`
   }
 `;
 
-export const MERGE_CARTS = gql`
-  mutation MergeCarts($source: String!, $destination: String!) {
-    mergeCarts(source_cart_id: $source, destination_cart_id: $destination) { id }
-  }
-`;
-
 export const CUSTOMER_QUERY = gql`
   query Customer {
     customer {
@@ -112,19 +106,19 @@ export const UPDATE_CUSTOMER = gql`
 
 export const CREATE_ADDRESS = gql`
   mutation CreateAddress($input: CustomerAddressInput!) {
-    createCustomerAddress(input: $input) { id }
+    createCustomerAddress(input: $input) { id: uid uid }
   }
 `;
 
 export const UPDATE_ADDRESS = gql`
-  mutation UpdateAddress($id: Int!, $input: CustomerAddressInput!) {
-    updateCustomerAddress(id: $id, input: $input) { id }
+  mutation UpdateAddress($uid: ID!, $input: CustomerAddressInput!) {
+    updateCustomerAddressV2(uid: $uid, input: $input) { id: uid uid }
   }
 `;
 
 export const DELETE_ADDRESS = gql`
-  mutation DeleteAddress($id: Int!) {
-    deleteCustomerAddress(id: $id)
+  mutation DeleteAddress($uid: ID!) {
+    deleteCustomerAddressV2(uid: $uid)
   }
 `;
 

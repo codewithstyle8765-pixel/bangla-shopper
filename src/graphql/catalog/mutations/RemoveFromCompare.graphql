@@ -1,0 +1,11 @@
+# Remove from compare request
+mutation RemoveFromCompare($storeId: Int, $productId: Int!, $customerToken: String) {
+  removeFromCompare(
+    storeId: $storeId
+    productId: $productId
+    customerToken: $customerToken
+  ) {
+    message
+    success
+  }
+}

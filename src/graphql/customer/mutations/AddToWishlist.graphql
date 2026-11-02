@@ -1,0 +1,13 @@
+# Add to wishlist request
+mutation AddToWishlist($storeId: Int, $productId: Int!, $customerToken: String, $params: String) {
+  addToWishlist(
+    storeId: $storeId
+    productId: $productId
+    customerToken: $customerToken
+    params: $params
+  ) {
+    itemId
+    message
+    success
+  }
+}

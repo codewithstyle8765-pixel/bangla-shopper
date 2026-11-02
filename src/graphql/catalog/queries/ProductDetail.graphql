@@ -1,0 +1,135 @@
+# Product page: gallery (images + videos), description, attributes (Specifications tab), reviews (Ratings & Reviews tab),
+# categories (breadcrumbs), related / upsell products, stock per place (Live Stock popup) and, for configurable products,
+# the options and each child product.
+query ProductDetail($urlKey: String!) {
+  products(filter: { url_key: { eq: $urlKey } }) {
+    # Attribute labels for the Specifications tab ("brand_name" → "Brand Name").
+    aggregations {
+      attribute_code
+      label
+    }
+    items {
+      ...ProductCard
+      media_gallery {
+        url
+        position
+        disabled
+        ... on ProductVideo {
+          video_content {
+            video_url
+            video_title
+            video_provider
+          }
+        }
+      }
+      description {
+        html
+      }
+      only_x_left_in_stock
+      custom_attributesV2(filters: { is_visible_on_front: true }) {
+        items {
+          code
+          ... on AttributeValue {
+            value
+          }
+          ... on AttributeSelectedOptions {
+            selected_options {
+              label
+            }
+          }
+        }
+      }
+      categories {
+        name
+        url_path
+        breadcrumbs {
+          category_name
+          category_url_path
+        }
+      }
+      live_stock {
+        location
+        available
+        quantity
+      }
+      review_summaries {
+        period
+        average_rating
+        ratings_count
+        reviews_count
+        distribution {
+          stars
+          count
+          percent
+        }
+      }
+      reviews(pageSize: 50, currentPage: 1, sort: { helpful: DESC }) {
+        items {
+          review_id
+          verified_buyer
+          first_purchase_at
+          total_purchased
+          pros
+          value
+          price
+          photos
+          store_reply
+          helpful_count
+          nickname
+          summary
+          text
+          created_at
+          average_rating
+          ratings_breakdown {
+            name
+            value
+          }
+        }
+      }
+      related_products {
+        ...ProductCard
+      }
+      upsell_products {
+        ...ProductCard
+      }
+      ... on ConfigurableProduct {
+        configurable_options {
+          uid
+          attribute_code
+          label
+          values {
+            uid
+            label
+            swatch_data {
+              __typename
+              value
+              ... on ImageSwatchData {
+                thumbnail
+              }
+            }
+          }
+        }
+        variants {
+          attributes {
+            code
+            uid
+          }
+          product {
+            sku
+            stock_status
+            price_range {
+              minimum_price {
+                final_price {
+                  value
+                }
+                regular_price {
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

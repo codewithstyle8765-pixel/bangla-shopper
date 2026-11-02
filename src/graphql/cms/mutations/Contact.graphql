@@ -1,0 +1,13 @@
+# contact admin request
+mutation Contact($storeId: Int, $name: String, $email: String, $comment: String, $telephone: String) {
+  contact(
+    storeId: $storeId
+    name: $name
+    email: $email
+    comment: $comment
+    telephone: $telephone
+  ) {
+    message
+    success
+  }
+}

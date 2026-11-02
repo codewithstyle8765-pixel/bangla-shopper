@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { OnPathnameChange } from "@/packages/module-common/OnPathnameChange";
 import clsx from "clsx";
 import { signOutCustomer } from "@/packages/module-customer/session";
 import { callApi } from "@/utils/api/client";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
 
 const LINKS = [
@@ -22,13 +22,11 @@ const fade = "transition-[opacity,visibility,translate] duration-(--duration-pan
  * Sign Out. The balance loads the first time the menu opens.
  */
 export function AccountMenu({ name }: { name: string }) {
+  const money = useMoney();
   const [open, setOpen] = useState(false);
   const [rewards, setRewards] = useState<{ points: number; value: number } | null | "loading">(null);
   const [signingOut, setSigningOut] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-
-  useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -48,6 +46,7 @@ export function AccountMenu({ name }: { name: string }) {
 
   return (
     <div ref={rootRef} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <OnPathnameChange onChange={() => setOpen(false)} />
       <span className="block truncate">Hello {name}!</span>
       <button
         type="button"
@@ -79,9 +78,9 @@ export function AccountMenu({ name }: { name: string }) {
             href="/customer/account/rewards"
             role="menuitem"
             prefetch={false}
-            className="group flex items-center gap-3 bg-brand-coral/8 px-4 py-3 transition-colors hover:bg-brand-coral/12"
+            className="group flex items-center gap-3.5 bg-brand-coral/8 px-4 py-3 transition-colors hover:bg-brand-coral/12"
           >
-            <RewardCoin className="h-9 w-9" />
+            <RewardCoin className="h-9 w-auto lg:h-10" />
             <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-bold uppercase tracking-[0.1em] text-brand-coral">Reward Points</span>
               {rewards === "loading" || rewards === null ? (
@@ -89,7 +88,7 @@ export function AccountMenu({ name }: { name: string }) {
               ) : (
                 <span className="block text-[15px] font-bold text-brand-dark">
                   {rewards.points.toLocaleString("en-US")} pts
-                  <span className="ml-1.5 text-[12px] font-medium text-footer-text">worth {formatTk(rewards.value, false)}</span>
+                  <span className="ml-1.5 text-[12px] font-medium text-footer-text">worth {money(rewards.value, false)}</span>
                 </span>
               )}
             </span>

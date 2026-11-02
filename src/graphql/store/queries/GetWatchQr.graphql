@@ -1,0 +1,8 @@
+# get Qr URL for Watch App
+query GetWatchQr($firebaseId: String, $os: String, $width: Int) {
+  getWatchQr(firebaseId: $firebaseId, os: $os, width: $width) {
+    message
+    qr_url
+    success
+  }
+}

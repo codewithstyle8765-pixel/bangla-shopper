@@ -21,7 +21,7 @@ import { callApi, useFormOperation } from "@/utils/api/client";
 import { DEFAULT_COUNTRY, formatAddressLines, type AddressField } from "@/utils/address";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 
 export interface CheckoutCustomer {
   email: string;
@@ -97,6 +97,7 @@ function SavedAddressOptions({
 }
 
 export function CheckoutView({ countries, locations, customer }: CheckoutViewProps) {
+  const money = useMoney();
   const router = useRouter();
   const { cart, isLoaded, refreshCart } = useCart();
   const [state, formAction, isPlacing] = useActionState(useFormOperation("PlaceOrder"), null);
@@ -261,7 +262,7 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
               <p className="line-clamp-2 text-[13px] leading-[1.3] text-brand-dark">{item.name}</p>
               <CartLineOptions options={item.options} className="mt-0.5" />
             </div>
-            <p className="shrink-0 text-[13px] font-semibold text-brand-dark">{formatTk(item.price * item.quantity)}</p>
+            <p className="shrink-0 text-[13px] font-semibold text-brand-dark">{money(item.price * item.quantity)}</p>
           </li>
         ))}
       </ul>
@@ -362,7 +363,7 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
                   onChange={() => setShippingMethod(m.code)}
                   title={m.label}
                   description={m.description}
-                  trailing={<span className="text-[14px] font-bold text-brand-dark">{m.amount === 0 ? "FREE" : formatTk(m.amount, false)}</span>}
+                  trailing={<span className="text-[14px] font-bold text-brand-dark">{m.amount === 0 ? "FREE" : money(m.amount, false)}</span>}
                 />
               ))}
             </div>
@@ -445,7 +446,7 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
             <h2 className="text-[14px] font-black uppercase tracking-[0.1em] text-brand-dark">
               Order Summary <span className="font-semibold normal-case tracking-normal text-footer-text">({cart.totalQuantity} {cart.totalQuantity === 1 ? "item" : "items"})</span>
             </h2>
-            <span className="text-[15px] font-bold text-brand-alert">{formatTk(total)}</span>
+            <span className="text-[15px] font-bold text-brand-alert">{money(total)}</span>
           </div>
           <div className="space-y-4 border-t border-card-border p-4">
             {summary}
@@ -462,14 +463,14 @@ export function CheckoutView({ countries, locations, customer }: CheckoutViewPro
           disabled={!canPlaceOrder}
           className="flex h-12 w-full cursor-pointer items-center justify-center rounded-[4px] bg-brand-coral text-[17px] font-semibold text-white transition-colors hover:bg-brand-coral-hover disabled:cursor-not-allowed disabled:bg-price-strikethrough/40"
         >
-          {isPlacing ? "Placing order..." : `Place Order · ${formatTk(total)}`}
+          {isPlacing ? "Placing order..." : `Place Order · ${money(total)}`}
         </button>
         <TrustBadges />
       </aside>
 
       <div data-sticky-cta="checkout" className="fixed inset-x-0 bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-30 flex items-center gap-3 border-t border-card-border bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
         <div className="min-w-0 flex-1">
-          <p className="text-[18px] font-bold leading-tight text-brand-alert">{formatTk(total)}</p>
+          <p className="text-[18px] font-bold leading-tight text-brand-alert">{money(total)}</p>
           <p className="text-[11px] leading-[14px] text-footer-text">Total incl. shipping</p>
         </div>
         <button

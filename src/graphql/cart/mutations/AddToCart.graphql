@@ -1,0 +1,26 @@
+# Add to cart request
+mutation AddToCart($storeId: Int, $productId: Int, $quoteId: Int, $customerToken: String, $qty: Int, $params: addToCartParams, $relatedProducts: [Int]) {
+  addToCart(
+    storeId: $storeId
+    productId: $productId
+    quoteId: $quoteId
+    customerToken: $customerToken
+    qty: $qty
+    params: $params
+    relatedProducts: $relatedProducts
+  ) {
+    canGuestCheckoutDownloadable
+    cartCount
+    cartTotal
+    cartTotalFormattedAmount
+    descriptionMessage
+    isAllowedGuestCheckout
+    isCheckoutAllowed
+    isVirtual
+    message
+    minimumAmount
+    minimumFormattedAmount
+    quoteId
+    success
+  }
+}

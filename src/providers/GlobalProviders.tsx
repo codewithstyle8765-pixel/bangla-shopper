@@ -7,17 +7,29 @@ import { WishlistProvider } from "@/packages/module-quote/context/WishlistContex
 import { PinchZoomWatcher } from "@/packages/module-common/PinchZoomWatcher";
 import { CookieConsent } from "@/packages/module-common/CookieConsent";
 import { PromoPopupBanner } from "@/packages/module-theme/banner/PromoPopupBanner";
+import type { PromoBannerData } from "@/packages/module-theme/banner/promoBanner.types";
+import { CurrencyProvider } from "@/packages/module-common/currency/Currency";
 
-export function GlobalProviders({ children }: { children: ReactNode }) {
+export function GlobalProviders({
+  children,
+  promo = null,
+  currencySymbol,
+}: {
+  children: ReactNode;
+  promo?: PromoBannerData | null;
+  currencySymbol: string;
+}) {
   return (
-    <CartProvider>
-      <WishlistProvider>
-        {children}
-        <CartDrawer />
-        <PinchZoomWatcher />
-        <CookieConsent />
-        <PromoPopupBanner />
-      </WishlistProvider>
-    </CartProvider>
+    <CurrencyProvider symbol={currencySymbol}>
+      <CartProvider>
+        <WishlistProvider>
+          {children}
+          <CartDrawer />
+          <PinchZoomWatcher />
+          <CookieConsent />
+          <PromoPopupBanner banner={promo} />
+        </WishlistProvider>
+      </CartProvider>
+    </CurrencyProvider>
   );
 }

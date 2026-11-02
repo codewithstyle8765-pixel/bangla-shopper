@@ -1,0 +1,4 @@
+# Create an empty shopping cart for a guest or logged in user
+mutation CreateEmptyCart($input: createEmptyCartInput) {
+  createEmptyCart(input: $input)
+}

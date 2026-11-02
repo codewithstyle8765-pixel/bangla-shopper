@@ -1,0 +1,4 @@
+# Creates Client Token for Braintree PayPal Vault Javascript SDK initialization.
+mutation CreateBraintreePayPalVaultClientToken($input: BraintreeVaultInput) {
+  createBraintreePayPalVaultClientToken(input: $input)
+}

@@ -1,0 +1,61 @@
+# Add items in the specified wishlist to the customer's cart.
+mutation AddWishlistItemsToCart($wishlistId: ID!, $wishlistItemIds: [ID!]) {
+  addWishlistItemsToCart(
+    wishlistId: $wishlistId
+    wishlistItemIds: $wishlistItemIds
+  ) {
+    add_wishlist_items_to_cart_user_errors {
+      code
+      message
+      wishlistId
+      wishlistItemId
+    }
+    status
+    wishlist {
+      id
+      items_count
+      items_v2 {
+        arTextureImages
+        arType
+        arUrl
+        availability
+        description
+        dominantColor
+        entityId
+        finalPrice
+        formattedFinalPrice
+        formattedMaxPrice
+        formattedMinPrice
+        formattedPrice
+        formattedTierPrice
+        groupedPrice
+        hasRequiredOptions
+        id
+        isAvailable
+        isInRange
+        isInWishlist
+        isNew
+        linksPurchasedSeparately
+        maxPrice
+        minAddToCartQty
+        minPrice
+        msrpDisplayActualPriceType
+        msrpEnabled
+        name
+        price
+        priceView
+        productId
+        qty
+        rating
+        reviewCount
+        sku
+        thumbNail
+        tierPrice
+        typeId
+        wishlistItemId
+      }
+      sharing_code
+      updated_at
+    }
+  }
+}

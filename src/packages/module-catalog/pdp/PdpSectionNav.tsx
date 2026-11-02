@@ -5,7 +5,7 @@ import Link from "next/link";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { QuantitySelector } from "@/packages/module-common/QuantitySelector";
 import { useCart } from "@/packages/module-quote/context/CartContext";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { usePdpSelection } from "./pdpSelection";
 
 /** The summary's Add to Cart row; once it scrolls under the header the phone buy bar appears. */
@@ -30,10 +30,11 @@ export interface PdpBuyProduct {
 const smooth = () => (window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
 
 function Price({ price, originalPrice, className = "" }: { price: number; originalPrice?: number; className?: string }) {
+  const money = useMoney();
   return (
     <p className={`flex items-baseline gap-1.5 whitespace-nowrap font-bold text-brand-alert ${className}`}>
-      {formatTk(price)}
-      {originalPrice ? <span className="text-[12px] font-medium text-text-subtle line-through">{formatTk(originalPrice)}</span> : null}
+      {money(price)}
+      {originalPrice ? <span className="text-[12px] font-medium text-text-subtle line-through">{money(originalPrice)}</span> : null}
     </p>
   );
 }

@@ -1,0 +1,12 @@
+# Get real-time customer cart count
+query GetCartCount($customerToken: String, $quoteId: Int, $storeId: Int) {
+  getCartCount(
+    customerToken: $customerToken
+    quoteId: $quoteId
+    storeId: $storeId
+  ) {
+    cartCount
+    message
+    success
+  }
+}

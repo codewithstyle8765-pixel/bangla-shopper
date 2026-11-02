@@ -1,0 +1,62 @@
+# customer credit memo view information
+query CreditView($storeId: Int, $creditMemoId: String, $customerToken: String) {
+  creditView(
+    storeId: $storeId
+    creditMemoId: $creditMemoId
+    customerToken: $customerToken
+  ) {
+    billingAddress {
+      city
+      company
+      country
+      firstname
+      lastname
+      pincode
+      region
+      street
+    }
+    itemList {
+      discountAmount
+      id
+      name
+      option {
+        label
+        value
+      }
+      orderedQty
+      price
+      productId
+      qty
+      rowTotal
+      sku
+      subTotal
+      taxAmount
+      thumbnail
+    }
+    message
+    orderId
+    paymentMethod {
+      title
+    }
+    shippingAddress {
+      city
+      company
+      country
+      firstname
+      lastname
+      pincode
+      region
+      street
+    }
+    shippingMethod {
+      title
+    }
+    success
+    totals {
+      formattedValue
+      label
+      title
+      value
+    }
+  }
+}

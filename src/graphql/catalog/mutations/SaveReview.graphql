@@ -1,0 +1,15 @@
+# save review request
+mutation SaveReview($title: String, $detail: String, $storeId: Int, $productId: Int, $nickname: String, $customerToken: String, $ratings: [reviewRatings]) {
+  saveReview(
+    title: $title
+    detail: $detail
+    storeId: $storeId
+    productId: $productId
+    nickname: $nickname
+    customerToken: $customerToken
+    ratings: $ratings
+  ) {
+    message
+    success
+  }
+}

@@ -10,10 +10,9 @@
  *      `from([authLink, httpLink])` as the only link
  * Mocks are reached only through `./link.ts` (an Apollo link); nothing else imports them.
  */
-import { MOCK_NAVIGATION, findMockProductBySku, resolveCategory, resolveProducts } from "./catalog";
+import { findMockProductBySku } from "./catalog";
 import { MOCK_FOOTER, MOCK_STORE_LOCATIONS } from "./cms";
 import { MOCK_CMS_PAGES } from "./cms-pages";
-import { MOCK_HOME_PAGE } from "./home";
 import { affiliateResolvers } from "./affiliate";
 import { cartResolvers } from "./cart";
 import { checkoutResolvers } from "./checkout";
@@ -28,12 +27,6 @@ const RESOLVERS: Record<string, Resolver> = {
   ...checkoutResolvers,
   ...customerResolvers,
   ...directoryResolvers,
-  Navigation: () => ({ categoryList: [{ children: MOCK_NAVIGATION }] }),
-  CategoryByPath: (v) => {
-    const category = resolveCategory(String(v.urlPath));
-    return { categoryList: category ? [category] : [] };
-  },
-  ProductListing: (v) => resolveProducts(v),
   ProductImagesBySku: (v) => ({
     products: {
       items: (v.skus as string[])
@@ -42,15 +35,46 @@ const RESOLVERS: Record<string, Resolver> = {
         .map((p) => ({ sku: p.sku, small_image: p.small_image })),
     },
   }),
-  ProductDetail: (v) => resolveProducts({ filter: { url_key: { eq: String(v.urlKey) } } }),
   CmsPage: (v) => ({ cmsPage: MOCK_CMS_PAGES[String(v.identifier)] ?? null }),
+  Footer: () => ({
+    footer: {
+      newsletter_title: MOCK_FOOTER.newsletterTitle,
+      newsletter_text: MOCK_FOOTER.newsletterText,
+      columns: [
+        {
+          title: MOCK_FOOTER.contact.title,
+          links: [
+            { label: "Address", href: null, text: MOCK_FOOTER.contact.address, icon: "LOCATION", new_tab: false },
+            { label: "Hotline", href: null, text: MOCK_FOOTER.contact.hotline, icon: "PHONE", new_tab: false },
+            { label: "Email", href: null, text: MOCK_FOOTER.contact.email, icon: "EMAIL", new_tab: false },
+            { label: "Open Time", href: null, text: MOCK_FOOTER.contact.hours, icon: "CLOCK", new_tab: false },
+          ],
+        },
+        ...MOCK_FOOTER.columns.map((col) => ({
+          title: col.title,
+          links: col.links.map((l) => ({ label: l.label, href: l.href, text: null, icon: null, new_tab: false })),
+        })),
+      ],
+      social: MOCK_FOOTER.social,
+      apps: {
+        title: "Check out our app!",
+        ...MOCK_FOOTER.apps,
+      },
+      payment_banner: {
+        image_url: "/assets/images/footer/payment-logos.webp",
+        alt_text: "Accepted Payment Methods",
+      },
+      highlights: MOCK_FOOTER.highlights,
+      copyright: MOCK_FOOTER.copyright,
+      legal_links: MOCK_FOOTER.legalLinks.map((l) => ({ label: l.label, href: l.href, text: null, icon: null, new_tab: false })),
+    },
+  }),
   CmsBlocks: (v) => {
     const blocks: Record<string, unknown> = { "headless-footer": MOCK_FOOTER, "headless-store-locations": MOCK_STORE_LOCATIONS };
     const ids = (v.identifiers as string[] | undefined) ?? Object.keys(blocks);
     return { cmsBlocks: { items: ids.filter((id) => id in blocks).map((identifier) => ({ identifier, content: JSON.stringify(blocks[identifier]) })) } };
   },
   ContactUs: () => ({ contactUs: { status: true } }),
-  HomePage: () => ({ homePage: MOCK_HOME_PAGE }),
   SubscribeNewsletter: () => ({ subscribeEmailToNewsletter: { status: "SUBSCRIBED" } }),
   ProductReviewRatings: () => ({
     productReviewRatingsMetadata: {

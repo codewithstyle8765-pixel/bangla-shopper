@@ -1,0 +1,10 @@
+# cms data information
+query CmsData($id: Int) {
+  cmsData(id: $id) {
+    content
+    message
+    success
+    title
+    url
+  }
+}

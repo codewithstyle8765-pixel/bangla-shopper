@@ -6,13 +6,15 @@ import type { HomeTile } from "@/types/storefront";
 import { SectionTitle, SectionTitleSkeleton } from "./SectionTitle";
 
 /** Concern banners from the home page API (`shop_by_concern`); each image carries its own artwork. */
-export function ShopByConcernSection({ tiles }: { tiles: HomeTile[] }) {
+export function ShopByConcernSection({ title, highlight, tiles }: { title: string; highlight?: string; tiles: HomeTile[] }) {
   if (tiles.length === 0) return null;
 
   return (
     <section aria-label="Shop by concern" className="mt-[16px] w-full">
       <Container className="mx-auto w-full px-(--gutter) desk:w-[1290px] desk:px-0">
-        <SectionTitle className="mb-[16px]">SHOP BY CONCERN</SectionTitle>
+        <SectionTitle className="mb-[16px]">
+          {highlight && <span className="text-brand-coral">{highlight}</span>} {title}
+        </SectionTitle>
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5 lg:gap-x-[9px] lg:gap-y-[11px]">
           {tiles.map((tile) => (
             <li key={`${tile.href}-${tile.name}`} className="min-w-0">

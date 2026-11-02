@@ -6,7 +6,6 @@ import { getImageProps } from "next/image";
 import clsx from "clsx";
 import { useScrollLock } from "@/packages/module-common/useScrollLock";
 import { MailIcon } from "@/packages/module-theme/layout/footer/FooterIcons";
-import { usePromoBanner } from "./usePromoBanner";
 import { PromoNewsletterForm } from "./PromoNewsletterForm";
 import type { PromoBannerData, PromoBannerPerkIcon } from "./promoBanner.types";
 
@@ -48,8 +47,9 @@ function PromoArtwork({ banner }: { banner: PromoBannerData }) {
   );
 }
 
-export function PromoPopupBanner() {
-  const { banner, loading, isEnabled } = usePromoBanner();
+/** Promo popup from the home page API; `banner` is null when the admin has none switched on. */
+export function PromoPopupBanner({ banner }: { banner: PromoBannerData | null }) {
+  const isEnabled = Boolean(banner?.isEnabled);
   const [isOpen, setIsOpen] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
 
@@ -58,7 +58,7 @@ export function PromoPopupBanner() {
 
   // Check sessionStorage on client mount once banner data is available
   useEffect(() => {
-    if (loading || !isEnabled || !banner) return;
+    if (!isEnabled || !banner) return;
 
     try {
       const isDismissedForSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -74,7 +74,7 @@ export function PromoPopupBanner() {
       // In case sessionStorage is blocked/restricted in incognito
       setIsOpen(true);
     }
-  }, [loading, isEnabled, banner]);
+  }, [isEnabled, banner]);
 
   // Trigger smooth animate-in transition after mounting
   useEffect(() => {

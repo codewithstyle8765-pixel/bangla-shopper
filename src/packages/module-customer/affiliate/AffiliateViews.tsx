@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { ListPager } from "@/packages/module-common/ListPager";
 import { NextImage } from "@/packages/module-common/NextImage";
 import type { AffiliateAccount, AffiliateTransaction, AffiliateWithdrawal } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 import { AccountEmptyState, AccountSection } from "../AccountUi";
 import { AffiliateJoinForm, WithdrawForm } from "./AffiliateForms";
 import {
@@ -38,7 +38,15 @@ export function AffiliateJoinView({ account, customerName, email }: { account: A
     { icon: AffiliateIcons.link, title: "Your own referral link", text: "Plus coupons, banners and a product widget to share." },
     { icon: AffiliateIcons.wallet, title: top ? `Earn up to ${top} per order` : "Commission on every order", text: "Your rate grows as you refer more orders." },
     { icon: AffiliateIcons.chart, title: "Live statistics", text: "See your clicks, orders and earnings any time." },
-    { icon: AffiliateIcons.users, title: "Free to join", text: `Get paid by ${account.paymentMethods.map((m) => m.label).slice(0, 2).join(" or ")} from ${formatTk(account.balance.minPayout)}.` },
+    {
+      icon: AffiliateIcons.users,
+      title: "Free to join",
+      text: (
+        <>
+          Get paid by {account.paymentMethods.map((m) => m.label).slice(0, 2).join(" or ")} from <Money value={account.balance.minPayout} />.
+        </>
+      ),
+    },
   ];
 
   return (
@@ -209,9 +217,9 @@ function TransactionRows({ rows }: { rows: AffiliateTransaction[] }) {
               <td className="py-3 text-brand-dark">{t.details}</td>
               <td className={clsx("whitespace-nowrap py-3 text-right font-bold", t.amount >= 0 ? "text-success" : "text-brand-alert")}>
                 {t.amount >= 0 ? "+" : "−"}
-                {formatTk(Math.abs(t.amount))}
+                <Money value={Math.abs(t.amount)} />
               </td>
-              <td className="whitespace-nowrap py-3 text-right text-footer-text">{formatTk(t.balance)}</td>
+              <td className="whitespace-nowrap py-3 text-right text-footer-text"><Money value={t.balance} /></td>
             </tr>
           ))}
         </tbody>
@@ -222,12 +230,12 @@ function TransactionRows({ rows }: { rows: AffiliateTransaction[] }) {
             <span className="min-w-0">
               <span className="block text-brand-dark">{t.details}</span>
               <span className="text-[12px] text-footer-text">
-                {formatDateTime(t.date)} · Balance {formatTk(t.balance)}
+                {formatDateTime(t.date)} · Balance <Money value={t.balance} />
               </span>
             </span>
             <span className={clsx("shrink-0 font-bold", t.amount >= 0 ? "text-success" : "text-brand-alert")}>
               {t.amount >= 0 ? "+" : "−"}
-              {formatTk(Math.abs(t.amount))}
+              <Money value={Math.abs(t.amount)} />
             </span>
           </li>
         ))}
@@ -290,7 +298,7 @@ export function AffiliateDashboardView({ account, recent, sections }: { account:
         </ul>
       </AccountSection>
 
-      <AccountSection title="Our programs" action={<span className="text-[12px] text-footer-text">Min. payout {formatTk(account.balance.minPayout)}</span>}>
+      <AccountSection title="Our programs" action={<span className="text-[12px] text-footer-text">Min. payout <Money value={account.balance.minPayout} /></span>}>
         <ProgramGroupTabs programs={account.programs} currentGroup={account.group} />
       </AccountSection>
 
@@ -453,10 +461,10 @@ export function AffiliateWithdrawalsView({ account, withdrawals, pager }: { acco
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-        <StatCard label="Current balance" value={formatTk(current)} />
-        <StatCard label="Open requests" value={formatTk(openWithdrawals)} />
+        <StatCard label="Current balance" value={<Money value={current} />} />
+        <StatCard label="Open requests" value={<Money value={openWithdrawals} />} />
         <div className="col-span-2 md:col-span-1">
-          <StatCard label="Available to withdraw" value={formatTk(available)} tone="brand" hint={`Minimum payout ${formatTk(minPayout)}`} />
+          <StatCard label="Available to withdraw" value={<Money value={available} />} tone="brand" hint={<>Minimum payout <Money value={minPayout} /></>} />
         </div>
       </div>
 
@@ -492,8 +500,8 @@ export function AffiliateWithdrawalsView({ account, withdrawals, pager }: { acco
                 {rows.map((w) => (
                   <tr key={w.id}>
                     <td className="py-3 text-footer-text">{formatDateTime(w.date)}</td>
-                    <td className="py-3 text-right font-bold text-brand-dark">{formatTk(w.amount)}</td>
-                    <td className="py-3 text-right text-footer-text">{formatTk(w.fee)}</td>
+                    <td className="py-3 text-right font-bold text-brand-dark"><Money value={w.amount} /></td>
+                    <td className="py-3 text-right text-footer-text"><Money value={w.fee} /></td>
                     <td className="py-3 pl-6">
                       <WithdrawalBadge status={w.status} />
                     </td>
@@ -505,9 +513,9 @@ export function AffiliateWithdrawalsView({ account, withdrawals, pager }: { acco
               {rows.map((w) => (
                 <li key={w.id} className="flex items-center justify-between gap-3 py-3 text-[14px]">
                   <span>
-                    <span className="block font-bold text-brand-dark">{formatTk(w.amount)}</span>
+                    <span className="block font-bold text-brand-dark"><Money value={w.amount} /></span>
                     <span className="text-[12px] text-footer-text">
-                      {formatDateTime(w.date)} · Fee {formatTk(w.fee)}
+                      {formatDateTime(w.date)} · Fee <Money value={w.fee} />
                     </span>
                   </span>
                   <WithdrawalBadge status={w.status} />

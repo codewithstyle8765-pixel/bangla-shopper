@@ -1,0 +1,6 @@
+# Subscribe the specified email to the store's newsletter.
+mutation SubscribeEmailToNewsletter($email: String!) {
+  subscribeEmailToNewsletter(email: $email) {
+    status
+  }
+}

@@ -2,18 +2,20 @@ import Link from "next/link";
 import { Shimmer } from "@/packages/module-common/Shimmer";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Container } from "@/packages/module-common/Container";
+import type { HomeBanner } from "@/types/storefront";
 
-export function PromoStripBanner() {
+/** Wide banner from the home page API. */
+export function PromoStripBanner({ banner }: { banner: HomeBanner }) {
   return (
     <section aria-label="Special Promotion" className="w-full mt-(--gutter) lg:mt-[17px]">
       <Container className="w-full desk:w-[1289px] mx-auto px-(--gutter) desk:px-0">
         <Link
-          href="/category/sale-items"
+          href={banner.href}
           className="block relative w-full overflow-hidden group"
         >
           <NextImage
-            src="/assets/images/home/layer_600.png"
-            alt="Promotion Banner"
+            src={banner.image}
+            alt={banner.alt}
             width={1289}
             sizes="(max-width: 1322px) 100vw, 1289px"
             height={430}

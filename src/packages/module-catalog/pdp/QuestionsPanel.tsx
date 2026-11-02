@@ -5,18 +5,23 @@ import clsx from "clsx";
 import { SearchIcon } from "@/packages/module-common/icons/UiIcons";
 import { Collapse } from "@/packages/module-common/Collapse";
 import { ShowMoreButton, scrollBackTo } from "@/packages/module-common/ShowMoreButton";
+import type { ProductQuestion } from "@/types/storefront";
+import { AskQuestionDialog } from "./AskQuestionDialog";
 
 const PREVIEW_QUESTIONS = 3;
 
-export interface ProductQuestion {
-  question: string;
-  answer: string;
+function QuestionMessageIcon({ className = "w-6 h-6 text-footer-text" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className} stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
 }
 
-const SUPPORT_EMAIL = "support@banglashoppers.com";
-
 /** Q&A: summary + search + "Ask a question" beside an accordion of answered questions (stacked on phones). */
-export function QuestionsPanel({ questions, productName }: { questions: ProductQuestion[]; productName: string }) {
+export function QuestionsPanel({ questions, productName, sku }: { questions: ProductQuestion[]; productName: string; sku: string }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<number | null>(0);
   const [showAll, setShowAll] = useState(false);
@@ -25,7 +30,7 @@ export function QuestionsPanel({ questions, productName }: { questions: ProductQ
   const visible = questions
     .map((q, index) => ({ ...q, index }))
     .filter((q) => !term || `${q.question} ${q.answer}`.toLowerCase().includes(term));
-  const askHref = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`Question about ${productName}`)}`;
+  const [asking, setAsking] = useState(false);
   const count = questions.length;
   /* Searching looks through every question; the preview only trims the unfiltered list. */
   const collapsible = !term && visible.length > PREVIEW_QUESTIONS + 1;
@@ -56,22 +61,51 @@ export function QuestionsPanel({ questions, productName }: { questions: ProductQ
           </div>
 
           <p className="mt-5 text-[14px] font-semibold text-brand-dark md:max-lg:hidden">Have a question about this product?</p>
-          <a
-            href={askHref}
-            className="mt-3 flex h-11 shrink-0 items-center md:max-lg:mt-0 justify-center gap-2 rounded-[4px] bg-brand-coral px-5 text-[15px] font-semibold text-white transition-colors hover:bg-brand-coral-hover"
+          <button
+            type="button"
+            onClick={() => setAsking(true)}
+            className="mt-3 flex h-11 w-full shrink-0 cursor-pointer items-center md:max-lg:mt-0 md:max-lg:w-auto justify-center gap-2 rounded-[4px] bg-brand-coral px-5 text-[15px] font-semibold text-white transition-colors hover:bg-brand-coral-hover"
           >
             Ask a question
-          </a>
+          </button>
         </aside>
 
         <div className="min-w-0">
-          {visible.length === 0 ? (
-            <p className="py-6 text-[14px] text-footer-text">
-              No questions match “{query.trim()}”.{" "}
-              <a href={askHref} className="font-semibold text-brand-link underline-offset-2 hover:underline">
-                Ask it instead
-              </a>
-            </p>
+          {count === 0 ? (
+            <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-brand-coral/10 flex items-center justify-center text-brand-coral mb-3">
+                <QuestionMessageIcon className="w-6 h-6 text-brand-coral" />
+              </div>
+              <p className="text-[15px] sm:text-[16px] font-bold text-brand-dark">
+                No questions asked yet
+              </p>
+              <p className="text-[13px] sm:text-[14px] text-text-subtle mt-1 max-w-[400px] leading-relaxed">
+                Have a question about this product&apos;s usage, ingredients, or authenticity? Be the first to ask!
+              </p>
+            </div>
+          ) : visible.length === 0 ? (
+            <div className="py-8 px-4 text-center flex flex-col items-center justify-center">
+              <p className="text-[15px] font-medium text-brand-dark">
+                No questions match “{query.trim()}”.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="cursor-pointer text-[13px] font-semibold text-brand-link hover:underline"
+                >
+                  Clear search
+                </button>
+                <span className="text-muted-line">|</span>
+                <button
+                  type="button"
+                  onClick={() => setAsking(true)}
+                  className="cursor-pointer text-[13px] font-semibold text-brand-coral hover:underline"
+                >
+                  Ask this question
+                </button>
+              </div>
+            </div>
           ) : (
             <ul id={`${uid}-list`} className="divide-y divide-card-border">
               {listed.map(({ question, answer, index }) => {
@@ -126,6 +160,7 @@ export function QuestionsPanel({ questions, productName }: { questions: ProductQ
           )}
         </div>
       </div>
+      <AskQuestionDialog open={asking} onClose={() => setAsking(false)} sku={sku} productName={productName} />
     </div>
   );
 }

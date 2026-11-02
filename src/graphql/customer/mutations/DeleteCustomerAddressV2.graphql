@@ -1,0 +1,4 @@
+# Delete the billing or shipping address of a customer.
+mutation DeleteCustomerAddressV2($uid: ID!) {
+  deleteCustomerAddressV2(uid: $uid)
+}

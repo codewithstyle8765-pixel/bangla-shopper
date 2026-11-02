@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { ContactView } from "@/packages/module-theme/contact/ContactView";
-import { getFooterData } from "@/utils/magento/cms";
+import { getContactPageData, getFooterData } from "@/utils/magento/cms";
 
-export const metadata: Metadata = {
-  title: "Contact Us | BanglaShoppers",
-  description: "Call, email or visit BanglaShoppers, or send us a message. We are here to help 7 days a week.",
-  alternates: { canonical: "/contact" },
-};
-
-export const revalidate = 3600;
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getContactPageData();
+  return {
+    title: data?.metaTitle || data?.title || "Contact Us | BanglaShoppers",
+    description: data?.metaDescription || "Call, email or visit BanglaShoppers, or send us a message. We are here to help 7 days a week.",
+    alternates: { canonical: "/contact" },
+  };
+}
 
 export default async function ContactPage() {
-  return <ContactView footer={await getFooterData()} />;
+  const [data, footer] = await Promise.all([getContactPageData(), getFooterData()]);
+  return <ContactView data={data} footer={footer} />;
 }

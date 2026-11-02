@@ -1,0 +1,4 @@
+# Synchronizes the payment order details for further payment processing
+mutation SyncPaymentOrder($input: SyncPaymentOrderInput) {
+  syncPaymentOrder(input: $input)
+}

@@ -1,0 +1,12 @@
+# save address request
+mutation SaveAddress($storeId: Int, $addressId: Int, $customerToken: String, $addressData: saveAddressDataInput) {
+  saveAddress(
+    storeId: $storeId
+    addressId: $addressId
+    customerToken: $customerToken
+    addressData: $addressData
+  ) {
+    message
+    success
+  }
+}

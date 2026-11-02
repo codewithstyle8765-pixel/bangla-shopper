@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Checkbox, FormAlert, SelectField, TextareaField, TextField, useFieldErrors, useSubmitWithoutReset } from "@/packages/module-common/form";
 import type { AffiliateAccount, AffiliateProfile } from "@/types/storefront";
 import { callApi, useFormOperation } from "@/utils/api/client";
-import { formatTk } from "@/utils/format";
+import { useCurrency, useMoney } from "@/packages/module-common/currency/Currency";
 import { primaryButton } from "./AffiliateUi";
 
 type Errors = Record<string, string>;
@@ -105,6 +105,7 @@ function PaymentFields({ account, profile, values, errors }: { account: Affiliat
 }
 
 export function AffiliateJoinForm({ account, customerName, email }: { account: AffiliateAccount; customerName: string; email: string }) {
+  const money = useMoney();
   /* A full load after joining, so the account frame swaps to the affiliate sidebar. */
   const join = useCallback(async (_prev: unknown, formData: FormData) => {
     const result = await callApi("JoinAffiliateProgram", formData);
@@ -132,7 +133,7 @@ export function AffiliateJoinForm({ account, customerName, email }: { account: A
       <FormCard step={1} title="Where you'll promote" description="Tell us about the website, page or channel where you'll share BanglaShoppers.">
         <PromotionFields {...fieldProps} />
       </FormCard>
-      <FormCard step={2} title="How we pay you" description={`Commission is paid once your balance reaches ${formatTk(account.balance.minPayout)}.`}>
+      <FormCard step={2} title="How we pay you" description={`Commission is paid once your balance reaches ${money(account.balance.minPayout)}.`}>
         <PaymentFields {...fieldProps} />
       </FormCard>
       <FormCard step={3} title="Confirm">
@@ -193,6 +194,8 @@ export function AffiliateSettingsForm({ account }: { account: AffiliateAccount }
 }
 
 export function WithdrawForm({ available, minPayout, current }: { available: number; minPayout: number; current: number }) {
+  const money = useMoney();
+  const currency = useCurrency();
   const [state, action, pending] = useActionState(useFormOperation("RequestAffiliateWithdrawal"), null);
   const formRef = useRef<HTMLFormElement>(null);
   const errors = useFieldErrors(formRef, state);
@@ -204,13 +207,13 @@ export function WithdrawForm({ available, minPayout, current }: { available: num
       {state && (state.ok ? <FormAlert tone="success">{state.message}</FormAlert> : !state.fieldErrors && <FormAlert>{state.message}</FormAlert>)}
       {tooLow ? (
         <FormAlert tone="info">
-          You need at least <strong>{formatTk(minPayout)}</strong> to request a withdrawal. Keep sharing your link to reach it.
+          You need at least <strong>{money(minPayout)}</strong> to request a withdrawal. Keep sharing your link to reach it.
         </FormAlert>
       ) : (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <TextField
             id="amount"
-            label="Amount (TK)"
+            label={`Amount (${currency})`}
             type="number"
             inputMode="decimal"
             min={1}
@@ -218,7 +221,7 @@ export function WithdrawForm({ available, minPayout, current }: { available: num
             max={available}
             placeholder={available.toFixed(2)}
             error={errors.amount}
-            hint={`Up to ${formatTk(available)} available.`}
+            hint={`Up to ${money(available)} available.`}
             wrapperClassName="sm:w-[260px]"
           />
           <button type="submit" disabled={pending} className={clsx(primaryButton, "sm:mt-[22px]")}>

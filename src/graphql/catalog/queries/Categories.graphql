@@ -1,0 +1,60 @@
+# Return a list of categories that match the specified filter.
+query Categories($filters: CategoryFilterInput, $pageSize: Int, $currentPage: Int) {
+  categories(filters: $filters, pageSize: $pageSize, currentPage: $currentPage) {
+    items {
+      available_sort_by
+      breadcrumbs {
+        category_level
+        category_name
+        category_uid
+        category_url_key
+        category_url_path
+      }
+      canonical_url
+      children_count
+      cms_block {
+        content
+        identifier
+        title
+      }
+      custom_layout_update_file
+      default_sort_by
+      description
+      display_mode
+      filter_price_range
+      image
+      include_in_menu
+      is_anchor
+      landing_page
+      level
+      magic_image
+      magic_label
+      magic_thumbnail
+      meta_description
+      meta_keywords
+      meta_title
+      name
+      path
+      path_in_store
+      position
+      product_count
+      products {
+        total_count
+      }
+      redirect_code
+      relative_url
+      sync_to_facebook_catalog
+      type
+      uid
+      url_key
+      url_path
+      url_suffix
+    }
+    page_info {
+      current_page
+      page_size
+      total_pages
+    }
+    total_count
+  }
+}

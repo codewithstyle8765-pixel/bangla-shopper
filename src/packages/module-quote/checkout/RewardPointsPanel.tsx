@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import type { CheckoutRewards } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { pointsToTaka } from "@/utils/rewards";
 import { RewardCoin } from "@/packages/module-common/icons/RewardCoin";
 
@@ -18,6 +18,7 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 
 /** "Apply reward points": amount field + "Use maximum", then Apply / Remove (signed-in customers with a balance). */
 export function RewardPointsPanel({ rewards, pending, error, onApply, onCancel }: RewardPointsPanelProps) {
+  const money = useMoney();
   const uid = useId();
   const max = rewards.maxPoints;
   const [points, setPoints] = useState(max);
@@ -46,10 +47,10 @@ export function RewardPointsPanel({ rewards, pending, error, onApply, onCancel }
         )}
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-[13px] text-footer-text">
-        <RewardCoin className="h-4.5 w-4.5 shrink-0" />
+      <div className="mt-2.5 flex items-center gap-3 text-[13px] text-footer-text">
+        <RewardCoin className="h-8 w-auto sm:h-8.5 lg:h-9 shrink-0" />
         <span>
-          Available balance: <strong className="font-semibold text-brand-dark">{fmt(rewards.balance)} points</strong> ({formatTk(rewards.balanceValue)})
+          Available balance: <strong className="font-semibold text-brand-dark">{fmt(rewards.balance)} points</strong> ({money(rewards.balanceValue)})
         </span>
       </div>
 
@@ -60,7 +61,7 @@ export function RewardPointsPanel({ rewards, pending, error, onApply, onCancel }
               <strong className="font-semibold">{fmt(rewards.applied.points)} points</strong> applied
             </p>
             <p className="mt-0.5 text-[12px] text-footer-text">
-              Saving <strong className="font-semibold text-brand-dark">{formatTk(rewards.applied.amount)}</strong> on this order
+              Saving <strong className="font-semibold text-brand-dark">{money(rewards.applied.amount)}</strong> on this order
             </p>
           </div>
           <button
@@ -89,7 +90,7 @@ export function RewardPointsPanel({ rewards, pending, error, onApply, onCancel }
               className="h-9.5 w-[110px] shrink-0 rounded-[4px] border border-card-border bg-white px-3 text-[16px] tabular-nums text-brand-dark outline-none transition-colors focus:border-brand-dark lg:text-[13px]"
             />
             <span className="text-[13px] text-footer-text">
-              = <strong className="font-semibold text-brand-dark">{formatTk(pointsToTaka(points))}</strong> off
+              = <strong className="font-semibold text-brand-dark">{money(pointsToTaka(points))}</strong> off
             </span>
           </div>
 

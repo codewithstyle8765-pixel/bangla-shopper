@@ -16,7 +16,7 @@ export interface MagentoProduct {
   country_of_manufacture?: string | null;
   small_image?: { url: string } | null;
   price_range: {
-    minimum_price: { final_price: { value: number }; regular_price: { value: number } };
+    minimum_price: { final_price: { value: number }; regular_price: { value: number }; discount?: { percent_off?: number | null } | null };
   };
 }
 
@@ -41,8 +41,36 @@ export interface MagentoProductDetail extends MagentoProduct {
   }>;
   related_products?: MagentoProduct[];
   upsell_products?: MagentoProduct[];
+  reviews?: {
+    items: Array<{
+      review_id: number;
+      nickname: string;
+      summary: string;
+      text: string;
+      created_at: string;
+      average_rating: number;
+      ratings_breakdown: Array<{ name: string; value: string }>;
+      verified_buyer: boolean;
+      first_purchase_at?: string | null;
+      total_purchased: number;
+      pros?: string | null;
+      value?: string | null;
+      price?: string | null;
+      photos: string[];
+      store_reply?: string | null;
+      helpful_count: number;
+    }>;
+  } | null;
   /** Custom field: availability per stock source (online + each store). */
-  live_stock?: Array<{ location: string; available: boolean }> | null;
+  live_stock?: Array<{ location: string; available: boolean; quantity?: number | null }> | null;
+  /** Rating figures of each time period. */
+  review_summaries?: Array<{
+    period: string;
+    average_rating: number;
+    ratings_count: number;
+    reviews_count: number;
+    distribution: Array<{ stars: number; count: number; percent: number } | null>;
+  } | null> | null;
   /** ConfigurableProduct only: the attributes a customer picks (Size, Shade) and the child product of each combination. */
   configurable_options?: Array<{
     uid: string;
@@ -75,8 +103,6 @@ export interface MagentoCategory {
   uid: string;
   name: string;
   description?: string | null;
-  /** Category image (Catalog › Categories › Content). */
-  image?: string | null;
   /** "Add CMS Block" content; the client puts the category banner(s) here. */
   cms_block?: { content?: string | null } | null;
   breadcrumbs?: Array<{ category_name: string; category_url_path: string }> | null;
@@ -184,34 +210,4 @@ export interface MagentoOrderAddress {
   country_code: string;
   region?: string | null;
   custom_attributesV2?: MagentoCustomAttribute[] | null;
-}
-
-/** Home page API (`homePage` query); field names to be confirmed against the backend schema. */
-export interface MagentoHomeBanner {
-  image: string;
-  mobile_image?: string | null;
-  alt?: string | null;
-  link: string;
-}
-
-export interface MagentoHomeTile {
-  name: string;
-  image: string;
-  link: string;
-}
-
-export interface MagentoHomePage {
-  hero_layout: "GRID" | "SLIDER";
-  hero_slides: MagentoHomeBanner[];
-  /** Grid template: the large banner rotates when more than one is set. */
-  hero_grid_main_banners: MagentoHomeBanner[];
-  /** Grid template: the three small banners. */
-  hero_grid_side_banners: MagentoHomeBanner[];
-  /** Which category section the admin turned on. */
-  category_layout: "SHOP_BY_CATEGORY" | "POPULAR_CATEGORY";
-  shop_by_category: MagentoHomeTile[];
-  popular_categories: MagentoHomeTile[];
-  shop_by_concern: MagentoHomeTile[];
-  /** Sections to show and their order; sections not listed are hidden. */
-  sort_order: Array<{ section_id: string; sort_order: number }>;
 }

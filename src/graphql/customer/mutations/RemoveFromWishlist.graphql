@@ -1,0 +1,12 @@
+# remove from wishlist request
+mutation RemoveFromWishlist($storeId: Int, $customerToken: String, $itemId: Int) {
+  removeFromWishlist(
+    storeId: $storeId
+    customerToken: $customerToken
+    itemId: $itemId
+  ) {
+    alreadyDeleted
+    message
+    success
+  }
+}

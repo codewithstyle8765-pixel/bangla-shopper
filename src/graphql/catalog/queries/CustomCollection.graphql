@@ -1,0 +1,78 @@
+# custom collection information
+query CustomCollection($storeId: Int, $quoteId: Int, $width: String, $sortData: String, $pageNumber: Int, $filterData: String, $customerToken: String, $notificationId: Int) {
+  customCollection(
+    storeId: $storeId
+    quoteId: $quoteId
+    width: $width
+    sortData: $sortData
+    pageNumber: $pageNumber
+    filterData: $filterData
+    customerToken: $customerToken
+    notificationId: $notificationId
+  ) {
+    cartCount
+    layeredData {
+      code
+      is_filterable
+      label
+      options {
+        count
+        id
+        label
+      }
+    }
+    message
+    productList {
+      arTextureImages
+      arType
+      arUrl
+      availability
+      categoryId
+      configurableData {
+        chooseText
+        images
+        index
+        productId
+        swatchData
+        template
+      }
+      dominantColor
+      entityId
+      finalPrice
+      formattedFinalPrice
+      formattedMaxPrice
+      formattedMinPrice
+      formattedPrice
+      formattedTierPrice
+      groupedPrice
+      hasRequiredOptions
+      isAvailable
+      isInRange
+      isInWishlist
+      isNew
+      linksPurchasedSeparately
+      maxPrice
+      minAddToCartQty
+      minPrice
+      msrpDisplayActualPriceType
+      msrpEnabled
+      name
+      price
+      priceView
+      rating
+      reviewCount
+      reviewEnable
+      thumbNail
+      tierPrice
+      typeId
+      wishlistEnable
+      wishlistItemId
+    }
+    sortingData {
+      code
+      label
+    }
+    success
+    totalCount
+  }
+}

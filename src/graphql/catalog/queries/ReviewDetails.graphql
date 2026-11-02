@@ -1,0 +1,25 @@
+# review details information
+query ReviewDetails($storeId: Int, $width: Int, $customerToken: String, $reviewId: Int) {
+  reviewDetails(
+    storeId: $storeId
+    width: $width
+    customerToken: $customerToken
+    reviewId: $reviewId
+  ) {
+    averageRating
+    dominantColor
+    message
+    productId
+    productName
+    ratingData {
+      ratingCode
+      ratingValue
+    }
+    reviewDate
+    reviewDetail
+    reviewTitle
+    success
+    thumbNail
+    totalProductReviews
+  }
+}

@@ -1,0 +1,12 @@
+# Product page Q&A tab: answered questions, newest first.
+query ProductQuestions($sku: String!, $pageSize: Int, $currentPage: Int) {
+  productQuestions(sku: $sku, pageSize: $pageSize, currentPage: $currentPage) {
+    total_count
+    items {
+      question
+      answer
+      author
+      created_at
+    }
+  }
+}

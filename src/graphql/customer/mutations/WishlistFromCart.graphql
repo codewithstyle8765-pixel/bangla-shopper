@@ -1,0 +1,42 @@
+# wishlist from cart request
+mutation WishlistFromCart($storeId: Int, $customerToken: String, $itemId: Int) {
+  wishlistFromCart(
+    storeId: $storeId
+    customerToken: $customerToken
+    itemId: $itemId
+  ) {
+    cartCount
+    discount {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    grandtotal {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    message
+    shipping {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    subtotal {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+    success
+    tax {
+      formattedValue
+      title
+      unformattedValue
+      value
+    }
+  }
+}

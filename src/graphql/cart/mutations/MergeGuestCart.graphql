@@ -1,0 +1,6 @@
+# On login: move the guest cart's items into the customer's cart.
+mutation MergeGuestCart($source: String!, $destination: String!) {
+  mergeCarts(source_cart_id: $source, destination_cart_id: $destination) {
+    id
+  }
+}

@@ -1,0 +1,25 @@
+# Contact Us page content and configuration
+query ContactPage {
+  contactPage {
+    meta_title
+    meta_description
+    title
+    subtitle
+    contact_cards {
+      hotline
+      email
+      address
+      hours
+      whatsapp
+    }
+    map_embed_url
+    form_title
+    form_subtitle
+    showroom_cta_label
+    showroom_cta_link
+    social {
+      network
+      href
+    }
+  }
+}

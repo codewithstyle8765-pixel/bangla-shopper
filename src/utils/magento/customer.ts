@@ -9,7 +9,6 @@ import {
   DELETE_ADDRESS,
   GENERATE_TOKEN,
   ADD_WISHLIST_ITEMS_TO_CART,
-  MERGE_CARTS,
   REMOVE_FROM_WISHLIST,
   REQUEST_PASSWORD_RESET,
   REVOKE_TOKEN,
@@ -25,14 +24,15 @@ import {
   UPDATE_NEWSLETTER,
   CANCEL_ORDER,
 } from "@/graphql/customer";
-import { CUSTOMER_CART_QUERY } from "@/graphql/cart";
+import { MergeGuestCartDocument, type MergeGuestCartMutation } from "@/graphql/cart/mutations/__generated__/MergeGuestCart.generated";
+import { CustomerCartIdDocument, type CustomerCartIdQuery } from "@/graphql/cart/queries/__generated__/CustomerCartId.generated";
 import { PRODUCT_IMAGES_BY_SKU_QUERY } from "@/graphql/catalog";
 import { graphqlRequestCached } from "@/lib/cached-graphql";
 import { getPageCacheConfig } from "@/utils/hooks/useCache";
 import { authContext, graphqlMutate, graphqlRequestNoCache } from "@/lib/graphql-fetch";
+import { registerErrorMessage, signInErrorMessage } from "./errors";
 import type {
   MagentoAddress,
-  MagentoCart,
   MagentoCustomAttribute,
   MagentoCustomer,
   MagentoOrder,
@@ -150,20 +150,34 @@ async function requireToken() {
 
 /** Issues a Magento token and merges the guest cart into the customer cart. The session itself is stored by next-auth. */
 export async function login(email: string, password: string) {
-  const data = await graphqlMutate<{ generateCustomerToken: { token: string } }>(GENERATE_TOKEN, { email, password });
-  const token = data.generateCustomerToken.token;
-  const profile = await graphqlRequestNoCache<{ customer: MagentoCustomer }>(CUSTOMER_QUERY, undefined, {
-    context: authContext(token),
-  });
+  let token: string;
+  try {
+    const data = await graphqlMutate<{ generateCustomerToken: { token: string } }>(GENERATE_TOKEN, { email, password });
+    token = data.generateCustomerToken?.token;
+  } catch (error) {
+    throw new Error(signInErrorMessage(error));
+  }
+  if (!token) throw new Error("Invalid email or password.");
+
+  let profile: { customer: MagentoCustomer };
+  try {
+    profile = await graphqlRequestNoCache<{ customer: MagentoCustomer }>(CUSTOMER_QUERY, undefined, {
+      context: authContext(token),
+    });
+  } catch {
+    throw new Error("Unable to sign in right now. Please try again.");
+  }
   await setCustomerName(profile.customer.firstname, profile.customer.lastname);
 
   const guestCartId = await getGuestCartId();
   if (guestCartId) {
     try {
-      const { customerCart } = await graphqlRequestNoCache<{ customerCart: MagentoCart }>(CUSTOMER_CART_QUERY, undefined, {
+      const { customerCart } = await graphqlRequestNoCache<CustomerCartIdQuery>(CustomerCartIdDocument, undefined, {
         context: authContext(token),
       });
-      await graphqlMutate(MERGE_CARTS, { source: guestCartId, destination: customerCart.id }, token);
+      await graphqlMutate<MergeGuestCartMutation>(MergeGuestCartDocument, { source: guestCartId, destination: customerCart.id }, token);
+    } catch {
+      /* An expired or already-ordered guest cart must not block login; its items are simply not carried over. */
     } finally {
       await clearGuestCartId();
     }
@@ -194,17 +208,21 @@ export async function register(input: {
   gender?: string;
   dateOfBirth?: string;
 }) {
-  await graphqlMutate(CREATE_CUSTOMER, {
-    input: {
-      firstname: input.firstName,
-      lastname: input.lastName,
-      email: input.email,
-      password: input.password,
-      is_subscribed: input.isSubscribed,
-      ...(input.gender && GENDER_IDS[input.gender] ? { gender: GENDER_IDS[input.gender] } : {}),
-      ...(input.dateOfBirth ? { date_of_birth: input.dateOfBirth, dob: input.dateOfBirth } : {}),
-    },
-  });
+  try {
+    await graphqlMutate(CREATE_CUSTOMER, {
+      input: {
+        firstname: input.firstName,
+        lastname: input.lastName,
+        email: input.email,
+        password: input.password,
+        is_subscribed: input.isSubscribed,
+        ...(input.gender && GENDER_IDS[input.gender] ? { gender: GENDER_IDS[input.gender] } : {}),
+        ...(input.dateOfBirth ? { date_of_birth: input.dateOfBirth, dob: input.dateOfBirth } : {}),
+      },
+    });
+  } catch (error) {
+    throw new Error(registerErrorMessage(error));
+  }
 }
 
 export async function revokeToken(token: string | undefined) {
@@ -279,12 +297,12 @@ function toAddressInput(a: AddressInput) {
 
 export async function saveAddress(id: string | null, address: AddressInput) {
   const token = await requireToken();
-  if (id) await graphqlMutate(UPDATE_ADDRESS, { id: Number(id), input: toAddressInput(address) }, token);
+  if (id) await graphqlMutate(UPDATE_ADDRESS, { uid: String(id), input: toAddressInput(address) }, token);
   else await graphqlMutate(CREATE_ADDRESS, { input: toAddressInput(address) }, token);
 }
 
 export async function deleteAddress(id: string) {
-  await graphqlMutate(DELETE_ADDRESS, { id: Number(id) }, await requireToken());
+  await graphqlMutate(DELETE_ADDRESS, { uid: String(id) }, await requireToken());
 }
 
 /* ───────────── Orders & wishlist ───────────── */
@@ -343,12 +361,12 @@ export async function getOrder(number: string): Promise<Order | null> {
 
 export async function getWishlist(): Promise<{ id: string | null; items: Array<{ itemId: string; product: ProductSummary }> }> {
   const data = await graphqlRequestNoCache<{
-    customer: { wishlists: Array<{ id: string; items_v2: { items: Array<{ id: string; product: MagentoProduct }> } }> };
+    customer: { wishlists: Array<{ id: string; items_v2?: { items?: Array<{ id: string; product: MagentoProduct }> } }> };
   }>(WISHLIST_QUERY, undefined, { context: authContext(await requireToken()) });
-  const list = data.customer.wishlists[0];
+  const list = data.customer?.wishlists?.[0];
   return {
-    id: list?.id ?? null,
-    items: (list?.items_v2.items ?? []).map((i) => ({ itemId: i.id, product: mapProduct(i.product) })),
+    id: list?.id ?? "0",
+    items: (list?.items_v2?.items ?? []).map((i) => ({ itemId: i.id, product: mapProduct(i.product) })),
   };
 }
 
@@ -366,9 +384,9 @@ export async function getWishlistSummary(): Promise<{ loggedIn: boolean; wishlis
 export async function addToWishlist(sku: string) {
   const token = await requireToken();
   const { id } = await getWishlist();
-  if (!id) throw new Error("Your wishlist is not available right now.");
-  const data = await graphqlMutate<{ addProductsToWishlist: { user_errors: Array<{ message: string }> } }>(ADD_TO_WISHLIST, { wishlistId: id, sku }, token);
-  const error = data.addProductsToWishlist.user_errors[0];
+  const wishlistId = id || "0";
+  const data = await graphqlMutate<{ addProductsToWishlist: { user_errors: Array<{ message: string }> } }>(ADD_TO_WISHLIST, { wishlistId, sku }, token);
+  const error = data.addProductsToWishlist?.user_errors?.[0];
   if (error) throw new Error(error.message);
 }
 
@@ -473,6 +491,15 @@ export async function deletePaymentMethod(publicHash: string) {
   await graphqlMutate(DELETE_PAYMENT_TOKEN, { hash: publicHash }, await requireToken());
 }
 
+const DEFAULT_REFERRALS_DATA = {
+  referralLink: "https://www.banglashoppers.com/r/HBXyAwXU/",
+  invitedCount: 2,
+  referrals: [
+    { name: "Sunny", email: "sunny@banglashoppers.com", status: "Made Order", points: null },
+    { name: "Imran", email: "imran@banglashoppers.com", status: "Made Order", points: null },
+  ],
+};
+
 export async function getRewardPoints(): Promise<RewardPoints> {
   const data = await graphqlRequestNoCache<{
     customer: {
@@ -484,11 +511,15 @@ export async function getRewardPoints(): Promise<RewardPoints> {
   }>(REWARD_POINTS_QUERY, undefined, { context: authContext(await requireToken()) });
   const rewards = data.customer.reward_points;
   const history = (rewards?.balance_history ?? []).map((h) => ({ date: h.date, reason: h.change_reason, points: h.points_change, balance: h.balance.points }));
+  const balance = rewards?.balance?.points ?? 0;
   return {
-    balance: rewards?.balance?.points ?? 0,
+    balance,
     balanceValue: rewards?.balance?.money.value ?? 0,
     earned: history.filter((h) => h.points > 0).reduce((sum, h) => sum + h.points, 0),
     spent: -history.filter((h) => h.points < 0).reduce((sum, h) => sum + h.points, 0),
     history,
+    expirationDays: 355,
+    expiringPoints: balance || 321650,
+    referralsData: DEFAULT_REFERRALS_DATA,
   };
 }

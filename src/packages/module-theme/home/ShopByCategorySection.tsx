@@ -6,13 +6,13 @@ import type { HomeTile } from "@/types/storefront";
 import { SectionTitle, SectionTitleSkeleton } from "./SectionTitle";
 
 /** Category tiles from the home page API (`shop_by_category`). */
-export function ShopByCategorySection({ tiles }: { tiles: HomeTile[] }) {
+export function ShopByCategorySection({ title, tiles }: { title: string; tiles: HomeTile[] }) {
   if (tiles.length === 0) return null;
 
   return (
     <section aria-label="Shop by category" className="mt-[30px] mb-[10px] w-full">
       <Container className="mx-auto w-full px-(--gutter) desk:w-[1290px] desk:px-0">
-        <SectionTitle className="mb-[22px]">SHOP BY CATEGORY</SectionTitle>
+        <SectionTitle className="mb-[22px]">{title}</SectionTitle>
         <ul className="grid grid-cols-4 gap-x-2 gap-y-6 sm:gap-x-3 md:grid-cols-6 xl:grid-cols-8 xl:gap-x-[13px] xl:gap-y-[36px]">
           {tiles.map((tile) => (
             <li key={`${tile.href}-${tile.name}`} className="min-w-0">

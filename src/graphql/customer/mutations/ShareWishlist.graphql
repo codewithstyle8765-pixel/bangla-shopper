@@ -1,0 +1,14 @@
+# share wishlist request
+mutation ShareWishlist($storeId: Int, $emails: String, $message: String, $websiteId: Int, $customerToken: String) {
+  shareWishlist(
+    storeId: $storeId
+    emails: $emails
+    message: $message
+    websiteId: $websiteId
+    customerToken: $customerToken
+  ) {
+    message
+    sentTo
+    success
+  }
+}

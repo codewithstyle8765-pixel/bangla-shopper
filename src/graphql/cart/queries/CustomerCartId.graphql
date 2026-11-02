@@ -1,0 +1,6 @@
+# The logged-in customer's cart id (Magento creates the cart if there is none).
+query CustomerCartId {
+  customerCart {
+    id
+  }
+}

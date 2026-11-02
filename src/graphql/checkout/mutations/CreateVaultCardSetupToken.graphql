@@ -1,0 +1,6 @@
+# Creates a vault card setup token
+mutation CreateVaultCardSetupToken($input: CreateVaultCardSetupTokenInput!) {
+  createVaultCardSetupToken(input: $input) {
+    setup_token
+  }
+}

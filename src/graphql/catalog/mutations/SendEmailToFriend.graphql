@@ -1,0 +1,14 @@
+# Send a message on behalf of a customer to the specified email addresses.
+mutation SendEmailToFriend($input: SendEmailToFriendInput) {
+  sendEmailToFriend(input: $input) {
+    recipients {
+      email
+      name
+    }
+    sender {
+      email
+      message
+      name
+    }
+  }
+}

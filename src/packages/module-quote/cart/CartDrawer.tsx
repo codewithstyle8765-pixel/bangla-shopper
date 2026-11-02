@@ -6,13 +6,14 @@ import Link from "next/link";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { CartLineOptions } from "./CartLineOptions";
 import { useCart } from "@/packages/module-quote/context/CartContext";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { FreeShippingProgress } from "./CartSummary";
 import { CartDrawerSkeleton } from "./CartSkeletons";
 import { QuantitySelector } from "@/packages/module-common/QuantitySelector";
 import { useScrollLock } from "@/packages/module-common/useScrollLock";
 
 export function CartDrawer() {
+  const money = useMoney();
   const {
     isCartOpen,
     closeCart,
@@ -126,6 +127,7 @@ export function CartDrawer() {
               <li key={item.id} className="py-4 flex gap-3">
                 <Link
                   href={item.urlKey ? `/product/${item.urlKey}` : "#"}
+                  prefetch
                   onClick={closeCart}
                   className="w-[80px] h-[80px] sm:w-[88px] sm:h-[88px] shrink-0 border border-card-border rounded-[4px] bg-white overflow-hidden"
                 >
@@ -142,6 +144,7 @@ export function CartDrawer() {
                   <div className="flex items-start gap-2">
                     <Link
                       href={item.urlKey ? `/product/${item.urlKey}` : "#"}
+                      prefetch
                       onClick={closeCart}
                       className="flex-1 text-[13px] font-medium leading-[1.3] text-brand-dark line-clamp-2 hover:text-brand-coral transition-colors"
                     >
@@ -177,11 +180,11 @@ export function CartDrawer() {
 
                     <div className="text-right leading-tight">
                       <p className="text-brand-alert text-[15px] font-bold">
-                        {formatTk(item.price * item.quantity)}
+                        {money(item.price * item.quantity)}
                       </p>
                       {item.originalPrice && item.originalPrice > item.price && (
                         <p className="text-price-strikethrough text-[11px] line-through">
-                          {formatTk(item.originalPrice * item.quantity)}
+                          {money(item.originalPrice * item.quantity)}
                         </p>
                       )}
                     </div>
@@ -196,12 +199,12 @@ export function CartDrawer() {
             {totalSavings > 0 && (
               <div className="flex justify-between text-[13px] text-brand-coral mb-1">
                 <span>You save</span>
-                <span className="font-semibold">{formatTk(totalSavings)}</span>
+                <span className="font-semibold">{money(totalSavings)}</span>
               </div>
             )}
             <div className="flex justify-between items-baseline mb-1">
               <span className="text-[15px] font-semibold text-brand-dark">Subtotal</span>
-              <span className="text-[19px] font-bold text-brand-dark">{formatTk(subtotal - cart.discount)}</span>
+              <span className="text-[19px] font-bold text-brand-dark">{money(subtotal - cart.discount)}</span>
             </div>
             <p className="text-[12px] text-neutral-500 mb-3">
               Shipping &amp; taxes calculated at checkout.

@@ -1,0 +1,29 @@
+# Fields every product card needs (listing, home rows, related, wishlist).
+fragment ProductCard on ProductInterface {
+  __typename
+  uid
+  sku
+  name
+  url_key
+  stock_status
+  rating_summary
+  review_count
+  country_of_manufacture
+  small_image {
+    url
+  }
+  price_range {
+    minimum_price {
+      final_price {
+        value
+      }
+      regular_price {
+        value
+      }
+      discount {
+        amount_off
+        percent_off
+      }
+    }
+  }
+}

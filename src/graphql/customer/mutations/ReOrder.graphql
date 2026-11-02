@@ -1,0 +1,12 @@
+# re order request
+mutation ReOrder($storeId: Int, $customerToken: String, $incrementId: String) {
+  reOrder(
+    storeId: $storeId
+    customerToken: $customerToken
+    incrementId: $incrementId
+  ) {
+    cartCount
+    message
+    success
+  }
+}

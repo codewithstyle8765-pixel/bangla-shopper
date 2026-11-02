@@ -8,12 +8,8 @@ export const metadata = {
   alternates: { canonical: "/" },
 };
 
-/* Prerendered at build time, rebuilt in the background at most once an hour. */
-export const revalidate = 3600;
-
 /**
- * The home page API response is cached (unstable_cache). It decides which sections render and in what order;
- * each section has its own Suspense + skeleton.
+ * The home page API response is cached for 60 seconds ('use cache'). It decides which sections render and in what order.
  */
 export default async function HomePage() {
   return <HomeView content={await getHomePage()} />;

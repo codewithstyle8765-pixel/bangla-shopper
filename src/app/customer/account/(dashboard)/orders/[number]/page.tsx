@@ -13,7 +13,8 @@ import { PrintInvoiceHeader } from "@/packages/module-customer/PrintInvoiceHeade
 import type { OrderStatus } from "@/types/storefront";
 import { getOrder } from "@/utils/magento/customer";
 import { countryName, getCountries } from "@/utils/magento/directory";
-import { formatDate, formatTk } from "@/utils/format";
+import { formatDate } from "@/utils/format";
+import { Money } from "@/packages/module-common/currency/Currency";
 
 export const metadata: Metadata = { title: "Order Details | BanglaShoppers", robots: { index: false } };
 
@@ -70,17 +71,17 @@ async function OrderDetailPageContent({ params }: { params: Promise<{ number: st
               <NextImage src={item.image} alt="" width={64} height={64} className="h-16 w-16 shrink-0 rounded-[4px] border border-card-border object-contain" />
               <div className="min-w-0 flex-1">
                 {item.urlKey ? (
-                  <Link href={`/product/${item.urlKey}`} className="line-clamp-2 text-[14px] font-medium text-brand-dark hover:text-brand-coral">
+                  <Link href={`/product/${item.urlKey}`} prefetch className="line-clamp-2 text-[14px] font-medium text-brand-dark hover:text-brand-coral">
                     {item.name}
                   </Link>
                 ) : (
                   <p className="line-clamp-2 text-[14px] font-medium text-brand-dark">{item.name}</p>
                 )}
                 <p className="mt-0.5 text-[12px] text-footer-text">
-                  SKU: {item.sku} · Qty {item.quantity} × {formatTk(item.price)}
+                  SKU: {item.sku} · Qty {item.quantity} × <Money value={item.price} />
                 </p>
               </div>
-              <p className="shrink-0 text-[14px] font-bold text-brand-dark">{formatTk(item.price * item.quantity)}</p>
+              <p className="shrink-0 text-[14px] font-bold text-brand-dark"><Money value={item.price * item.quantity} /></p>
             </li>
           ))}
         </ul>
@@ -107,10 +108,10 @@ async function OrderDetailPageContent({ params }: { params: Promise<{ number: st
           </AccountSection>
           <AccountSection title="Order Total">
             <dl className="space-y-2 text-[14px]">
-              <div className="flex justify-between"><dt className="text-footer-text">Subtotal</dt><dd>{formatTk(order.subtotal)}</dd></div>
-              {order.discount > 0 && <div className="flex justify-between"><dt className="text-footer-text">Discount</dt><dd className="text-brand-coral">− {formatTk(order.discount)}</dd></div>}
-              <div className="flex justify-between"><dt className="text-footer-text">Shipping</dt><dd>{order.shipping ? formatTk(order.shipping) : "FREE"}</dd></div>
-              <div className="flex justify-between border-t border-card-border pt-2 font-bold text-brand-dark"><dt>Grand Total</dt><dd className="text-brand-alert">{formatTk(order.grandTotal)}</dd></div>
+              <div className="flex justify-between"><dt className="text-footer-text">Subtotal</dt><dd><Money value={order.subtotal} /></dd></div>
+              {order.discount > 0 && <div className="flex justify-between"><dt className="text-footer-text">Discount</dt><dd className="text-brand-coral">− <Money value={order.discount} /></dd></div>}
+              <div className="flex justify-between"><dt className="text-footer-text">Shipping</dt><dd>{order.shipping ? <Money value={order.shipping} /> : "FREE"}</dd></div>
+              <div className="flex justify-between border-t border-card-border pt-2 font-bold text-brand-dark"><dt>Grand Total</dt><dd className="text-brand-alert"><Money value={order.grandTotal} /></dd></div>
             </dl>
           </AccountSection>
         </div>

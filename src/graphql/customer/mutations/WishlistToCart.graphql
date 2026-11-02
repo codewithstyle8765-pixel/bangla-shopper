@@ -1,0 +1,15 @@
+# wishlist to cart request
+mutation WishlistToCart($itemId: Int, $storeId: Int, $productId: Int, $qty: Int, $customerToken: String) {
+  wishlistToCart(
+    itemId: $itemId
+    storeId: $storeId
+    productId: $productId
+    qty: $qty
+    customerToken: $customerToken
+  ) {
+    cartCount
+    message
+    productId
+    success
+  }
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FilterGroup } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { useCurrency, useMoney } from "@/packages/module-common/currency/Currency";
 
 /** Magento price buckets ("300_500", last one open: "2000_" or "2000_*") → slider bounds; an open top bucket means the far right is "and above". */
 export function priceBounds(group: FilterGroup) {
@@ -31,6 +31,8 @@ interface PriceRangeFilterProps {
 
 /** Dragging uses pointer capture on the track (touch inside the scrolling drawer, iOS); hidden range inputs keep keyboard and screen-reader control. */
 export function PriceRangeFilter({ group, value, idPrefix, onChange }: PriceRangeFilterProps) {
+  const money = useMoney();
+  const currency = useCurrency();
   const { min, max, step, open } = priceBounds(group);
   const parse = (v?: string): [number, number] => {
     const [from, to] = (v ?? "").split("_");
@@ -69,7 +71,7 @@ export function PriceRangeFilter({ group, value, idPrefix, onChange }: PriceRang
   };
 
   const pct = (v: number) => ((v - min) / (max - min || 1)) * 100;
-  const label = (v: number) => (v >= max && open ? `${formatTk(max, false)}+` : formatTk(v, false));
+  const label = (v: number) => (v >= max && open ? `${money(max, false)}+` : money(v, false));
 
   const valueAt = (clientX: number) => {
     const rect = track.current!.getBoundingClientRect();
@@ -145,7 +147,7 @@ export function PriceRangeFilter({ group, value, idPrefix, onChange }: PriceRang
       >
         {(["Min", "Max"] as const).map((name, i) => (
           <label key={name} htmlFor={`${idPrefix}-price-${name}`} className="flex h-10 min-w-0 flex-1 items-center rounded-[4px] border border-card-border bg-white px-2 text-[12px] text-footer-text focus-within:border-brand-dark">
-            <span className="mr-0.5 shrink-0">TK</span>
+            <span className="mr-0.5 shrink-0">{currency}</span>
             <input
               id={`${idPrefix}-price-${name}`}
               inputMode="numeric"

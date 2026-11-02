@@ -1,0 +1,11 @@
+# search term list information
+query SearchTermList($storeId: Int) {
+  searchTermList(storeId: $storeId) {
+    message
+    success
+    termList {
+      ratio
+      term
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# Retrieve payment credentials for a transaction. Use this query for Payflow Link and Payments Advanced payment methods.
+query GetPayflowLinkToken($input: PayflowLinkTokenInput!) {
+  getPayflowLinkToken(input: $input) {
+    mode
+    paypal_url
+    secure_token
+    secure_token_id
+  }
+}

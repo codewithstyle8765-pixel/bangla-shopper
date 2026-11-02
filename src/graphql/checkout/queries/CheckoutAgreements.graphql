@@ -1,0 +1,12 @@
+# Return Terms and Conditions configuration information.
+query CheckoutAgreements {
+  checkoutAgreements {
+    agreement_id
+    checkbox_text
+    content
+    content_height
+    is_html
+    mode
+    name
+  }
+}

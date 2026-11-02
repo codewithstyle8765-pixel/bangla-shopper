@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { useSubmitWithoutReset } from "@/packages/module-common/form";
 import { useFormOperation } from "@/utils/api/client";
@@ -17,10 +17,18 @@ export function PromoNewsletterForm({ buttonLabel = "Subscribe", privacyNote, on
   const [state, formAction, pending] = useActionState(useFormOperation("SubscribeNewsletter"), null);
   const formRef = useRef<HTMLFormElement>(null);
   const submit = useSubmitWithoutReset(formRef, formAction, state);
+  const [errorDismissed, setErrorDismissed] = useState(false);
 
   useEffect(() => {
     if (state?.ok) onSubscribed();
+    if (state) setErrorDismissed(false);
   }, [state, onSubscribed]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value.trim() && !state?.ok) {
+      setErrorDismissed(true);
+    }
+  };
 
   return (
     <form ref={formRef} onSubmit={submit} noValidate className="mt-3 w-full lg:mt-[22px]">
@@ -36,6 +44,7 @@ export function PromoNewsletterForm({ buttonLabel = "Subscribe", privacyNote, on
           required
           autoComplete="email"
           placeholder="Enter your email address"
+          onChange={handleInputChange}
           className="h-full min-w-0 flex-1 bg-transparent text-[16px] text-brand-dark outline-none placeholder:text-footer-text lg:text-[14px]"
         />
       </div>
@@ -46,7 +55,7 @@ export function PromoNewsletterForm({ buttonLabel = "Subscribe", privacyNote, on
       >
         {pending ? "Subscribing..." : buttonLabel}
       </button>
-      {state ? (
+      {state && (state.ok || !errorDismissed) ? (
         <p role="status" className={clsx("mt-2.5 text-[12.5px] font-medium", state.ok ? "text-success" : "text-brand-alert")}>
           {state.message}
         </p>

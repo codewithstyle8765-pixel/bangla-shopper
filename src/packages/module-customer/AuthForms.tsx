@@ -18,12 +18,27 @@ const GENDER_OPTIONS = [
 /** Only same-site relative paths are allowed after login. */
 const safeRedirect = (target: string) => (target.startsWith("/") && !target.startsWith("//") ? target : "/customer/account");
 
+/** next-auth's own error codes and raw HTTP/GraphQL transport text never reach the UI. */
+const AUTH_ERRORS: Record<string, string> = {
+  CredentialsSignin: "Invalid email or password.",
+  AccessDenied: "Access denied. Please try again.",
+  SessionRequired: "Please sign in to continue.",
+  Configuration: "Unable to sign in right now. Please try again.",
+  Callback: "Unable to sign in right now. Please try again.",
+  OAuthCallback: "Unable to sign in right now. Please try again.",
+  OAuthAccountNotLinked: "This email is already registered. Please sign in with your password.",
+};
+
+const TRANSPORT_ERROR = /Response not successful|Received status code|Network error|fetch failed|ECONNREFUSED|ETIMEDOUT|Unexpected token/i;
+
 /** next-auth is loaded only when a customer actually signs in. */
 async function signInWithPassword(email: string, password: string): Promise<string | null> {
   const { signIn } = await import("next-auth/react");
   const result = await signIn("credentials", { email, password, redirect: false });
   if (result?.ok && !result.error) return null;
-  return result?.error && result.error !== "CredentialsSignin" ? result.error : "Invalid email or password.";
+  const error = result?.error;
+  if (!error) return "Invalid email or password.";
+  return AUTH_ERRORS[error] ?? (TRANSPORT_ERROR.test(error) || /^[A-Za-z]+$/.test(error) ? "Unable to sign in right now. Please try again." : error);
 }
 
 function SubmitButton({ pending, children }: { pending: boolean; children: string }) {

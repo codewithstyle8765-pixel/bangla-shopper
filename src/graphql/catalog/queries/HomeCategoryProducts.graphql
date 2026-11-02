@@ -1,0 +1,8 @@
+# Products of one category for a Home page product row (Trending Now, Double Cashback, Beauty Tech).
+query HomeCategoryProducts($urlPath: String!, $pageSize: Int!) {
+  products(filter: { category_url_path: { eq: $urlPath } }, pageSize: $pageSize, currentPage: 1) {
+    items {
+      ...ProductCard
+    }
+  }
+}

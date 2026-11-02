@@ -7,9 +7,10 @@ import { FREE_SHIPPING_THRESHOLD } from "@/lib/config";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Collapse } from "@/packages/module-common/Collapse";
 import { useCart } from "@/packages/module-quote/context/CartContext";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 
 export function FreeShippingProgress({ subtotal }: { subtotal: number }) {
+  const money = useMoney();
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   return (
@@ -17,7 +18,7 @@ export function FreeShippingProgress({ subtotal }: { subtotal: number }) {
       <p className="text-[13px] text-brand-dark">
         {remaining > 0 ? (
           <>
-            Add <strong className="text-brand-coral">{formatTk(remaining)}</strong> more for <strong>FREE shipping</strong>
+            Add <strong className="text-brand-coral">{money(remaining)}</strong> more for <strong>FREE shipping</strong>
           </>
         ) : (
           <strong className="text-brand-link">You&apos;ve unlocked FREE shipping!</strong>
@@ -138,6 +139,7 @@ interface CartTotalsProps {
 
 /** `shipping` undefined renders "Calculated at checkout". */
 export function CartTotals({ shipping, reward, children }: CartTotalsProps) {
+  const money = useMoney();
   const { cart } = useCart();
   const shippingAmount = shipping ?? 0;
   const total = Math.max(0, cart.subtotal - cart.discount - (reward?.amount ?? 0) + shippingAmount);
@@ -146,30 +148,30 @@ export function CartTotals({ shipping, reward, children }: CartTotalsProps) {
     <dl className="space-y-2.5 text-[14px]">
       <div className="flex justify-between">
         <dt className="text-footer-text">Subtotal ({cart.totalQuantity} {cart.totalQuantity === 1 ? "item" : "items"})</dt>
-        <dd className="font-medium text-brand-dark">{formatTk(cart.subtotal)}</dd>
+        <dd className="font-medium text-brand-dark">{money(cart.subtotal)}</dd>
       </div>
       {cart.discount > 0 && (
         <div className="flex justify-between">
           <dt className="text-footer-text">Discount</dt>
-          <dd className="font-medium text-brand-coral">− {formatTk(cart.discount)}</dd>
+          <dd className="font-medium text-brand-coral">− {money(cart.discount)}</dd>
         </div>
       )}
       {reward && (
         <div className="flex justify-between">
           <dt className="text-footer-text">Reward points ({reward.points.toLocaleString("en-US")} pts)</dt>
-          <dd className="font-medium text-brand-coral">− {formatTk(reward.amount)}</dd>
+          <dd className="font-medium text-brand-coral">− {money(reward.amount)}</dd>
         </div>
       )}
       <div className="flex justify-between">
         <dt className="text-footer-text">Shipping</dt>
         <dd className="font-medium text-brand-dark">
-          {shipping === undefined ? "Calculated at checkout" : shipping === 0 ? "FREE" : formatTk(shippingAmount)}
+          {shipping === undefined ? "Calculated at checkout" : shipping === 0 ? "FREE" : money(shippingAmount)}
         </dd>
       </div>
       {children}
       <div className="flex items-baseline justify-between border-t border-card-border pt-3">
         <dt className="text-[16px] font-bold uppercase tracking-[0.1em] text-brand-dark">Total</dt>
-        <dd className="text-[22px] font-bold text-brand-alert">{formatTk(total)}</dd>
+        <dd className="text-[22px] font-bold text-brand-alert">{money(total)}</dd>
       </div>
     </dl>
   );

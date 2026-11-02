@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { CartLineOptions } from "./CartLineOptions";
 import { useCart } from "@/packages/module-quote/context/CartContext";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { CartTotals, CouponForm, FreeShippingProgress, TrustBadges } from "./CartSummary";
 import { CartPageSkeleton } from "./CartSkeletons";
 import { QuantitySelector } from "@/packages/module-common/QuantitySelector";
@@ -14,6 +14,7 @@ import { EarnPointsNote } from "@/packages/module-quote/checkout/EarnPointsNote"
 import { useCustomerName } from "@/packages/module-customer/session";
 
 export function CartPageView() {
+  const money = useMoney();
   const { cart, isLoaded, isUpdating, updateQuantity, removeItem, error } = useCart();
   const signedIn = Boolean(useCustomerName());
 
@@ -54,11 +55,11 @@ export function CartPageView() {
           {cart.items.map((item) => (
             <li key={item.id} className="grid grid-cols-[88px_minmax(0,1fr)] gap-x-3 gap-y-3 py-4 md:grid-cols-[minmax(0,1fr)_120px_130px_120px] md:items-center md:gap-4">
               <div className="row-span-2 md:row-span-1 md:flex md:items-center md:gap-4">
-                <Link href={`/product/${item.urlKey}`} className="block h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[4px] border border-card-border bg-white">
+                <Link href={`/product/${item.urlKey}`} prefetch className="block h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[4px] border border-card-border bg-white">
                   <NextImage src={item.image} alt={item.name} width={88} height={88} className="h-full w-full object-contain" />
                 </Link>
                 <div className="hidden min-w-0 md:block">
-                  <Link href={`/product/${item.urlKey}`} className="line-clamp-2 text-[14px] font-medium leading-[1.35] text-brand-dark hover:text-brand-coral">
+                  <Link href={`/product/${item.urlKey}`} prefetch className="line-clamp-2 text-[14px] font-medium leading-[1.35] text-brand-dark hover:text-brand-coral">
                     {item.name}
                   </Link>
                   <CartLineOptions options={item.options} className="mt-1" />
@@ -75,7 +76,7 @@ export function CartPageView() {
 
               <div className="min-w-0 md:hidden">
                 <div className="flex items-start gap-2">
-                  <Link href={`/product/${item.urlKey}`} className="line-clamp-2 flex-1 text-[13px] font-medium leading-[1.35] text-brand-dark">
+                  <Link href={`/product/${item.urlKey}`} prefetch className="line-clamp-2 flex-1 text-[13px] font-medium leading-[1.35] text-brand-dark">
                     {item.name}
                   </Link>
                   <button
@@ -90,12 +91,12 @@ export function CartPageView() {
                   </button>
                 </div>
                 <CartLineOptions options={item.options} className="mt-0.5" />
-                <p className="mt-1 text-[13px] font-bold text-brand-alert">{formatTk(item.price)}</p>
+                <p className="mt-1 text-[13px] font-bold text-brand-alert">{money(item.price)}</p>
               </div>
 
               <div className="hidden text-right md:block">
-                <p className="text-[15px] font-semibold text-brand-dark">{formatTk(item.price)}</p>
-                {item.originalPrice && <p className="text-[12px] text-price-strikethrough line-through">{formatTk(item.originalPrice)}</p>}
+                <p className="text-[15px] font-semibold text-brand-dark">{money(item.price)}</p>
+                {item.originalPrice && <p className="text-[12px] text-price-strikethrough line-through">{money(item.originalPrice)}</p>}
               </div>
 
               <div className="col-start-2 flex items-center justify-between md:col-start-auto md:justify-center">
@@ -105,10 +106,10 @@ export function CartPageView() {
                   disabled={isUpdating}
                   label={`Quantity for ${item.name}`}
                 />
-                <p className="text-[15px] font-bold text-brand-dark md:hidden">{formatTk(item.price * item.quantity)}</p>
+                <p className="text-[15px] font-bold text-brand-dark md:hidden">{money(item.price * item.quantity)}</p>
               </div>
 
-              <p className="hidden text-right text-[16px] font-bold text-brand-dark md:block">{formatTk(item.price * item.quantity)}</p>
+              <p className="hidden text-right text-[16px] font-bold text-brand-dark md:block">{money(item.price * item.quantity)}</p>
             </li>
           ))}
         </ul>
@@ -119,7 +120,7 @@ export function CartPageView() {
           </Link>
           {savings > 0 && (
             <p className="text-[14px] text-brand-dark">
-              You are saving <strong className="text-brand-coral">{formatTk(savings)}</strong> on this order
+              You are saving <strong className="text-brand-coral">{money(savings)}</strong> on this order
             </p>
           )}
         </div>
@@ -143,7 +144,7 @@ export function CartPageView() {
       <div data-sticky-cta="cart" className="fixed inset-x-0 bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] z-30 flex items-center gap-3 border-t border-card-border bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
         <div className="min-w-0 flex-1">
           <p className="text-[12px] text-footer-text">Total ({cart.totalQuantity} items)</p>
-          <p className="text-[18px] font-bold text-brand-alert">{formatTk(Math.max(0, cart.subtotal - cart.discount))}</p>
+          <p className="text-[18px] font-bold text-brand-alert">{money(Math.max(0, cart.subtotal - cart.discount))}</p>
         </div>
         <Link href="/checkout" className="flex h-12 items-center rounded-[4px] bg-brand-coral px-6 text-[16px] font-semibold text-white">
           Checkout

@@ -1,0 +1,13 @@
+# Apply coupon code request
+mutation ApplyCoupon($storeId: Int, $couponCode: String, $removeCoupon: Int, $quoteId: Int, $customerToken: String) {
+  applyCoupon(
+    storeId: $storeId
+    couponCode: $couponCode
+    removeCoupon: $removeCoupon
+    quoteId: $quoteId
+    customerToken: $customerToken
+  ) {
+    message
+    success
+  }
+}

@@ -1,0 +1,14 @@
+# Upload banner image for customer
+mutation UploadBannerPic($width: String, $mFactor: String, $customerToken: String!, $imageEncoded: String!, $imageName: String!) {
+  uploadBannerPic(
+    width: $width
+    mFactor: $mFactor
+    customerToken: $customerToken
+    imageEncoded: $imageEncoded
+    imageName: $imageName
+  ) {
+    message
+    success
+    url
+  }
+}

@@ -1,0 +1,40 @@
+# Announcement bar and promo popup, shown on every page (from the home page API).
+query SiteBanners {
+  homePage {
+    announcement_bar {
+      left {
+        icon
+        text
+        link
+      }
+      messages {
+        text
+        link
+      }
+      right {
+        icon
+        text
+        link
+      }
+    }
+    promo_popup {
+      id
+      enabled
+      image
+      mobile_image
+      alt
+      link
+      heading
+      heading_highlight
+      subheading
+      button_label
+      dismiss_label
+      show_newsletter
+      privacy_note
+      perks {
+        icon
+        label
+      }
+    }
+  }
+}

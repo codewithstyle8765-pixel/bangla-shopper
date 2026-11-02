@@ -1,0 +1,7 @@
+# Login customer in Watch App
+mutation WatchLogin($firebaseId: String, $customerToken: String) {
+  watchLogin(firebaseId: $firebaseId, customerToken: $customerToken) {
+    message
+    success
+  }
+}

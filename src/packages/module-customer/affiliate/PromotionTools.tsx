@@ -6,7 +6,7 @@ import { Modal } from "@/packages/module-common/Modal";
 import { NextImage } from "@/packages/module-common/NextImage";
 import { Checkbox, controlClass, TextField } from "@/packages/module-common/form";
 import type { AffiliateBanner, AffiliateProgram, AffiliateWidgetProduct } from "@/types/storefront";
-import { formatTk } from "@/utils/format";
+import { useMoney } from "@/packages/module-common/currency/Currency";
 import { CopyButton, CopyField, ShareButtons } from "./CopyField";
 import { primaryButton } from "./AffiliateUi";
 
@@ -88,6 +88,7 @@ const numberIn = (value: string, min: number, max: number, fallback: number) => 
 };
 
 export function ReferralWidgetBuilder({ referralUrl, products }: { referralUrl: string; products: AffiliateWidgetProduct[] }) {
+  const money = useMoney();
   const [title, setTitle] = useState("Related Products");
   const [count, setCount] = useState("6");
   const [width, setWidth] = useState("250");
@@ -155,7 +156,7 @@ export function ReferralWidgetBuilder({ referralUrl, products }: { referralUrl: 
                   <NextImage src={p.image} alt="" fill sizes="120px" className="object-contain" />
                 </div>
                 {names && <p className="mt-1.5 line-clamp-2 text-[11px] leading-[1.35] text-brand-dark">{p.name}</p>}
-                {prices && <p className="mt-0.5 text-[12px] font-bold text-brand-coral">{formatTk(p.price, false)}</p>}
+                {prices && <p className="mt-0.5 text-[12px] font-bold text-brand-coral">{money(p.price, false)}</p>}
               </li>
             ))}
           </ul>

@@ -1,0 +1,6 @@
+# Generate a token for specified customer.
+mutation GenerateCustomerToken($email: String!, $password: String!) {
+  generateCustomerToken(email: $email, password: $password) {
+    token
+  }
+}

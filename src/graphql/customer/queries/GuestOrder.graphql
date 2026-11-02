@@ -1,0 +1,238 @@
+# Retrieve guest order details based on number, email and billing last name.
+query GuestOrder($input: GuestOrderInformationInput!) {
+  guestOrder(input: $input) {
+    applied_coupons {
+      code
+    }
+    available_actions
+    billing_address {
+      city
+      company
+      country_code
+      fax
+      firstname
+      lastname
+      middlename
+      postcode
+      prefix
+      region
+      region_id
+      street
+      suffix
+      telephone
+      vat_id
+    }
+    carrier
+    comments {
+      message
+      timestamp
+    }
+    credit_memos {
+      comments {
+        message
+        timestamp
+      }
+      id
+      items {
+        __typename
+        id
+        product_name
+        product_sku
+        quantity_refunded
+      }
+      number
+    }
+    customer_info {
+      firstname
+      lastname
+      middlename
+      prefix
+      suffix
+    }
+    email
+    gift_message {
+      from
+      message
+      to
+    }
+    id
+    invoices {
+      comments {
+        message
+        timestamp
+      }
+      id
+      items {
+        __typename
+        id
+        product_name
+        product_sku
+        quantity_invoiced
+      }
+      number
+    }
+    is_virtual
+    items {
+      __typename
+      discounts {
+        applied_to
+        label
+      }
+      entered_options {
+        label
+        value
+      }
+      gift_message {
+        from
+        message
+        to
+      }
+      id
+      product {
+        __typename
+        canonical_url
+        country_of_manufacture
+        gift_message_available
+        max_sale_qty
+        meta_description
+        meta_keyword
+        meta_title
+        min_sale_qty
+        name
+        new_from_date
+        new_to_date
+        only_x_left_in_stock
+        options_container
+        quantity
+        rating_summary
+        review_count
+        sku
+        special_price
+        special_to_date
+        stock_status
+        swatch_image
+        uid
+        url_key
+        url_suffix
+      }
+      product_name
+      product_sale_price {
+        currency
+        value
+      }
+      product_sku
+      product_type
+      product_url_key
+      quantity_canceled
+      quantity_invoiced
+      quantity_ordered
+      quantity_refunded
+      quantity_returned
+      quantity_shipped
+      selected_options {
+        label
+        value
+      }
+      status
+    }
+    mstRewardPoints {
+      earn_activated_at
+      earn_points
+      is_earn_activated
+      spend_amount {
+        currency
+        value
+      }
+      spend_points
+    }
+    number
+    order_date
+    order_status_change_date
+    payment_methods {
+      additional_data {
+        name
+        value
+      }
+      name
+      type
+    }
+    shipments {
+      comments {
+        message
+        timestamp
+      }
+      id
+      items {
+        __typename
+        id
+        product_name
+        product_sku
+        quantity_shipped
+      }
+      number
+      tracking {
+        carrier
+        number
+        title
+      }
+    }
+    shipping_address {
+      city
+      company
+      country_code
+      fax
+      firstname
+      lastname
+      middlename
+      postcode
+      prefix
+      region
+      region_id
+      street
+      suffix
+      telephone
+      vat_id
+    }
+    shipping_method
+    status
+    token
+    total {
+      base_grand_total {
+        currency
+        value
+      }
+      discounts {
+        applied_to
+        label
+      }
+      grand_total {
+        currency
+        value
+      }
+      grand_total_excl_tax {
+        currency
+        value
+      }
+      subtotal_excl_tax {
+        currency
+        value
+      }
+      subtotal_incl_tax {
+        currency
+        value
+      }
+      taxes {
+        rate
+        title
+      }
+      total_shipping {
+        currency
+        value
+      }
+      total_tax {
+        currency
+        value
+      }
+    }
+  }
+}

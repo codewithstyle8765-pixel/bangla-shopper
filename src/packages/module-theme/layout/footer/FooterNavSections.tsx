@@ -38,11 +38,11 @@ export function FooterNavSections({ contact, columns }: FooterNavSectionsProps) 
   };
 
   const contactItems = [
-    { icon: PinIcon, label: "Address", value: contact.address },
-    { icon: PhoneIcon, label: "Hotline", value: contact.hotline, href: `tel:${contact.hotline.replace(/\s+/g, "")}` },
-    { icon: MailIcon, label: "Email", value: contact.email, href: `mailto:${contact.email}` },
-    { icon: ClockIcon, label: "Open Time", value: contact.hours },
-  ];
+    contact.address ? { icon: PinIcon, label: "Address", value: contact.address } : null,
+    contact.hotline ? { icon: PhoneIcon, label: "Hotline", value: contact.hotline, href: `tel:${contact.hotline.replace(/\s+/g, "")}` } : null,
+    contact.email ? { icon: MailIcon, label: "Email", value: contact.email, href: `mailto:${contact.email}` } : null,
+    contact.hours ? { icon: ClockIcon, label: "Open Time", value: contact.hours } : null,
+  ].filter(Boolean) as Array<{ icon: typeof PinIcon; label: string; value: string; href?: string }>;
 
   const isContactOpen = !!openSections["contact"];
 

@@ -1,0 +1,7 @@
+# delete address request
+mutation DeleteAddress($addressId: Int, $customerToken: String) {
+  deleteAddress(addressId: $addressId, customerToken: $customerToken) {
+    message
+    success
+  }
+}

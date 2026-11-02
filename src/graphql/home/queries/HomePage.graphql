@@ -1,0 +1,90 @@
+# Home page sections, in admin order; `configurations` is null for a section with no content.
+query HomePage {
+  homePage {
+    sections {
+      id
+      enabled
+      sort_order
+      configurations {
+        __typename
+        ... on HomeHero {
+          layout
+          slides {
+            ...HomeBannerFields
+          }
+          grid_main {
+            ...HomeBannerFields
+          }
+          grid_side {
+            ...HomeBannerFields
+          }
+        }
+        ... on HomeBanner {
+          ...HomeBannerFields
+        }
+        ... on HomeCategories {
+          title
+          layout
+          popular {
+            ...HomeTileFields
+          }
+          shop_by_category {
+            ...HomeTileFields
+          }
+        }
+        ... on HomeTileSection {
+          title
+          title_highlight
+          tiles {
+            ...HomeTileFields
+          }
+        }
+        ... on HomeProductSection {
+          title
+          view_all_link
+          products {
+            ...ProductCard
+          }
+        }
+        ... on HomeBeautyTech {
+          title
+          description
+          icon
+          button_label
+          button_link
+          products {
+            ...ProductCard
+          }
+        }
+        ... on HomeLandedJustNow {
+          eyebrow
+          title
+          description
+          icon
+          view_all_label
+          view_all_link
+          banners {
+            ...HomeBannerFields
+          }
+        }
+        ... on HomeSeoAbout {
+          title
+          content_html
+        }
+      }
+    }
+  }
+}
+
+fragment HomeBannerFields on HomeBanner {
+  image
+  mobile_image
+  alt
+  link
+}
+
+fragment HomeTileFields on HomeTile {
+  name
+  image
+  link
+}

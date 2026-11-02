@@ -8,6 +8,8 @@ import { ErrorBoundary } from "@/packages/module-common/error/ErrorBoundary";
 import { GlobalProviders } from "@/providers";
 import { getNavigation } from "@/utils/magento/catalog";
 import { getFooterData } from "@/utils/magento/cms";
+import { getSiteBanners } from "@/utils/magento/home";
+import { getStoreSettings } from "@/utils/magento/store";
 import { SITE_URL } from "@/lib/config";
 
 const roboto = Roboto({
@@ -29,14 +31,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [categories, footer] = await Promise.all([getNavigation(), getFooterData()]);
+  const [categories, footer, banners, store] = await Promise.all([getNavigation(), getFooterData(), getSiteBanners(), getStoreSettings()]);
 
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body className="antialiased font-sans min-h-screen bg-background text-foreground flex flex-col overflow-x-clip pb-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:pb-0 has-[[data-sticky-cta]]:pb-[calc(4rem+1px+var(--sticky-cta-h)+env(safe-area-inset-bottom))] lg:has-[[data-sticky-cta=checkout]]:pb-0 lg:has-[[data-sticky-cta=pdp]]:pb-0 lg:has-[[data-sticky-cta=cart]]:pb-0">
         <ErrorBoundary>
-          <GlobalProviders>
-            <Header categories={categories} hotline={footer?.contact.hotline}>
+          <GlobalProviders promo={banners.promo} currencySymbol={store.currencySymbol}>
+            <Header categories={categories} hotline={footer?.contact.hotline} announcements={banners.announcements}>
               <MegaMenu categories={categories} />
             </Header>
             <main className="flex-1 w-full">{children}</main>

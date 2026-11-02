@@ -1,0 +1,22 @@
+# Return the attribute type, given an attribute code and entity type.
+query CustomAttributeMetadata($attributes: [AttributeInput!]!) {
+  customAttributeMetadata(attributes: $attributes) {
+    items {
+      attribute_code
+      attribute_options {
+        label
+        value
+      }
+      attribute_type
+      entity_type
+      input_type
+      storefront_properties {
+        position
+        use_in_layered_navigation
+        use_in_product_listing
+        use_in_search_results_layered_navigation
+        visible_on_catalog_pages
+      }
+    }
+  }
+}

@@ -12,14 +12,11 @@ import { ProductTabs } from "@/packages/module-catalog/pdp/ProductTabs";
 import { ProductDetailSkeleton } from "@/packages/module-catalog/pdp/ProductDetailSkeleton";
 import { ProductCarousel } from "@/packages/module-common/carousel/ProductCarousel";
 import { ProductCard } from "@/packages/module-catalog/product/ProductCard";
-import { getPrerenderProductUrlKeys, getProductDetail } from "@/utils/magento/catalog";
+import { getPrerenderProductUrlKeys, getProductDetail, getProductQuestions } from "@/utils/magento/catalog";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
-
-/* Prerendered at build time, rebuilt in the background at most once an hour. */
-export const revalidate = 3600;
 
 /** Builds the catalog's first products at build time; any other product renders on first visit, then stays cached. */
 export async function generateStaticParams() {
@@ -43,11 +40,9 @@ async function ProductDetail({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await getProductDetail(slug);
   if (!product) notFound();
+  const questions = await getProductQuestions(product.sku);
 
-  const discountPercent =
-    product.originalPrice && product.originalPrice > product.price
-      ? Math.round((1 - product.price / product.originalPrice) * 100)
-      : undefined;
+  const discountPercent = product.discountPercentage;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -100,6 +95,11 @@ async function ProductDetail({ params }: ProductPageProps) {
         <div className="w-full mt-6 lg:mt-8">
           <ProductTabs
             reviewCount={product.ratingCount}
+            rating={product.rating}
+            reviews={product.reviews}
+            reviewSummaries={product.reviewSummaries}
+            specs={product.specs}
+            questions={questions}
             sku={product.sku}
             productName={product.name}
             product={{
@@ -117,7 +117,7 @@ async function ProductDetail({ params }: ProductPageProps) {
 
         {product.related.length > 0 && (
           <div id="similar-products" className="w-full mt-[8px] desk:mt-[6px] scroll-mt-(--sticky-header)">
-            <ProductCarousel title="Similar Products >" titleClassName="desk:mt-[5px]" viewAllLink={product.categoryHref ?? "/category/makeup"}>
+            <ProductCarousel title="Similar Products >" titleClassName="desk:mt-[5px]" viewAllLink={product.categoryHref ?? "/category/all-products"}>
               {product.related.map((item) => (
                 <ProductCard key={item.id} {...item} layout="fluid" />
               ))}
@@ -127,7 +127,7 @@ async function ProductDetail({ params }: ProductPageProps) {
 
         {product.recommended.length > 0 && (
           <div className="w-full mt-[5px] desk:mt-[8px]">
-            <ProductCarousel title="We found other products you might like! >" titleClassName="desk:mt-[5px]" viewAllLink="/category/trends">
+            <ProductCarousel title="We found other products you might like! >" titleClassName="desk:mt-[5px]" viewAllLink={product.categoryHref ?? "/category/all-products"}>
               {product.recommended.map((item) => (
                 <ProductCard key={`rec-${item.id}`} {...item} layout="fluid" />
               ))}

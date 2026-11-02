@@ -1,5 +1,6 @@
-import { APPLY_REWARD_POINTS, CART_REWARD_POINTS, CUSTOMER_REWARD_TIER, REMOVE_REWARD_POINTS } from "@/graphql/rewards";
+import { APPLY_REWARD_POINTS, CART_REWARD_POINTS, REMOVE_REWARD_POINTS } from "@/graphql/rewards";
 import { authContext, graphqlMutate, graphqlRequestNoCache } from "@/lib/graphql-fetch";
+import { CustomerRewardTierDocument, type CustomerRewardTierQuery } from "@/graphql/rewards/queries/__generated__/CustomerRewardTier.generated";
 import type { CheckoutRewards, RewardTierStatus } from "@/types/storefront";
 import { getCustomerToken } from "@/utils/session";
 import { pointsToTaka } from "@/utils/rewards";
@@ -41,15 +42,6 @@ export async function setRewardPoints(points: number): Promise<CheckoutRewards> 
   return getCheckoutRewards();
 }
 
-type RewardTierData = {
-  mstRewardsTiers: Array<{ name?: string | null; description?: string | null; min_earn_points?: number | null; tier_logo?: string | null; is_current_tier?: boolean | null } | null> | null;
-  customer?: {
-    mstRewardPointsBalance?: {
-      transactions: Array<{ transaction_id?: number | null; code?: string | null; comment?: string | null; amount?: number | null; is_activated?: boolean | null } | null>;
-    } | null;
-  } | null;
-};
-
 /** Order number from a transaction ("Order #101742203"), else its comment. */
 const pendingLabel = (comment?: string | null, code?: string | null) => {
   const order = `${comment ?? ""} ${code ?? ""}`.match(/#?(\d{6,})/)?.[1];
@@ -62,7 +54,7 @@ export async function getRewardTier(): Promise<RewardTierStatus> {
   const token = await getCustomerToken();
   if (!token) return empty;
   try {
-    const data = await graphqlRequestNoCache<RewardTierData>(CUSTOMER_REWARD_TIER, undefined, { context: authContext(token) });
+    const data = await graphqlRequestNoCache<CustomerRewardTierQuery>(CustomerRewardTierDocument, undefined, { context: authContext(token) });
     const list = (data.mstRewardsTiers ?? []).flatMap((t) => (t?.name ? [t] : []));
     const tiers = list
       .map((t) => ({ name: t.name ?? "", minPoints: t.min_earn_points ?? 0, logo: t.tier_logo ?? undefined, description: t.description || undefined }))

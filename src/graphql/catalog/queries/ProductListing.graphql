@@ -1,0 +1,35 @@
+# Category and search pages: products, filters (aggregations), sort options and paging.
+query ProductListing(
+  $search: String
+  $filter: ProductAttributeFilterInput
+  $sort: ProductAttributeSortInput
+  $pageSize: Int
+  $currentPage: Int
+) {
+  products(search: $search, filter: $filter, sort: $sort, pageSize: $pageSize, currentPage: $currentPage) {
+    total_count
+    page_info {
+      current_page
+      total_pages
+    }
+    sort_fields {
+      default
+      options {
+        label
+        value
+      }
+    }
+    aggregations {
+      attribute_code
+      label
+      options {
+        label
+        value
+        count
+      }
+    }
+    items {
+      ...ProductCard
+    }
+  }
+}

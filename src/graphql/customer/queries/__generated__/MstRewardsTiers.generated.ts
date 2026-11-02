@@ -1,0 +1,10 @@
+import * as Types from '../../../../types/graphql-types';
+
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export type MstRewardsTiersQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type MstRewardsTiersQuery = { __typename?: 'Query', mstRewardsTiers: Array<{ __typename?: 'MstRewardsTier', description?: string | null, is_active?: boolean | null, is_current_tier?: boolean | null, min_earn_points?: number | null, name?: string | null, tier_logo?: string | null, remaining?: { __typename?: 'MstRewardsRemainingPoints', points?: string | null, money?: { __typename?: 'Money', currency?: Types.CurrencyEnum | null, value?: number | null } | null } | null } | null> };
+
+
+export const MstRewardsTiersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MstRewardsTiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mstRewardsTiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"is_active"}},{"kind":"Field","name":{"kind":"Name","value":"is_current_tier"}},{"kind":"Field","name":{"kind":"Name","value":"min_earn_points"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"remaining"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"money"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"points"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tier_logo"}}]}}]}}]} as unknown as DocumentNode<MstRewardsTiersQuery, MstRewardsTiersQueryVariables>;

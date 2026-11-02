@@ -1,0 +1,9 @@
+# Return the full details for a specified product, category, or CMS page.
+query Route($url: String!) {
+  route(url: $url) {
+    __typename
+    redirect_code
+    relative_url
+    type
+  }
+}

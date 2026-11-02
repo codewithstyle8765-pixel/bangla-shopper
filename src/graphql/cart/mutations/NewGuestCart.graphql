@@ -1,0 +1,4 @@
+# New guest cart; returns its masked id.
+mutation NewGuestCart {
+  createEmptyCart
+}

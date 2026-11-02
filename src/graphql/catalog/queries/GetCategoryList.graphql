@@ -1,0 +1,13 @@
+# category list information
+query GetCategoryList($storeId: Int) {
+  getCategoryList(storeId: $storeId) {
+    categoryData {
+      dominantColor
+      id
+      img_url
+      name
+    }
+    message
+    success
+  }
+}

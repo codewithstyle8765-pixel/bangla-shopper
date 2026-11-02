@@ -1,0 +1,7 @@
+# cart empty request
+mutation EmptyCart($storeId: Int, $quoteId: Int, $customerToken: String) {
+  emptyCart(storeId: $storeId, quoteId: $quoteId, customerToken: $customerToken) {
+    message
+    success
+  }
+}

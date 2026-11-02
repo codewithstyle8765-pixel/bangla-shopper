@@ -1,0 +1,9 @@
+# Return the relative URL for a specified product, category or CMS page.
+query UrlResolver($url: String!) {
+  urlResolver(url: $url) {
+    entity_uid
+    redirectCode
+    relative_url
+    type
+  }
+}

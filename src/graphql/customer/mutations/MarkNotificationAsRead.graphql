@@ -1,0 +1,11 @@
+# Mark customer order notification(s) as read
+mutation MarkNotificationAsRead($customerToken: String!, $notificationId: Int, $markAll: Boolean) {
+  markNotificationAsRead(
+    customerToken: $customerToken
+    notificationId: $notificationId
+    markAll: $markAll
+  ) {
+    message
+    success
+  }
+}

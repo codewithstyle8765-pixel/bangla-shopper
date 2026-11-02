@@ -1,0 +1,7 @@
+# register device request
+mutation RegisterDevice($os: String, $customerToken: String, $token: String) {
+  registerDevice(os: $os, customerToken: $customerToken, token: $token) {
+    message
+    success
+  }
+}

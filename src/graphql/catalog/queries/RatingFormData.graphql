@@ -1,0 +1,12 @@
+# rating form data information
+query RatingFormData($storeId: Int) {
+  ratingFormData(storeId: $storeId) {
+    message
+    ratingFormData {
+      id
+      name
+      values
+    }
+    success
+  }
+}

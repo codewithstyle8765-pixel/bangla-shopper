@@ -52,7 +52,7 @@ export function TierProgress({ status, earned }: { status: RewardTierStatus; ear
                   {t.logo ? (
                     <NextImage src={t.logo} alt="" width={128} height={128} className="h-full w-full object-contain" />
                   ) : (
-                    <RewardCoin className="h-10 w-10" />
+                    <RewardCoin className="h-9 w-auto sm:h-10 lg:h-11" />
                   )}
                 </span>
                 {/* Only a tier the customer has reached opens its message. */}

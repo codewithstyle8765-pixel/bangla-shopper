@@ -1,0 +1,25 @@
+# shipping methods information
+query ShippingMethods($shippingData: shippingDataInput, $customerToken: String, $storeId: Int, $quoteId: Int, $currency: String) {
+  shippingMethods(
+    shippingData: $shippingData
+    customerToken: $customerToken
+    storeId: $storeId
+    quoteId: $quoteId
+    currency: $currency
+  ) {
+    cartCount
+    cartTotal
+    message
+    shippingMethods {
+      isSelected
+      method {
+        code
+        isSelected
+        label
+        price
+      }
+      title
+    }
+    success
+  }
+}

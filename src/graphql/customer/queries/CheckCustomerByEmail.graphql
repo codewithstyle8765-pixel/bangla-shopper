@@ -1,0 +1,8 @@
+# check customer by email information
+query CheckCustomerByEmail($email: String, $storeId: Int) {
+  checkCustomerByEmail(email: $email, storeId: $storeId) {
+    isCustomerExist
+    message
+    success
+  }
+}

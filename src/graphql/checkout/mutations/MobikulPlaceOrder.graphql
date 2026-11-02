@@ -1,0 +1,36 @@
+# place order request
+mutation MobikulPlaceOrder($storeId: Int, $quoteId: Int, $customerToken: String, $token: String, $paymentMethod: String, $ccCid: Int, $ccType: String, $ccNumber: Int, $ccExpYear: Int, $ccExpMonth: Int, $billingData: shippingDataInput, $checkoutMethod: String, $purchasePoint: String, $currency: String) {
+  mobikulPlaceOrder(
+    storeId: $storeId
+    quoteId: $quoteId
+    customerToken: $customerToken
+    token: $token
+    paymentMethod: $paymentMethod
+    ccCid: $ccCid
+    ccType: $ccType
+    ccNumber: $ccNumber
+    ccExpYear: $ccExpYear
+    ccExpMonth: $ccExpMonth
+    billingData: $billingData
+    checkoutMethod: $checkoutMethod
+    purchasePoint: $purchasePoint
+    currency: $currency
+  ) {
+    canReorder
+    cartCount
+    customerDetails {
+      email
+      firstname
+      groupId
+      guestCustomer
+      lastname
+      middlename
+    }
+    email
+    incrementId
+    message
+    orderId
+    showCreateAccountLink
+    success
+  }
+}

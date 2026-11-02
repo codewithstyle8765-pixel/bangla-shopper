@@ -1,0 +1,6 @@
+# Retrieve the secure PayPal URL for a Payments Pro Hosted Solution transaction.
+query GetHostedProUrl($input: HostedProUrlInput!) {
+  getHostedProUrl(input: $input) {
+    secure_form_url
+  }
+}

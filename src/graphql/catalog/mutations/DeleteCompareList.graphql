@@ -1,0 +1,6 @@
+# Delete the specified compare list.
+mutation DeleteCompareList($uid: ID!) {
+  deleteCompareList(uid: $uid) {
+    result
+  }
+}

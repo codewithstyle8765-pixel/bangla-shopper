@@ -1,0 +1,6 @@
+# Check whether the specified email has already been used to create a customer account.
+query IsEmailAvailable($email: String!) {
+  isEmailAvailable(email: $email) {
+    is_email_available
+  }
+}
