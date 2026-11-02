@@ -109,8 +109,12 @@ function normalizeStatus(status: string): OrderStatus {
   return "pending";
 }
 
-/** Magento sends "2026-10-11 18:42:00" (UTC) or an ISO string. */
-const toIsoDate = (value: string) => new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`).toISOString();
+/** Magento sends "2026-10-11 18:42:00" (UTC) or an ISO string; missing/invalid dates become "". */
+const toIsoDate = (value?: string | null) => {
+  if (!value) return "";
+  const date = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+};
 
 export function mapOrder(o: MagentoOrder): Order {
   return {

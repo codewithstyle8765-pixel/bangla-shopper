@@ -6,13 +6,17 @@ interface PrintInvoiceHeaderProps {
 }
 
 export function PrintInvoiceHeader({ orderNumber, createdAt, status }: PrintInvoiceHeaderProps) {
-  const formattedDate = new Date(createdAt).toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const parsed = createdAt ? new Date(createdAt) : null;
+  const formattedDate =
+    parsed && !Number.isNaN(parsed.getTime())
+      ? parsed.toLocaleString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "—";
 
   return (
     <div className="hidden print:flex print:items-start print:justify-between print:border-b-2 print:border-brand-dark print:pb-4 print:mb-6">

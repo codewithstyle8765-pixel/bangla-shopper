@@ -16,13 +16,22 @@ export function formatPriceRange(value: string, symbol: string): string {
   return lo ? `${money(lo)} – ${money(Number(to))}` : `Up to ${money(Number(to))}`;
 }
 
+const parseDate = (iso: string) => {
+  if (!iso) return null;
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
 export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  const date = parseDate(iso);
+  if (!date) return "—";
+  return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 /** "26 Oct 2026, 05:15 PM": 12-hour clock with a zero-padded hour and capital AM/PM. */
 export function formatDateTime(iso: string): string {
-  const date = new Date(iso);
+  const date = parseDate(iso);
+  if (!date) return "—";
   const time = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
   return `${formatDate(iso)}, ${time}`;
 }

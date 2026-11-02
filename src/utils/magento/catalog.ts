@@ -294,8 +294,12 @@ export async function getPrerenderProductUrlKeys(limit = 100): Promise<string[]>
 /** "country_of_manufacture" → "Country Of Manufacture" for attributes Magento sends no label for. */
 const specLabel = (code: string) => code.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 
-/** Magento sends "2022-08-05 03:44:22" (UTC). */
-const toIsoDate = (value: string) => new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`).toISOString();
+/** Magento sends "2022-08-05 03:44:22" (UTC); missing/invalid dates become "". */
+const toIsoDate = (value?: string | null) => {
+  if (!value) return "";
+  const date = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+};
 
 export async function getProductDetail(urlKey: string): Promise<ProductDetail | null> {
   const data = await graphqlRequestCached<ProductDetailQuery, ProductDetailQueryVariables>(ProductDetailDocument, { urlKey }, getProductCacheConfig(urlKey));
