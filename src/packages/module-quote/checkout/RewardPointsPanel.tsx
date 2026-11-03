@@ -46,8 +46,8 @@ export function RewardPointsPanel({ rewards, pending, error, onApply, onCancel }
         )}
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-[13px] text-footer-text">
-        <RewardCoin className="h-4.5 w-4.5 shrink-0" />
+      <div className="mt-2.5 flex items-center gap-3 text-[13px] text-footer-text">
+        <RewardCoin className="h-8 w-auto sm:h-8.5 lg:h-9 shrink-0" />
         <span>
           Available balance: <strong className="font-semibold text-brand-dark">{fmt(rewards.balance)} points</strong> ({formatTk(rewards.balanceValue)})
         </span>

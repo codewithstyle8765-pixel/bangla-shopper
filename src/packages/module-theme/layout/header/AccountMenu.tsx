@@ -79,9 +79,9 @@ export function AccountMenu({ name }: { name: string }) {
             href="/customer/account/rewards"
             role="menuitem"
             prefetch={false}
-            className="group flex items-center gap-3 bg-brand-coral/8 px-4 py-3 transition-colors hover:bg-brand-coral/12"
+            className="group flex items-center gap-3.5 bg-brand-coral/8 px-4 py-3 transition-colors hover:bg-brand-coral/12"
           >
-            <RewardCoin className="h-9 w-9" />
+            <RewardCoin className="h-9 w-auto lg:h-10" />
             <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-bold uppercase tracking-[0.1em] text-brand-coral">Reward Points</span>
               {rewards === "loading" || rewards === null ? (

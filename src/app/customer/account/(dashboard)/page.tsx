@@ -70,7 +70,7 @@ async function DashboardPageContent() {
             className="group flex items-center justify-between gap-3 border-t border-card-border px-4 py-3 transition-colors hover:bg-brand-coral/5"
           >
             <span className="flex min-w-0 items-center gap-2.5">
-              <RewardCoin className="h-8 w-8 shrink-0" />
+              <RewardCoin className="h-8.5 w-auto lg:h-9.5 shrink-0" />
               <span className="min-w-0">
                 <span className="block text-[14px] font-semibold leading-[1.3] text-brand-dark">Reward Points</span>
                 <span className="block text-[12px] leading-[1.4] text-footer-text">
@@ -103,7 +103,7 @@ async function DashboardPageContent() {
               href="/customer/account/rewards"
               className="flex h-full items-center gap-3 rounded-[6px] border border-card-border bg-white p-3 transition-colors hover:border-brand-coral sm:p-4"
             >
-              <RewardCoin className="h-9 w-9 sm:h-10 sm:w-10" />
+              <RewardCoin className="h-10 w-auto sm:h-11 lg:h-12" />
               <span className="min-w-0">
                 <span className="block text-[20px] font-bold text-brand-coral sm:text-[24px]">{rewards.balance.toLocaleString("en-US")}</span>
                 <span className="mt-0.5 block text-[12px] text-footer-text sm:text-[13px]">

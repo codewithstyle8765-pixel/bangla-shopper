@@ -28,9 +28,24 @@ interface OrderConfirmationProps {
 const bangla = Noto_Sans_Bengali({ subsets: ["bengali"], display: "swap", variable: "--font-bangla" });
 
 const NEXT_STEPS = [
-  { title: "Confirmation call", text: "Our team calls you to confirm the order and delivery address." },
-  { title: "Packed & shipped", text: "We pack your products with care and hand them to the courier." },
-  { title: "Delivered", text: "Pay on delivery or relax, it's already paid. Enjoy your products!" },
+  {
+    titleEn: "Order Confirmation",
+    titleBn: "অর্ডার নিশ্চিতকরণ",
+    textEn: "Our team will call you to confirm your order and delivery details.",
+    textBn: "আমাদের টিম আপনাকে কল করে অর্ডার ও ডেলিভারির তথ্য নিশ্চিত করবে।",
+  },
+  {
+    titleEn: "Packed & Shipped",
+    titleBn: "প্যাকিং ও শিপিং",
+    textEn: "We'll carefully pack your products and hand them over to our delivery partner.",
+    textBn: "আপনার পণ্যগুলো যত্নসহকারে প্যাক করে ডেলিভারি পার্টনারের কাছে হস্তান্তর করা হবে।",
+  },
+  {
+    titleEn: "Delivered to You",
+    titleBn: "আপনার হাতে ডেলিভারি",
+    textEn: "Check your items in front of the delivery person and enjoy your purchase!",
+    textBn: "ডেলিভারি কর্মীর সামনে পণ্যগুলো যাচাই করে বুঝে নিন। কেনাকাটার জন্য ধন্যবাদ!",
+  },
 ];
 
 const lineIcon = { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
@@ -215,8 +230,8 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
       </div>
 
       {earn > 0 && (
-        <div className="mx-auto mt-6 flex items-center gap-3 lg:max-w-[640px] rounded-[8px] bg-brand-coral/8 px-4 py-3 text-left">
-          <RewardCoin className="h-9 w-9" />
+        <div className="mx-auto mt-6 flex items-center gap-3.5 lg:max-w-[640px] rounded-[8px] bg-brand-coral/8 px-4 py-3 text-left">
+          <RewardCoin className="h-11 w-auto sm:h-12 lg:h-13" />
           <p className="text-[14px] leading-[1.45] text-brand-dark">
             {signedIn ? (
               <>
@@ -310,16 +325,34 @@ export function OrderConfirmation({ number, initialOrder, signedIn, countries, h
         </div>
       )}
 
-      <section data-print-hide aria-label="What happens next" className="mt-8 rounded-[8px] bg-brand-surface p-4 text-left sm:p-5">
-        <h2 className="text-[14px] font-black uppercase tracking-[0.1em] text-brand-dark">What happens next</h2>
-        <ol className="mt-3 grid gap-4 sm:grid-cols-3">
+      <section data-print-hide aria-label="What happens next" className="mt-8 rounded-[8px] bg-brand-surface p-5 text-left sm:p-6">
+        <h2 className="text-[15px] font-bold text-brand-dark sm:text-[17px]">
+          WHAT HAPPENS NEXT? | <span lang="bn" className="font-bold">এরপর কী হবে?</span>
+        </h2>
+        <ol className="mt-5 grid gap-6 sm:grid-cols-3 sm:gap-6">
           {NEXT_STEPS.map((step, i) => (
-            <li key={step.title} className="flex gap-3">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand-coral text-[13px] font-bold text-white">{i + 1}</span>
-              <span>
-                <span className="block text-[14px] font-semibold text-brand-dark">{step.title}</span>
-                <span className="mt-0.5 block text-[13px] leading-[1.45] text-footer-text">{step.text}</span>
-              </span>
+            <li key={step.titleEn} className="flex flex-col">
+              <div className="flex items-center gap-3">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-coral text-[14px] font-bold text-white shadow-xs">
+                  {i + 1}
+                </span>
+                <div className="min-w-0">
+                  <span className="block text-[15px] font-bold leading-tight text-brand-dark">
+                    {step.titleEn}
+                  </span>
+                  <span lang="bn" className="mt-0.5 block text-[13px] font-semibold leading-tight text-brand-dark sm:text-[14px]">
+                    {step.titleBn}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3 space-y-1">
+                <p className="text-[13px] leading-[1.5] text-footer-text sm:text-[14px]">
+                  {step.textEn}
+                </p>
+                <p lang="bn" className="text-[13px] leading-[1.6] text-brand-dark sm:text-[14px]">
+                  {step.textBn}
+                </p>
+              </div>
             </li>
           ))}
         </ol>
